@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { Flex } from '@/components/styled';
-import { theme } from 'styled-tools';
+import { Flex } from "@/components/styled";
+import styled from "@emotion/styled";
+import { theme } from "styled-tools";
 
-const radii = theme('radii.2', 4);
+const radii = theme("radii.2", 4);
 
 export const Group = styled(Flex)`
   & > button {
@@ -25,6 +25,6 @@ export const Group = styled(Flex)`
   }
 `;
 
-Group.displayName = 'Group';
+Group.displayName = "Group";
 
 export default Group;

@@ -1,8 +1,8 @@
-import { defineMessages } from 'react-intl';
+import { defineMessages } from "react-intl";
 
 export default defineMessages({
   loginOut: {
-    id: 'logout.loginOut',
-    defaultMessage: 'Saindo...',
+    id: "logout.loginOut",
+    defaultMessage: "Saindo...",
   },
 });

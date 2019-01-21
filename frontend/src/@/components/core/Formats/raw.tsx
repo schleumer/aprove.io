@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { PropTypes } from '@/commons';
+import { PropTypes } from "@/commons";
 
-const RawComponent = props => {
+const RawComponent = (props) => {
   const {
     input: { value },
     defaultValue,
@@ -23,7 +23,7 @@ RawComponent.propTypes = {
 };
 
 RawComponent.defaultProps = {
-  defaultValue: 'Vázio',
+  defaultValue: "Vázio",
 };
 
 export default RawComponent;

@@ -5,18 +5,18 @@ import { Box } from "@/components/styled";
 
 import { getSpace } from "@/components/styled/system";
 
-import { theme } from 'styled-tools';
+import { theme } from "styled-tools";
 
 const TableRow = styled(Box.withComponent("tr"))``;
 
 const TableColumn = styled(Box.withComponent("td"))`
 padding: ${getSpace(2)};
-border-top: 1px solid ${theme('colors.light')};
+border-top: 1px solid ${theme("colors.light")};
 `;
 
 TableColumn.defaultProps = {
-  verticalAlign: 'top',
-}
+  verticalAlign: "top",
+};
 
 const TableHeader = styled(Box.withComponent("th"))`
 padding: ${getSpace(2)};

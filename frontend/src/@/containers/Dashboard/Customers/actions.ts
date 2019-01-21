@@ -1,4 +1,4 @@
-import { SET_VIEW, VIEW } from './constants';
+import { SET_VIEW, VIEW } from "./constants";
 
 export function view({ id }) {
   return {

@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import { DateTime } from 'luxon';
-import { PropTypes } from '@/commons';
+import { PropTypes } from "@/commons";
+import { DateTime } from "luxon";
 
-const DateTimeComponent = props => {
+const DateTimeComponent = (props) => {
   const {
     input: { value },
     defaultValue,
@@ -28,7 +28,7 @@ DateTimeComponent.propTypes = {
 };
 
 DateTimeComponent.defaultProps = {
-  defaultValue: 'Vázio',
+  defaultValue: "Vázio",
 };
 
 export default DateTimeComponent;

@@ -1,6 +1,6 @@
-import * as R from 'ramda';
-import ajv from './ajv';
-import * as localize from 'ajv-i18n/localize/pt-BR';
+import * as localize from "ajv-i18n/localize/pt-BR";
+import * as R from "ramda";
+import ajv from "./ajv";
 
 // const messages = {
 //   pattern: 'Formato incorreto',
@@ -22,11 +22,11 @@ export default function formValidator(data, schema) {
     localize(e.errors);
 
     const errors = e.errors.reduce((result, e) => {
-      const key = e.dataPath.replace(/^\./, '');
+      const key = e.dataPath.replace(/^\./, "");
 
       const value = R.append(
         e.message,
-        R.propOr([], key, result)
+        R.propOr([], key, result),
       );
 
       return {

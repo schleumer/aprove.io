@@ -36,7 +36,7 @@ const viewQuery = gql`
 interface HandleView {
   data: {
     id: string,
-  }
+  };
 }
 
 export function* handleView(action: HandleView) {

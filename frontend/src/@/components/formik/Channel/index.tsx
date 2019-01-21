@@ -1,34 +1,34 @@
-import React from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import injectReducer from '@/utils/injectReducer';
-import reducer from './reducer';
-import * as actions from './actions';
+import injectReducer from "@/utils/injectReducer";
+import React from "react";
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { createStructuredSelector } from "reselect";
+import * as actions from "./actions";
+import reducer from "./reducer";
 
 interface Props {
-  name: string,
-  isSubmitting: Function,
-  register: Function,
-  children: React.ReactNode,
+  name: string;
+  isSubmitting: Function;
+  register: Function;
+  children: React.ReactNode;
   channelState: {
-    isSubmitting: boolean
-  },
+    isSubmitting: boolean,
+  };
 }
 
 interface State {}
 
 class Channel extends React.Component<Props, State> {
-  static actions = actions;
+  public static actions = actions;
   constructor(props) {
     super(props);
 
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     if (!this.props.name) {
-      console.error('Invalid <Channel />, name is required.');
+      console.error("Invalid <Channel />, name is required.");
       return;
     }
 
@@ -37,7 +37,7 @@ class Channel extends React.Component<Props, State> {
     this.props.register(this.props.name);
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     const { channelState, children } = this.props;
     const el = React.Children.only(children);
 
@@ -50,11 +50,11 @@ class Channel extends React.Component<Props, State> {
     }
   }
 
-  onSubmit(childProps, onSubmit) {
+  public onSubmit(childProps, onSubmit) {
     return (values, form) => {
       const { isSubmitting, name } = this.props;
 
-      console.log('%s is submitting', name);
+      console.log("%s is submitting", name);
 
       isSubmitting(name, true);
 
@@ -62,38 +62,38 @@ class Channel extends React.Component<Props, State> {
     };
   }
 
-  render() {
+  public render() {
     const { children, name } = this.props;
 
     if (!name) {
       return <b>Invalid.</b>;
     }
 
-    return React.Children.map(children, _child => {
+    return React.Children.map(children, (_child) => {
       const child = _child as React.ReactElement<any>;
 
       return React.cloneElement(child, {
         onSubmit: this.onSubmit(child.props, child.props.onSubmit),
-      })
+      });
     });
   }
 }
 
 const withReducer = injectReducer({
-  key: '@/components/formik/Channel',
+  key: "@/components/formik/Channel",
   reducer,
 });
 
 export function mapDispatchToProps(dispatch) {
   return {
     isSubmitting: (name, state) => dispatch(actions.isSubmitting(name, state)),
-    register: name => dispatch(actions.register(name)),
+    register: (name) => dispatch(actions.register(name)),
   };
 }
 
 const mapStateToProps = createStructuredSelector({
   channelState(state, props) {
-    return state['@/components/formik/Channel'][props.name];
+    return state["@/components/formik/Channel"][props.name];
   },
 });
 

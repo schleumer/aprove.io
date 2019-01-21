@@ -1,4 +1,4 @@
-import R from 'ramda';
+import R from "ramda";
 
 export default (path: string, obj: any, _default?: any) =>
-  R.pathOr(_default, path.split('.'), _default);
+  R.pathOr(_default, path.split("."), _default);

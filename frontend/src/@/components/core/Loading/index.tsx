@@ -1,16 +1,16 @@
-import React from 'react';
+import React from "react";
 
-import { PropTypes, connect, compose } from '@/commons';
+import { compose, connect, PropTypes } from "@/commons";
 
-import injectReducer from '@/utils/injectReducer';
+import injectReducer from "@/utils/injectReducer";
 
-import * as actions from './actions';
+import * as actions from "./actions";
 
-import reducer from './reducer';
+import reducer from "./reducer";
 
-import LoadingIndicator from '@/components/core/LoadingIndicator';
+import LoadingIndicator from "@/components/core/LoadingIndicator";
 
-const Loading = props => {
+const Loading = (props) => {
   const { loading, name, children } = props;
 
   let state = loading[name];
@@ -31,7 +31,7 @@ Loading.propTypes = {
   children: PropTypes.func,
 };
 
-const withReducer = injectReducer({ key: '@/components/Loading', reducer });
+const withReducer = injectReducer({ key: "@/components/Loading", reducer });
 
 export function mapDispatchToProps(dispatch) {
   return {
@@ -39,8 +39,8 @@ export function mapDispatchToProps(dispatch) {
   };
 }
 
-const mapStateToProps = state => ({
-  loading: state['@/components/Loading'],
+const mapStateToProps = (state) => ({
+  loading: state["@/components/Loading"],
 });
 
 const withConnect = connect(

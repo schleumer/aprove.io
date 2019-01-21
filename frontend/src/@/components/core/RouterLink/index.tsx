@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import NavLink from './underlyingNavLink';
+import NavLink from "./underlyingNavLink";
 
 import {
   alignSelf,

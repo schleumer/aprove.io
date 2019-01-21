@@ -1,6 +1,6 @@
-import produce from 'immer';
+import produce from "immer";
 
-import { SET_VIEW } from './constants';
+import { SET_VIEW } from "./constants";
 
 // The initial state of the App
 const initialState = {
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 function instancesReducer(state = initialState, action) {
-  return produce(state, draft => {
+  return produce(state, (draft) => {
     switch (action.type) {
       case SET_VIEW:
         draft.view = action.data;

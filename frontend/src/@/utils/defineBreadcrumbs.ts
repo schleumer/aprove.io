@@ -1,4 +1,4 @@
-import * as intl from 'react-intl';
+import * as intl from "react-intl";
 
 interface Breadcrumb {
   id: string;
@@ -8,7 +8,7 @@ interface Breadcrumb {
 }
 
 interface Breadcrumbs {
-  [key: string]: Breadcrumb[]
+  [key: string]: Breadcrumb[];
 }
 
 export default (definition: Breadcrumbs) => definition;

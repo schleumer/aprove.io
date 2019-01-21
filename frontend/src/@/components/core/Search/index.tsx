@@ -472,7 +472,7 @@ export class BuiltSearch {
   public actions: any;
   public options: any;
 
-  get Component(): { new(...args): React.Component<OuterProps, State> } {
+  get Component(): new(...args) => React.Component<OuterProps, State> {
     return this.component;
   }
 

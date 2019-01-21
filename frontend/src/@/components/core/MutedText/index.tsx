@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 import {
   alignSelf,
@@ -11,9 +11,9 @@ import {
   order,
   space,
   width,
-} from '@/components/styled/system';
+} from "@/components/styled/system";
 
-const css = props => props.css;
+const css = (props) => props.css;
 
 const MutedText = styled.span(
   space,
@@ -30,7 +30,7 @@ const MutedText = styled.span(
 );
 
 MutedText.defaultProps = {
-  color: 'gray',
+  color: "gray",
 };
 
 export default MutedText;

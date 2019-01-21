@@ -5,14 +5,14 @@ export interface UserState {
 }
 
 export interface AuthState {
-  errors: Array<any>,
-  token: string,
-  user: UserState,
-  submitting: boolean,
+  errors: any[];
+  token: string;
+  user: UserState;
+  submitting: boolean;
 }
 
 export interface State {
-  loading: boolean,
-  error: boolean,
-  auth: AuthState,
+  loading: boolean;
+  error: boolean;
+  auth: AuthState;
 }

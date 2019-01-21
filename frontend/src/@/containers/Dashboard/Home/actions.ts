@@ -1,6 +1,6 @@
 import {
   CHANGE_USERNAME,
-} from './constants';
+} from "./constants";
 
 export function changeUsername(name) {
   return {

@@ -1,4 +1,4 @@
-import { IS_SUBMITTING, REGISTER } from './constants';
+import { IS_SUBMITTING, REGISTER } from "./constants";
 
 export function register(name) {
   return {

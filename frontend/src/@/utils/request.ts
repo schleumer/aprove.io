@@ -1,8 +1,8 @@
-import 'whatwg-fetch';
+import "whatwg-fetch";
 
 class ResponseError extends Error {
-  constructor (message?: string, public response?: any) {
-    super(message)
+  constructor(message?: string, public response?: any) {
+    super(message);
   }
 }
 

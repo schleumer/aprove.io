@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { PropTypes } from '@/commons';
+import { PropTypes } from "@/commons";
 
-const RawComponent = props => {
+const RawComponent = (props) => {
   const {
     input: { value },
     defaultValue,
@@ -12,7 +12,7 @@ const RawComponent = props => {
     return <span>{defaultValue}</span>;
   }
 
-  const phone = value.replace(/([0-9]{2})([0-9]{4,5})([0-9]{4})/, '($1) $2-$3');
+  const phone = value.replace(/([0-9]{2})([0-9]{4,5})([0-9]{4})/, "($1) $2-$3");
 
   return <span>{phone}</span>;
 };
@@ -25,7 +25,7 @@ RawComponent.propTypes = {
 };
 
 RawComponent.defaultProps = {
-  defaultValue: 'Vázio',
+  defaultValue: "Vázio",
 };
 
 export default RawComponent;

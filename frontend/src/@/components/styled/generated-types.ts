@@ -1,6 +1,6 @@
 export type NumberOrStringProp = string | number | null | undefined;
 
-export type ResponsiveProp = NumberOrStringProp | Array<NumberOrStringProp>;
+export type ResponsiveProp = NumberOrStringProp | NumberOrStringProp[];
 
 // generated
 export interface WithSpace {

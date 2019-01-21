@@ -10,19 +10,19 @@
  *   return state.set('yourStateVariable', true);
  */
 
-import produce from 'immer';
-import { CHANGE_USERNAME } from './constants';
+import produce from "immer";
+import { CHANGE_USERNAME } from "./constants";
 
 // The initial state of the App
 const initialState = {
-  username: '',
+  username: "",
 };
 
 function homeReducer(state = initialState, action) {
   switch (action.type) {
     case CHANGE_USERNAME:
-      return produce(x => {
-        x.username = action.name.replace(/@/gi, '');
+      return produce((x) => {
+        x.username = action.name.replace(/@/gi, "");
       })(state);
     default:
       return state;

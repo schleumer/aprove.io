@@ -1,4 +1,4 @@
-import { BuiltSearch } from './index';
+import { BuiltSearch } from "./index";
 
 export default (buildSearch: BuiltSearch) => {
   const { id } = buildSearch.meta;

@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
+import PropTypes from "prop-types";
+import React from "react";
 
 interface WrapperProps {
-  compact: boolean
+  compact: boolean;
 }
 
 const Wrapper = styled.div<WrapperProps>`
-  margin-bottom: ${({ compact }) => (compact ? '0px' : '15px')};
+  margin-bottom: ${({ compact }) => (compact ? "0px" : "15px")};
 `;
 
 const Label = styled.label`

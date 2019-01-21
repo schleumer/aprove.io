@@ -10,17 +10,17 @@
  *   return state.set('yourStateVariable', true);
  */
 
-import produce from 'immer';
+import produce from "immer";
 
 import {
+  AUTHENTICATE,
   AUTHENTICATE_ERRORS,
   AUTHENTICATED,
-  AUTHENTICATE,
   RESET_STATE,
   SET_TOKEN,
-} from './constants';
+} from "./constants";
 
-import { State } from './types';
+import { State } from "./types";
 
 // The initial state of the App
 const initialState: State = {
@@ -35,7 +35,7 @@ const initialState: State = {
 };
 
 function appReducer(state = initialState, action) {
-  return produce(state, draft => {
+  return produce(state, (draft) => {
     switch (action.type) {
       case AUTHENTICATE:
         draft.auth.submitting = true;

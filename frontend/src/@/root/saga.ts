@@ -1,19 +1,19 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from "redux-saga/effects";
 
 import {
-  authenticateErrors,
-  setToken,
   authenticated,
+  authenticateErrors,
   resetState,
-} from '@/root/actions';
+  setToken,
+} from "@/root/actions";
 
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
-import history from '@/history';
+import history from "@/history";
 
-import { mutate, query, upgradeErrors } from '@/utils/graphql';
+import { mutate, query, upgradeErrors } from "@/utils/graphql";
 
-import * as loadingActions from '@/components/core/Loading/actions';
+import * as loadingActions from "@/components/core/Loading/actions";
 
 import {
   AUTHENTICATE,
@@ -21,7 +21,7 @@ import {
   LOGOUT,
   PERSIST_AUTHENTICATE,
   REAUTHENTICATE,
-} from './constants';
+} from "./constants";
 
 export function* tryAuthenticate(form) {
   const { data } = form;
@@ -43,7 +43,7 @@ export function* tryAuthenticate(form) {
       input: {
         username: data.username,
         password: data.password,
-        instance: '!guess',
+        instance: "!guess",
       },
     },
   };
@@ -52,9 +52,9 @@ export function* tryAuthenticate(form) {
     const response = yield call(mutate, options);
 
     if (!response.data) {
-      yield put(authenticateErrors(upgradeErrors(new Error('failed'))));
+      yield put(authenticateErrors(upgradeErrors(new Error("failed"))));
 
-      yield put(loadingActions.setState('global', false));
+      yield put(loadingActions.setState("global", false));
 
       return;
     }
@@ -65,7 +65,7 @@ export function* tryAuthenticate(form) {
 
     result.$managed = true;
 
-    localStorage.setItem('aprove-io:auth', JSON.stringify(result));
+    localStorage.setItem("aprove-io:auth", JSON.stringify(result));
 
     yield persistAuthenticate(result);
   } catch (e) {
@@ -77,7 +77,7 @@ export function* persistAuthenticate(data) {
   const { token, user } = data;
 
   yield put(authenticated({ token, user }));
-  history.push('/');
+  history.push("/");
 }
 
 export function* tryPersistAuthenticate(action) {
@@ -85,9 +85,9 @@ export function* tryPersistAuthenticate(action) {
 }
 
 export function* logout() {
-  localStorage.removeItem('aprove-io:auth');
+  localStorage.removeItem("aprove-io:auth");
   yield put(resetState());
-  history.push('/login');
+  history.push("/login");
 }
 
 export function* reauthenticate(action) {
@@ -95,10 +95,10 @@ export function* reauthenticate(action) {
     data: { data, from },
   } = action;
 
-  yield put(loadingActions.setState('global', true));
+  yield put(loadingActions.setState("global", true));
 
   if (!data.$managed) {
-    yield put(loadingActions.setState('global', false));
+    yield put(loadingActions.setState("global", false));
 
     return;
   }
@@ -121,33 +121,33 @@ export function* reauthenticate(action) {
     const response = yield call(query, options);
 
     if (!response.data) {
-      yield put(authenticateErrors(upgradeErrors(new Error('failed'))));
+      yield put(authenticateErrors(upgradeErrors(new Error("failed"))));
 
-      yield put(loadingActions.setState('global', false));
+      yield put(loadingActions.setState("global", false));
 
       return;
     }
 
     yield put(authenticateErrors([]));
 
-    yield put(loadingActions.setState('global', false));
+    yield put(loadingActions.setState("global", false));
     yield persistAuthenticate(data);
 
-    history.push(from || '/');
+    history.push(from || "/");
   } catch (e) {
     yield put(authenticateErrors(upgradeErrors(e)));
 
-    yield put(loadingActions.setState('global', false));
+    yield put(loadingActions.setState("global", false));
 
-    history.push('/login');
+    history.push("/login");
   }
 }
 
 export function* goToLogin(from) {
-  localStorage.removeItem('aprove-io:auth');
+  localStorage.removeItem("aprove-io:auth");
   yield put(resetState());
-  yield put(loadingActions.setState('global', false));
-  history.push('/login');
+  yield put(loadingActions.setState("global", false));
+  history.push("/login");
 }
 
 export default function* login() {

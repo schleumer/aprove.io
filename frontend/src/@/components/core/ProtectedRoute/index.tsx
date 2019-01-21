@@ -1,9 +1,9 @@
-import React from 'react';
-import { Redirect, Route, RouteProps } from 'react-router-dom';
+import React from "react";
+import { Redirect, Route, RouteProps } from "react-router-dom";
 
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { makeSelectAuth } from '@/root/selectors';
+import { makeSelectAuth } from "@/root/selectors";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 
 interface Props extends RouteProps {
   auth: {
@@ -13,26 +13,26 @@ interface Props extends RouteProps {
 }
 
 class PrivateRoute extends React.Component<Props> {
-  render () {
+  public render() {
     const { component: Component, permission, ...rest } = this.props;
 
     return (
       <Route
         {...rest}
-        render={props =>
+        render={(props) =>
           rest.auth.user ? (
             <Component {...props} />
           ) : (
             <Redirect
               to={{
-                pathname: '/login',
+                pathname: "/login",
                 state: { from: props.location },
               }}
             />
           )
         }
       />
-    )
+    );
   }
 }
 

@@ -1,18 +1,18 @@
-import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { Helmet } from "react-helmet";
+import { connect } from "react-redux";
+import { compose } from "redux";
 import {
-  createStructuredSelector,
   createSelector,
   createSelectorCreator,
-} from 'reselect';
+  createStructuredSelector,
+} from "reselect";
 
-import { Switch, Route, Link } from 'react-router-dom';
+import { Link, Route, Switch } from "react-router-dom";
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from "react-intl";
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import React from "react";
 
 export {
   Helmet,

@@ -1,14 +1,14 @@
+import styled from "@emotion/styled";
 import { createLocation } from "history";
 import invariant from "invariant";
 import PropTypes from "prop-types";
 import React from "react";
 import { LinkProps } from "react-router-dom";
-import styled from '@emotion/styled';
 
 const isModifiedEvent = (event) =>
   !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
 
-const Anchor = styled.a``
+const Anchor = styled.a``;
 
 /**
  * The public API for rendering a history-aware <a>.

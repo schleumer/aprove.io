@@ -7,18 +7,18 @@
  *   script `extract-intl`, and must use CommonJS module syntax
  *   You CANNOT use import/export in this file.
  */
-const addLocaleData = require('react-intl').addLocaleData; //eslint-disable-line
-const ptLocaleData = require('react-intl/locale-data/pt');
+const addLocaleData = require("react-intl").addLocaleData; // eslint-disable-line
+const ptLocaleData = require("react-intl/locale-data/pt");
 
-const ptTranslationMessages = require('./translations/pt.json');
+const ptTranslationMessages = require("./translations/pt.json");
 
 addLocaleData(ptLocaleData);
 
-export const DEFAULT_LOCALE = 'pt';
+export const DEFAULT_LOCALE = "pt";
 
 // prettier-ignore
 export const appLocales = [
-  'pt',
+  "pt",
 ];
 
 export const formatTranslationMessages = (locale, messages) => {
@@ -37,5 +37,5 @@ export const formatTranslationMessages = (locale, messages) => {
 };
 
 export const translationMessages = {
-  pt: formatTranslationMessages('pt', ptTranslationMessages),
+  pt: formatTranslationMessages("pt", ptTranslationMessages),
 };

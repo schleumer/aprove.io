@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import hoistNonReactStatics from 'hoist-non-react-statics';
+import hoistNonReactStatics from "hoist-non-react-statics";
+import PropTypes from "prop-types";
+import React from "react";
 
-import getInjectors from './sagaInjectors';
+import getInjectors from "./sagaInjectors";
 
 interface InjectSaga {
-  key: string,
-  saga: Function,
-  mode?: string,
+  key: string;
+  saga: Function;
+  mode?: string;
 }
 
 /**
@@ -21,33 +21,33 @@ interface InjectSaga {
  *   - constants.ONCE_TILL_UNMOUNT—behaves like 'RESTART_ON_REMOUNT' but never runs it again.
  *
  */
-export default ({ key, saga, mode }: InjectSaga) => WrappedComponent => {
+export default ({ key, saga, mode }: InjectSaga) => (WrappedComponent) => {
   class InjectSaga extends React.Component {
-    static WrappedComponent = WrappedComponent;
+    public static WrappedComponent = WrappedComponent;
 
-    static contextTypes = {
+    public static contextTypes = {
       store: PropTypes.object.isRequired,
     };
 
-    static displayName = `withSaga(${WrappedComponent.displayName ||
+    public static displayName = `withSaga(${WrappedComponent.displayName ||
       WrappedComponent.name ||
-      'Component'})`;
+      "Component"})`;
 
-    componentWillMount() {
+    public injectors = getInjectors(this.context.store);
+
+    public componentWillMount() {
       const { injectSaga } = this.injectors;
 
       injectSaga(key, { saga, mode }, this.props);
     }
 
-    componentWillUnmount() {
+    public componentWillUnmount() {
       const { ejectSaga } = this.injectors;
 
       ejectSaga(key);
     }
 
-    injectors = getInjectors(this.context.store);
-
-    render() {
+    public render() {
       return <WrappedComponent {...this.props} />;
     }
   }

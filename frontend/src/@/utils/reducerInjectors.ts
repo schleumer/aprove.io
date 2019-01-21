@@ -1,24 +1,25 @@
-import invariant from 'invariant';
-import { isEmpty, isFunction, isString } from 'lodash';
+import invariant from "invariant";
+import { isEmpty, isFunction, isString } from "lodash";
 
-import checkStore from './checkStore';
-import createReducer from '../reducers';
+import createReducer from "../reducers";
+import checkStore from "./checkStore";
 
 export function injectReducerFactory(store, isValid) {
   return function injectReducer(key, reducer) {
-    if (!isValid) checkStore(store);
+    if (!isValid) { checkStore(store); }
 
     invariant(
       isString(key) && !isEmpty(key) && isFunction(reducer),
-      '(src/@/utils...) injectReducer: Expected `reducer` to be a reducer function',
+      "(src/@/utils...) injectReducer: Expected `reducer` to be a reducer function",
     );
 
     // Check `store.injectedReducers[key] === reducer` for hot reloading when a key is the same but a reducer is different
     if (
       Reflect.has(store.injectedReducers, key) &&
       store.injectedReducers[key] === reducer
-    )
+    ) {
       return;
+    }
 
     store.injectedReducers[key] = reducer; // eslint-disable-line no-param-reassign
     store.replaceReducer(createReducer(store.injectedReducers));

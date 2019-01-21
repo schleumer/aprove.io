@@ -1,4 +1,4 @@
-import PageTitle from './PageTitle';
-import PageBody from './PageBody';
+import PageBody from "./PageBody";
+import PageTitle from "./PageTitle";
 
 export { PageTitle, PageBody };

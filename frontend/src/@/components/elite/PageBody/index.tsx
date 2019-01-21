@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
-import { Box } from '@/components/styled';
+import { Box } from "@/components/styled";
 
 const PageBody = styled(Box)``;
 
 PageBody.defaultProps = {
-  bg: 'white',
+  bg: "white",
   p: 3,
 };
 

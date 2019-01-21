@@ -1,5 +1,5 @@
-import { IS_SUBMITTING, REGISTER } from './constants';
-import produce from 'immer';
+import produce from "immer";
+import { IS_SUBMITTING, REGISTER } from "./constants";
 
 // The initial state of the App
 const initialState = {};
@@ -8,7 +8,7 @@ const defaultChannelState = () => ({
 });
 
 function formikChannelComponentReducer(state = initialState, action) {
-  return produce(state, draft => {
+  return produce(state, (draft) => {
     const { data } = action;
 
     switch (action.type) {

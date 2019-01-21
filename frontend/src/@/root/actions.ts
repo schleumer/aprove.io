@@ -2,13 +2,13 @@ import {
   AUTHENTICATE,
   AUTHENTICATE_ERRORS,
   AUTHENTICATED,
+  GO_TO_LOGIN,
+  LOGOUT,
   PERSIST_AUTHENTICATE,
   REAUTHENTICATE,
-  LOGOUT,
   RESET_STATE,
   SET_TOKEN,
-  GO_TO_LOGIN,
-} from './constants';
+} from "./constants";
 
 export function authenticate(form) {
   return {

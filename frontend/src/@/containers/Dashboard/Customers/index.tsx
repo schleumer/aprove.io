@@ -1,30 +1,30 @@
 import {
-  React,
-  Helmet,
-  Switch,
-  Route,
-  FormattedMessage,
-  connect,
   compose,
+  connect,
   createStructuredSelector,
-} from '@/commons';
+  FormattedMessage,
+  Helmet,
+  React,
+  Route,
+  Switch,
+} from "@/commons";
 
-import { injectReducer, injectSaga } from '@/utils';
+import { injectReducer, injectSaga } from "@/utils";
 
-import { makeSelectAuth } from '@/root/selectors';
+import { makeSelectAuth } from "@/root/selectors";
 
-import reducer from './reducer';
+import reducer from "./reducer";
 
-import saga from './saga';
+import saga from "./saga";
 
-import InstancesList from './list';
+import InstancesList from "./list";
 
-import InstancesView from './view';
+import InstancesView from "./view";
 
 const Home = ({ match, globalState }) => (
   <div>
     <FormattedMessage id="instances.title">
-      {t => (
+      {(t) => (
         <Helmet>
           <title>{t}</title>
           <meta
@@ -52,8 +52,8 @@ Home.propTypes = {
   // }),
 };
 
-const withSaga = injectSaga({ key: 'instances', saga });
-const withReducer = injectReducer({ key: 'instances', reducer });
+const withSaga = injectSaga({ key: "instances", saga });
+const withReducer = injectReducer({ key: "instances", reducer });
 
 export function mapDispatchToProps() {
   return {};
@@ -61,7 +61,7 @@ export function mapDispatchToProps() {
 
 const mapStateToProps = createStructuredSelector({
   auth: makeSelectAuth(),
-  globalState: state => state,
+  globalState: (state) => state,
 });
 
 const withConnect = connect(

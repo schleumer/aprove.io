@@ -1,6 +1,6 @@
-import history from '@/history';
+import history from "@/history";
 
-import configureStore from '@/configureStore';
+import configureStore from "@/configureStore";
 
 export const initialState = {};
 
