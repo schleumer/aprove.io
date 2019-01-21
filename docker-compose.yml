@@ -1,0 +1,91 @@
+version: '3'
+
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - pg-volume:/db
+    environment:
+      - PGDATA=/db/pgdata
+    deploy:
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+    networks:
+      web-network:
+        aliases:
+          - app-network
+  backend:
+    image: registry.gitlab.com/wesley.schleumer/aprove.io/backend:latest
+    depends_on:
+      - database
+    ports:
+      - 3000
+    environment:
+      - SERVICE_PORTS=3000
+      - PORT=3000
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 5
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+    networks:
+      web-network:
+        aliases:
+          - app-network
+  frontend:
+    image: registry.gitlab.com/wesley.schleumer/aprove.io/frontend:latest
+    ports:
+      - 18602:80
+    deploy:
+      update_config:
+        parallelism: 5
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+    networks:
+      web-network:
+        aliases:
+          - app-network
+
+  backend_proxy:
+    image: dockercloud/haproxy
+    depends_on:
+      - backend
+    environment:
+      - BALANCE=leastconn
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 18601:80
+    networks:
+      web-network:
+        aliases:
+          - app-network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  web-network:
+    driver: overlay
+
+volumes:
+  pg-volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /web/postgresql

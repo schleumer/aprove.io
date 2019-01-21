@@ -1,0 +1,44 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>[ENDPOINT_TITLE] - [ENDPOINT_DESCRIPTION]</title>
+
+  <link rel="stylesheet" media="screen" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/graphiql/0.11.11/graphiql.min.css">
+  <link rel="stylesheet" media="screen" href="//cdn.jsdelivr.net/gh/schleumer/graphiql-workspace@1.1.8/graphiql-workspace.min.css">
+
+  <script src="//cdn.jsdelivr.net/react/15.4.2/react.min.js"></script>
+  <script src="//cdn.jsdelivr.net/react/15.4.2/react-dom.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/schleumer/graphiql-workspace@1.1.8/graphiql-workspace.min.js"></script>
+</head>
+<body>
+<div id="workspace" class="graphiql-workspace"></div>
+
+<script>
+  // var options = {
+  //   "name" : "search",
+  //   "url" : "https://crossroad.dev.imob.online:8889/search/graphql",
+  //   "defaultQuery" : "query {\n  ping(message: \"Ok\") {\n    message\n  }\n}",
+  //   "defaultVariables" : "{}"
+  // }
+  var options = [ENDPOINT_OPTIONS]
+
+  window.__config = new graphiqlWorkspace.AppConfig(options.name, {
+    id: options.name,
+    key: options.name,
+    defaultUrl: options.url,
+    defaultQuery: options.defaultQuery,
+    defaultVariables: options.defaultVariables,
+    tabIds: []
+  });
+
+  ReactDOM.render(
+    React.createElement(graphiqlWorkspace.GraphiQLWorkspace, {config: window.__config}),
+    document.getElementById('workspace'));
+</script>
+</body>
+</html>

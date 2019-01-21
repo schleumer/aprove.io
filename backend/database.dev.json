@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "driver": "pg",
+    "user": "aprove",
+    "password": "123456",
+    "host": "localhost",
+    "database": "aprove",
+    "schema": "public"
+  }
+}

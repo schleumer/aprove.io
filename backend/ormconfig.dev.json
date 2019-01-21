@@ -1,0 +1,13 @@
+{
+  "name": "default",
+  "type": "postgres",
+  "host": "localhost",
+  "username": "aprove",
+  "password": "123456",
+  "database": "aprove",
+  "logging": false,
+  "plural": true,
+  "entities": [
+    "src/@/entity/**/*.ts"
+  ]
+}

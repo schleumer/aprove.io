@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/fbjs/.*
+.*/node_modules/graphql/jsutils/keyValMap.js.flow
+
+[include]
+./src/
+
+[libs]
+
+[options]
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue
+module.name_mapper='^@/' ->'<PROJECT_ROOT>/src/@/'
+module.system.node.resolve_dirname=node_modules
+
