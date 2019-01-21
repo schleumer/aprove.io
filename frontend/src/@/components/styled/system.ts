@@ -291,6 +291,11 @@ export const width = style({
   transformValue: getWidth,
 });
 
+export const height = style({
+  prop: "height",
+  transformValue: getWidth,
+});
+
 export const fontSize = style({
   prop: "fontSize",
   key: "fontSizes",
@@ -364,12 +369,6 @@ export const maxWidth = style({
 export const minWidth = style({
   prop: "minWidth",
   key: "minWidths",
-  transformValue: rem,
-});
-
-export const height = style({
-  prop: "height",
-  key: "heights",
   transformValue: rem,
 });
 

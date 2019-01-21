@@ -39,6 +39,7 @@ const themed = (key) => (props) => props.theme[key];
 export const Box: types.Styled<HTMLDivElement, types.Box> = styled("div")(
   space,
   width,
+  height,
   fontSize,
   lineHeight,
   color,

@@ -1,12 +1,14 @@
-import { Box } from "@/components/styled";
-import styled from "@emotion/styled";
 import R from "ramda";
 import React from "react";
+
+import { Box } from "@/components/styled";
+import { Box as BoxType } from "@/components/styled/types";
+import styled from "@emotion/styled";
 
 interface State {
 }
 
-interface Props {
+interface Props extends BoxType {
   name: string;
   x?: boolean;
   y?: boolean;
@@ -59,10 +61,10 @@ export default class ScrollController extends React.Component<Props, State> {
     const safeProps = omit<Props>(this.props);
 
     return (
-      <Context.Consumer name="ScrollController">
+      <Context.Consumer>
         {(x) => {
           return (
-            <Context.Provider name="ScrollController" value={{ ...x, parents: [...x.parents, this] }}>
+            <Context.Provider value={{ ...x, parents: [...x.parents, this] }}>
               <StyledScrollController ref={this.containerRef} {...safeProps} />
             </Context.Provider>
           );

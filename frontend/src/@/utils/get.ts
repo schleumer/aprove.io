@@ -1,4 +1,4 @@
 import R from "ramda";
 
-export default (path: string, obj: any, _default?: any) =>
-  R.pathOr(_default, path.split("."), _default);
+export default (path: string, obj: any, defaultValue?: any) =>
+  R.pathOr(defaultValue, path.split("."), defaultValue);

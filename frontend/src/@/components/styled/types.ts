@@ -11,6 +11,7 @@ export interface WithCSS {
 export interface Box extends
   gentypes.WithFontWeight,
   gentypes.WithSpace,
+  gentypes.WithHeight,
   gentypes.WithWidth,
   gentypes.WithFontSize,
   gentypes.WithColor,
