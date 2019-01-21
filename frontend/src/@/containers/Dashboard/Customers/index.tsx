@@ -1,24 +1,19 @@
+import React from "react";
+import { Helmet } from "react-helmet";
+import { FormattedMessage } from "react-intl";
+import { connect } from "react-redux";
+import { Route, Switch } from "react-router-dom";
+import { compose } from "redux";
 import {
-  compose,
-  connect,
   createStructuredSelector,
-  FormattedMessage,
-  Helmet,
-  React,
-  Route,
-  Switch,
-} from "@/commons";
-
-import { injectReducer, injectSaga } from "@/utils";
+} from "reselect";
 
 import { makeSelectAuth } from "@/root/selectors";
-
-import reducer from "./reducer";
-
-import saga from "./saga";
+import { injectReducer, injectSaga } from "@/utils";
 
 import InstancesList from "./list";
-
+import reducer from "./reducer";
+import saga from "./saga";
 import InstancesView from "./view";
 
 const Home = ({ match, globalState }) => (

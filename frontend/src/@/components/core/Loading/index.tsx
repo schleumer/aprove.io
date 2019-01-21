@@ -1,6 +1,8 @@
 import React from "react";
 
-import { compose, connect, PropTypes } from "@/commons";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { compose } from "redux";
 
 import injectReducer from "@/utils/injectReducer";
 

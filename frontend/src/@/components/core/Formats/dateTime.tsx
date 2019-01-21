@@ -1,7 +1,7 @@
 import React from "react";
 
-import { PropTypes } from "@/commons";
 import { DateTime } from "luxon";
+import PropTypes from "prop-types";
 
 const DateTimeComponent = (props) => {
   const {

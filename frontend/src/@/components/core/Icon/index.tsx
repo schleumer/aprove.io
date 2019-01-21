@@ -4,6 +4,10 @@ import React from "react";
 interface ISvgIconProps extends React.SVGProps<SVGSVGElement> {
   mr?: number;
   ml?: number;
+  /**
+   * _N_o line-height fix _M_argin
+   */
+  nm?: boolean;
 }
 const SvgIcon = styled.svg<ISvgIconProps>`
   margin-right: ${({ mr }) => `${mr}px`};

@@ -1,13 +1,10 @@
 import { FastField, FieldArray, FieldArrayRenderProps, Formik, FormikProps } from "formik";
-import * as yup from "yup";
-
+import React from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
-
-import {
-  connect,
-  createStructuredSelector,
-  React,
-} from "@/commons";
+import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import * as yup from "yup";
 
 import {
   Box,
@@ -22,17 +19,12 @@ import {
   TableColumn,
   TableRow,
 } from "@/components/core";
-
-import Tooltip from "@/components/core/Tooltip";
-
-import { Channel, Form, PhoneInput, SelectInput, TextInput } from "@/components/formik";
-
-import messages from "./messages";
-
 import { ArrayOptions } from "@/components/core/SelectInput/adapter";
+import Tooltip from "@/components/core/Tooltip";
+import { Channel, Form, PhoneInput, SelectInput, TextInput } from "@/components/formik";
 import globalMessages from "@/messages/global";
 
-import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
+import messages from "./messages";
 
 const validationSchema = yup.object().shape({
   id: yup.number().required(),

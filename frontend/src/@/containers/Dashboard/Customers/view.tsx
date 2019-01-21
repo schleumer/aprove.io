@@ -1,19 +1,20 @@
-import { compose, connect, createStructuredSelector, React } from "@/commons";
-
-import { makeSelectAuth } from "@/root/selectors";
-
-import * as actions from "./actions";
+import React from "react";
+import { connect } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { compose } from "redux";
+import {
+  createStructuredSelector,
+} from "reselect";
 
 import { Loading } from "@/components/core";
 import { PageBody, PageTitle } from "@/components/elite";
-import { RouteComponentProps } from "react-router-dom";
-import { makeSelectView } from "./selectors";
+import { makeSelectAuth } from "@/root/selectors";
 
-import messages from "./messages";
-
+import * as actions from "./actions";
 import breadcrumbs from "./breadcrumbs";
-
 import Editor from "./editor";
+import messages from "./messages";
+import { makeSelectView } from "./selectors";
 
 interface IParams {
   customerId: string;

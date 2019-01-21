@@ -1,6 +1,6 @@
 import React from "react";
 
-import { PropTypes } from "@/commons";
+import PropTypes from "prop-types";
 
 const RawComponent = (props) => {
   const {

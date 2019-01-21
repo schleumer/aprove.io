@@ -10,7 +10,7 @@ import ButtonTransparent from "../ButtonTransparent";
 
 import Icon from "../Icon";
 
-import { FormattedMessage } from "@/commons";
+import { FormattedMessage } from "react-intl";
 
 import { Box, Flex } from "@/components/styled";
 
