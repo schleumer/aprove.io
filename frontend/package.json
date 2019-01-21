@@ -101,7 +101,7 @@
     "graphql": "^14.0.2",
     "graphql-tag": "^2.10.0",
     "history": "4.7.2",
-    "hoist-non-react-statics": "3.2.1",
+    "hoist-non-react-statics": "^3.2.1",
     "immer": "^1.9.3",
     "intl": "1.2.5",
     "invariant": "2.2.4",
@@ -138,7 +138,8 @@
     "ts-optchain": "^0.1.2",
     "warning": "4.0.2",
     "whatwg-fetch": "3.0.0",
-    "yup": "^0.26.6"
+    "yup": "^0.26.6",
+    "eventemitter3": "latest"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",

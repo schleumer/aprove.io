@@ -1,8 +1,8 @@
-import { getScrollLeft, getScrollParent, getScrollTop } from "@/utils";
 import React from "react";
 import ReactDOM from "react-dom";
+import { InjectedScrollProps, listenToScroll } from "../ScrollController";
 
-interface Props {
+interface Props extends InjectedScrollProps {
   visible: boolean;
   reference: React.ReactElement<any>;
   content: React.ReactNode;
@@ -22,39 +22,14 @@ class Portal extends React.Component<Props, State> {
     left: null,
   };
 
-  public placeIt(): void {
+  public componentDidMount(): void {
     const node = ReactDOM.findDOMNode(this);
-
     if (node instanceof HTMLElement) {
-      const parent = getScrollParent(node);
-      const scrollLeft = getScrollLeft(parent);
-      const scrollTop = getScrollTop(parent);
-
-      console.log(parent.getBoundingClientRect());
-
-      const { top: oldTop, left: oldLeft } = this.state;
-
-      const rect = node.getBoundingClientRect();
-      const newLeft = rect.left + scrollLeft;
-      const newTop = rect.bottom + scrollTop;
-
-      console.log({scrollLeft, scrollTop, newTop, newLeft});
-
-      if (newLeft !== oldLeft || newTop !== oldTop) {
-        this.setState({
-          top: newTop,
-          left: newLeft,
-        });
-      }
+      console.log(this.props.getRect(node));
     }
   }
 
-  public componentDidMount(): void {
-    this.placeIt();
-  }
-
   public componentDidUpdate(): void {
-    this.placeIt();
   }
 
   public render() {
@@ -74,4 +49,4 @@ class Portal extends React.Component<Props, State> {
   }
 }
 
-export default Portal;
+export default listenToScroll(Portal);

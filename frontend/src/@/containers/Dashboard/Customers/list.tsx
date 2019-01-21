@@ -2,7 +2,7 @@ import React from "react";
 
 import { FastField, Form, Formik } from "formik";
 import produce from "immer";
-import connect from "react-redux/es/connect/connect";
+import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 

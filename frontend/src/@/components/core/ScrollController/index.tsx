@@ -1,5 +1,7 @@
 import R from "ramda";
 import React from "react";
+import EventEmitter from "eventemitter3";
+import hoistNonReactStatic from "hoist-non-react-statics";
 
 import { Box } from "@/components/styled";
 import { Box as BoxType } from "@/components/styled/types";
@@ -14,17 +16,57 @@ interface Props extends BoxType {
   y?: boolean;
 }
 
+interface ElementRect {}
+
+export interface InjectedScrollProps {
+  getRect(el: HTMLElement): ElementRect;
+}
+
 const StyledScrollController = styled(Box)<Props>`
+position: relative;
 overflow-x: ${(props) => props.x ? "auto" : "visible"};
 overflow-y: ${(props) => props.y ? "auto" : "visible"};
 `;
 
 const omit = R.omit<string>(["name"]);
 
-export const Context = React.createContext({
+interface ScrollContext {
+  bus: EventEmitter;
+  parents: any[];
+}
+
+export const Context = React.createContext<ScrollContext>({
   bus: null,
   parents: [],
 });
+
+export const listenToScroll = <P, S>(
+  WrappedComponent: React.ComponentType<P & { children?: React.ReactNode } & InjectedScrollProps>,
+) => {
+  class Enhance extends React.Component<P, S> {
+    constructor(props, context) {
+      super(props, context);
+    }
+
+    public getRect(ctx: ScrollContext) {
+      return (el: HTMLElement): ElementRect => {
+        return null;
+      };
+    }
+
+    public render() {
+      return (
+        <Context.Consumer>
+          {(ctx) => <WrappedComponent getRect={this.getRect(ctx)} {...this.props} />}
+        </Context.Consumer>
+      );
+    }
+  }
+
+  hoistNonReactStatic(Enhance, WrappedComponent);
+
+  return Enhance;
+};
 
 export default class ScrollController extends React.Component<Props, State> {
   public containerRef = React.createRef();
@@ -57,6 +99,17 @@ export default class ScrollController extends React.Component<Props, State> {
     console.log(this, evt);
   }
 
+  public mergeContext(x: ScrollContext): ScrollContext {
+    const newContext = {
+      bus: x.bus || new EventEmitter(),
+      parents: [...x.parents, this],
+    };
+
+    console.log(newContext, this.props);
+
+    return newContext
+  }
+
   public render() {
     const safeProps = omit<Props>(this.props);
 
@@ -64,7 +117,7 @@ export default class ScrollController extends React.Component<Props, State> {
       <Context.Consumer>
         {(x) => {
           return (
-            <Context.Provider value={{ ...x, parents: [...x.parents, this] }}>
+            <Context.Provider value={this.mergeContext(x)}>
               <StyledScrollController ref={this.containerRef} {...safeProps} />
             </Context.Provider>
           );
