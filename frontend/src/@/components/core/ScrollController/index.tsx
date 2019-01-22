@@ -8,6 +8,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 interface ScrollContext {
+  enabled: boolean;
   name: string;
   bus: EventEmitter;
   path: any[];
@@ -15,10 +16,15 @@ interface ScrollContext {
   getRect?(el: HTMLElement): ElementRect;
 }
 
+interface ScrollEvent {
+  ctx: ScrollContext;
+}
+
 interface State {
 }
 
 interface Props extends BoxType {
+  enabled: boolean;
   name: string;
   root: boolean;
   x: boolean;
@@ -36,7 +42,16 @@ interface ElementRect {
   top: number;
 }
 
+interface ListenerProps {
+  ctx: ScrollContext;
+}
+
+interface ListenerState {
+  rect: ElementRect;
+}
+
 export interface InjectedScrollProps {
+  scrollIsEnabled: boolean;
   containerRect: ElementRect;
   getRect(el: HTMLElement): ElementRect;
 }
@@ -50,6 +65,7 @@ overflow-y: ${(props) => props.y ? "auto" : "visible"};
 const omit = R.omit<string>(["name", "ctx"]);
 
 export const Context = React.createContext<ScrollContext>({
+  enabled: true,
   name: null,
   bus: null,
   path: [],
@@ -58,18 +74,6 @@ export const Context = React.createContext<ScrollContext>({
 export const listenToScroll = <P, S>(
   WrappedComponent: React.ComponentType<P & { children?: React.ReactNode } & InjectedScrollProps>,
 ): React.ComponentClass<Pick<P, Exclude<keyof P, keyof InjectedScrollProps>>> => {
-  interface ScrollEvent {
-    ctx: ScrollContext;
-  }
-
-  interface ListenerProps {
-    ctx: ScrollContext;
-  }
-
-  interface ListenerState {
-    rect: ElementRect;
-  }
-
   class Listener extends React.Component<P & ListenerProps, ListenerState> {
     public state = {
       rect: null,
@@ -102,8 +106,15 @@ export const listenToScroll = <P, S>(
     }
 
     public render() {
+      const { ctx } = this.props;
+
       if (this.state.rect) {
-        return <WrappedComponent getRect={this.getRect} containerRect={this.state.rect} {...this.props} />;
+        return <WrappedComponent
+          scrollIsEnabled={ctx.enabled}
+          getRect={this.getRect}
+          containerRect={this.state.rect}
+          {...this.props}
+        />;
       } else {
         return null;
       }
@@ -124,9 +135,7 @@ export const listenToScroll = <P, S>(
     }
   }
 
-  hoistNonReactStatic(Enhance, WrappedComponent);
-
-  return Enhance;
+  return hoistNonReactStatic(Enhance, WrappedComponent);
 };
 
 class ContextualizedScrollController extends React.Component<Props & PropsWithContext, State> {
@@ -141,25 +150,11 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
   }
 
   public componentDidMount(): void {
-    if (this.props.root) {
-      window.addEventListener("scroll", this.scrolled);
-    } else {
-      const { current } = this.containerRef;
-      if (current !== null && current instanceof HTMLElement) {
-        current.addEventListener("scroll", this.scrolled);
-      }
-    }
+    this.attach();
   }
 
   public componentWillUnmount(): void {
-    if (this.props.root) {
-      window.removeEventListener("scroll", this.scrolled);
-    } else {
-      const { current } = this.containerRef;
-      if (current !== null && current instanceof HTMLElement) {
-        current.removeEventListener("scroll", this.scrolled);
-      }
-    }
+    this.detach();
   }
 
   public getRect(el: HTMLElement): ElementRect {
@@ -219,23 +214,45 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
       </Context.Provider>
     );
   }
+
+  private attach(): void {
+    if (this.props.root) {
+      window.addEventListener("scroll", this.scrolled);
+    } else {
+      const { current } = this.containerRef;
+      if (current !== null && current instanceof HTMLElement) {
+        current.addEventListener("scroll", this.scrolled);
+      }
+    }
+  }
+
+  private detach(): void {
+    if (this.props.root) {
+      window.removeEventListener("scroll", this.scrolled);
+    } else {
+      const { current } = this.containerRef;
+      if (current !== null && current instanceof HTMLElement) {
+        current.removeEventListener("scroll", this.scrolled);
+      }
+    }
+  }
 }
 
 class ScrollController extends React.Component<Props, State> {
   public static defaultProps = {
+    enabled: true,
     x: true,
     y: true,
     root: false,
   };
 
   public mergeContext(x: ScrollContext): ScrollContext {
-    const newContext = {
+    return {
       name: this.props.name,
       bus: x.bus || new EventEmitter(),
       path: [...x.path, this],
+      enabled: this.props.enabled,
     };
-
-    return newContext;
   }
 
   public render() {

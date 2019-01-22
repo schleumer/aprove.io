@@ -46,12 +46,16 @@ class Portal extends React.Component<Props, State> {
   }
 
   public render() {
-    const portal = ReactDOM.createPortal(
-      <div style={{ position: "absolute", zIndex: 9999, top: this.state.top + this.props.span, left: this.state.left }}>
-        { this.props.content }
-      </div>,
-      document.getElementById("portal-target"),
-    );
+    let portal = null;
+
+    if (this.props.scrollIsEnabled && this.props.visible) {
+      portal = ReactDOM.createPortal(
+        <div style={{ position: "absolute", zIndex: 9999, top: this.state.top + this.props.span, left: this.state.left }}>
+          { this.props.content }
+        </div>,
+        document.getElementById("portal-target"),
+      )
+    }
 
     return (
       <React.Fragment>

@@ -15,7 +15,7 @@ export class ScrollKitchenSink extends React.Component<Props> {
           content={<div style={{ width: 250, height: 50, backgroundColor: "black", color: "white" }}>PORTAL</div>}
           reference={<b>REFERENCE</b>}
         />
-        <ScrollController name="ks1" x={true} y={true} height={500} width={500}>
+        <ScrollController enabled={false} name="ks1" x={true} y={true} height={500} width={500}>
           <div style={{ width: 1000, height: 1000, backgroundColor: "green", paddingTop: 133 }}>
             <Portal
               span={30}
