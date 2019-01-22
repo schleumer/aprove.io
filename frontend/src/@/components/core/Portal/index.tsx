@@ -25,16 +25,29 @@ class Portal extends React.Component<Props, State> {
   public componentDidMount(): void {
     const node = ReactDOM.findDOMNode(this);
     if (node instanceof HTMLElement) {
-      console.log(this.props.getRect(node));
+      const rect = this.props.getRect(node);
+
+      this.setState({ top: rect.top, left: rect.left });
     }
   }
 
   public componentDidUpdate(): void {
+    const { top, left } = this.state;
+
+    const node = ReactDOM.findDOMNode(this);
+
+    if (node instanceof HTMLElement) {
+      const rect = this.props.getRect(node);
+
+      if (rect.top !== top || rect.left !== left) {
+        this.setState({ top: rect.top, left: rect.left });
+      }
+    }
   }
 
   public render() {
     const portal = ReactDOM.createPortal(
-      <div style={{ position: "absolute", zIndex: 9999, top: this.state.top, left: this.state.left }}>
+      <div style={{ position: "absolute", zIndex: 9999, top: this.state.top + this.props.span, left: this.state.left }}>
         { this.props.content }
       </div>,
       document.getElementById("portal-target"),

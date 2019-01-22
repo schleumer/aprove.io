@@ -22,7 +22,7 @@ import { Root as Dashboard } from "@/containers/Dashboard";
 import { makeSelectAuth, makeSelectLoading } from "@/root/selectors";
 
 import Loading from "@/components/core/Loading";
-import ScrollController from "@/components/core/ScrollController";
+import { RootScrollController } from "@/components/core/ScrollController";
 
 import * as actions from "./actions";
 import saga from "./saga";
@@ -70,7 +70,7 @@ class App extends React.PureComponent<IProps> {
 
   public render() {
     return (
-      <ScrollController name="root" x={false} y={true}>
+      <RootScrollController>
         <AppWrapper>
           <Helmet
             titleTemplate="%s - Helmet da massa"
@@ -96,7 +96,7 @@ class App extends React.PureComponent<IProps> {
             </Loading>
           </Container>
         </AppWrapper>
-      </ScrollController>
+      </RootScrollController>
     );
   }
 }
