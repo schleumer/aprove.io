@@ -93,7 +93,7 @@ export function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = createStructuredSelector({
   channelState(state, props) {
-    return state["@/components/formik/Channel"][props.name];
+    return (state["@/components/formik/Channel"] || {})[props.name];
   },
 });
 

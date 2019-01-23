@@ -18,7 +18,6 @@ export default function createReducer(injectedReducers = {}) {
     router: connectRouter(history),
     global: globalReducer,
     language: languageProviderReducer,
-    pendingRequests,
     ...injectedReducers,
   });
 }

@@ -492,7 +492,7 @@ export class BuiltSearch {
 
   public selector(name: string = "default") {
     return (state: any) => {
-      return state[this.meta.id][name] || null;
+      return (state[this.meta.id] || {})[name] || null;
     };
   }
 

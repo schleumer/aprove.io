@@ -41,9 +41,11 @@ export function mapDispatchToProps(dispatch) {
   };
 }
 
-const mapStateToProps = (state) => ({
-  loading: state["@/components/Loading"],
-});
+const mapStateToProps = (state) => {
+  return ({
+    loading: state["@/components/Loading"] || {},
+  });
+};
 
 const withConnect = connect(
   mapStateToProps,
