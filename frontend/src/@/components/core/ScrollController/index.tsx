@@ -47,10 +47,12 @@ interface ListenerProps {
 }
 
 interface ListenerState {
+  id: string;
   rect: ElementRect;
 }
 
 export interface InjectedScrollProps {
+  scrollId: string;
   scrollIsEnabled: boolean;
   containerRect: ElementRect;
   getRect(el: HTMLElement): ElementRect;
@@ -77,6 +79,7 @@ export const listenToScroll = <P, S>(
   class Listener extends React.Component<P & ListenerProps, ListenerState> {
     public state = {
       rect: null,
+      id: null,
     };
 
     constructor(props) {
@@ -96,7 +99,11 @@ export const listenToScroll = <P, S>(
     public updateContainerRect() {
       const { ctx } = this.props;
 
-      this.setState({ rect: ctx.getMyRect() });
+      const rect = ctx.getMyRect();
+
+      const id = `${rect.left}x${rect.top}:${rect.width}x${rect.height}`;
+
+      this.setState({ rect, id });
     }
 
     public getRect(el: HTMLElement): ElementRect {
@@ -110,9 +117,10 @@ export const listenToScroll = <P, S>(
 
       if (this.state.rect) {
         return <WrappedComponent
+          containerRect={this.state.rect}
+          scrollId={this.state.id}
           scrollIsEnabled={ctx.enabled}
           getRect={this.getRect}
-          containerRect={this.state.rect}
           {...this.props}
         />;
       } else {

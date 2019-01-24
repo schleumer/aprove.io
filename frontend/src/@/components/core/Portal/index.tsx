@@ -10,7 +10,11 @@ interface Props extends InjectedScrollProps {
   left?: number;
   top?: number;
 }
-interface State {}
+
+interface State {
+  top?: number;
+  left?: number;
+}
 
 class Portal extends React.Component<Props, State> {
   public static defaultProps = {
@@ -20,6 +24,7 @@ class Portal extends React.Component<Props, State> {
   public state = {
     top: null,
     left: null,
+    oldId: null,
   };
 
   public componentDidMount(): void {
@@ -27,20 +32,26 @@ class Portal extends React.Component<Props, State> {
     if (node instanceof HTMLElement) {
       const rect = this.props.getRect(node);
 
-      this.setState({ top: rect.top, left: rect.left });
+      const newTop = rect.top + rect.height;
+      const newLeft = rect.left;
+
+      this.setState({ top: newTop, left: newLeft });
     }
   }
 
   public componentDidUpdate(): void {
-    const { top, left } = this.state;
+    const { top: oldTop, left: oldLeft } = this.state;
 
     const node = ReactDOM.findDOMNode(this);
 
     if (node instanceof HTMLElement) {
       const rect = this.props.getRect(node);
 
-      if (rect.top !== top || rect.left !== left) {
-        this.setState({ top: rect.top, left: rect.left });
+      const newTop = rect.top + rect.height;
+      const newLeft = rect.left;
+
+      if (newTop !== oldTop || newLeft !== oldLeft) {
+        this.setState({ top: newTop, left: newLeft });
       }
     }
   }
@@ -50,11 +61,16 @@ class Portal extends React.Component<Props, State> {
 
     if (this.props.scrollIsEnabled && this.props.visible) {
       portal = ReactDOM.createPortal(
-        <div style={{ position: "absolute", zIndex: 9999, top: this.state.top + this.props.span, left: this.state.left }}>
+        <div style={{
+          position: "absolute",
+          zIndex: 9999,
+          top: this.state.top + this.props.span,
+          left: this.state.left,
+        }}>
           { this.props.content }
         </div>,
         document.getElementById("portal-target"),
-      )
+      );
     }
 
     return (

@@ -7,6 +7,8 @@ import React from "react";
 import AsyncSelect from "react-select/lib/Async";
 import { Adapter } from "./adapter";
 
+import * as emotion from "emotion";
+
 import { Styles as ReactSelectStyles } from "react-select/lib/styles";
 
 const defaultSize = R.defaultTo(2);
@@ -161,15 +163,8 @@ interface State {
 }
 
 const CustomOption = (props) => {
-  const { className, cx, getStyles, isDisabled, isFocused, isSelected, innerRef, innerProps, emotion } = props;
-
-  let option = props.data.label;
-
-  if (props.data.option) {
-    option = props.data.option;
-  }
-
-  return !isDisabled ? (
+  const { children, className, cx, getStyles, isDisabled, isFocused, isSelected, innerRef, innerProps } = props;
+  return (
     <div
       ref={innerRef}
       className={cx(
@@ -182,30 +177,34 @@ const CustomOption = (props) => {
         },
         className,
       )}
-      {...innerProps}>
-      {option}
+      {...innerProps}
+    >
+      {children}
     </div>
-  ) : null;
+  );
 };
 
 const CustomDisplayOption = (props) => {
-  const { innerProps, isDisabled } = props;
-
-  let option = props.data.label;
-
-  if (props.data.option) {
-    option = props.data.option;
-  }
-
-  return !isDisabled ? (
-    <div {...innerProps}>
-      {option}
+  const { children, className, cx, getStyles, isDisabled, innerProps } = props;
+  return (
+    <div
+      className={cx(
+        emotion.css(getStyles("singleValue", props)),
+        {
+          "single-value": true,
+          "single-value--is-disabled": isDisabled,
+        },
+        className,
+      )}
+      {...innerProps}
+    >
+      {children}
     </div>
-  ) : null;
+  );
 };
 
 const MenuList = (props) => {
-  const { children, className, cx, getStyles, isMulti, innerRef, emotion } = props;
+  const { children, className, cx, getStyles, isMulti, innerRef } = props;
   return (
     <div
       className={cx(
@@ -317,7 +316,6 @@ class SelectInput extends React.Component<Props, State> {
           menuPortalTarget={portalDOM}
           isLoading={loading}
           isDisabled={loading}
-          menuIsOpen={true}
           placeholder={loading ? "Carregando..." : "Selecione..."}
         />
       </div>

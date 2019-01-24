@@ -375,7 +375,7 @@ class StyledInput extends React.Component<StyledInputProps, StyledInputState> {
   public render() {
     const { focused } = this.state;
     const { value } = this.props;
-    const filteredProps = R.omit(["state"], this.props);
+    const filteredProps = R.omit(["state", "field", "onBlur", "onChange", "form"], this.props);
 
     const state = states[this.props.state || "default"];
     const newFilteredProps = { ...state, ...filteredProps };
