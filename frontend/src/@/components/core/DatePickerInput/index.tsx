@@ -185,6 +185,7 @@ class StyledTextInput extends React.Component<Props, State> {
     const input = (
       <StyledTextInputBase
         onFocus={() => this.showDropdown()}
+        onBlur={() => this.hideDropdown()}
         {...newFilteredProps} />
     );
 
@@ -192,6 +193,7 @@ class StyledTextInput extends React.Component<Props, State> {
       <div>
         <Portal
           span={8}
+          onHide={() => this.hideDropdown()}
           visible={this.state.visible}
           reference={input}
           content={<div style={{ padding: 5, backgroundColor: 'white', width: 200 }}>xd</div>}/>
