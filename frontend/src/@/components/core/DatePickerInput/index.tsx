@@ -146,7 +146,9 @@ interface Props {
   state: string;
 }
 
-interface State {}
+interface State {
+  visible: boolean;
+}
 
 class StyledTextInput extends React.Component<Props, State> {
   public static defaultProps = {
@@ -155,19 +157,44 @@ class StyledTextInput extends React.Component<Props, State> {
     borderRadius: 2,
   };
 
+  public state = {
+    visible: false,
+  };
+
+  public showDropdown() {
+    console.log("???");
+    this.setState({ visible: true });
+  }
+
+  public hideDropdown() {
+    this.setState({ visible: false });
+  }
+
+  public toggleDropdown() {
+    this.setState({ visible: !this.state.visible });
+  }
+
   public render() {
     const { props } = this;
 
-    const filteredProps = R.omit(["state"], props);
+    const filteredProps = R.omit(["state", "field", "onFocus", "onBlur", "onChange", "form"], props);
 
     const state = states[props.state || "default"];
     const newFilteredProps = { ...state, ...filteredProps };
 
+    const input = (
+      <StyledTextInputBase
+        onFocus={() => this.showDropdown()}
+        {...newFilteredProps} />
+    );
+
     return (
       <div>
-        <Portal visible={true}
-                reference={<StyledTextInputBase {...newFilteredProps} />}
-                content={<b>xd</b>}/>
+        <Portal
+          span={8}
+          visible={this.state.visible}
+          reference={input}
+          content={<div style={{ padding: 5, backgroundColor: 'white', width: 200 }}>xd</div>}/>
       </div>
     );
   }

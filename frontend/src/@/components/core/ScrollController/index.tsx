@@ -6,13 +6,14 @@ import hoistNonReactStatic from "hoist-non-react-statics";
 import R from "ramda";
 import React from "react";
 import ReactDOM from "react-dom";
+import { debounce } from "lodash";
 
 interface ScrollContext {
   enabled: boolean;
   name: string;
   bus: EventEmitter;
   path: any[];
-  getMyRect?(): ElementRect;
+  getMyInfo?(): ScrollContainerInfo;
   getRect?(el: HTMLElement): ElementRect;
 }
 
@@ -40,6 +41,11 @@ interface ElementRect {
   height: number;
   left: number;
   top: number;
+}
+
+interface ScrollContainerInfo extends ElementRect {
+  scrollTop: number;
+  scrollLeft: number;
 }
 
 interface ListenerProps {
@@ -99,9 +105,13 @@ export const listenToScroll = <P, S>(
     public updateContainerRect() {
       const { ctx } = this.props;
 
-      const rect = ctx.getMyRect();
+      if (!ctx.enabled) {
+        return;
+      }
 
-      const id = `${rect.left}x${rect.top}:${rect.width}x${rect.height}`;
+      const rect = ctx.getMyInfo();
+
+      const id = `${rect.left}x${rect.top}:${rect.width}x${rect.height}:${rect.scrollLeft}x${rect.scrollTop}`;
 
       this.setState({ rect, id });
     }
@@ -153,7 +163,7 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
     super(props);
 
     this.scrolled = this.scrolled.bind(this);
-    this.getMyRect = this.getMyRect.bind(this);
+    this.getMyInfo = this.getMyInfo.bind(this);
     this.getRect = this.getRect.bind(this);
   }
 
@@ -176,9 +186,11 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
     };
   }
 
-  public getMyRect(): ElementRect | null {
+  public getMyInfo(): ScrollContainerInfo | null {
     if (this.props.root) {
       return {
+        scrollTop: window.scrollY,
+        scrollLeft: window.scrollX,
         left: 0,
         top: 0,
         width: window.innerWidth,
@@ -191,6 +203,8 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
         const rect = node.getBoundingClientRect();
 
         return {
+          scrollTop: node.scrollTop,
+          scrollLeft: node.scrollLeft,
           left: rect.left + window.pageXOffset,
           top: rect.top + window.pageYOffset,
           width: rect.width,
@@ -215,7 +229,7 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
     return (
       <Context.Provider value={{
         ...this.props.ctx,
-        getMyRect: this.getMyRect,
+        getMyInfo: this.getMyInfo,
         getRect: this.getRect,
       }}>
         <StyledScrollController ref={this.containerRef} {...safeProps} />
@@ -225,11 +239,11 @@ class ContextualizedScrollController extends React.Component<Props & PropsWithCo
 
   private attach(): void {
     if (this.props.root) {
-      window.addEventListener("scroll", this.scrolled);
+      window.addEventListener("scroll", debounce(this.scrolled.bind(this), 50));
     } else {
       const { current } = this.containerRef;
       if (current !== null && current instanceof HTMLElement) {
-        current.addEventListener("scroll", this.scrolled);
+        current.addEventListener("scroll", debounce(this.scrolled.bind(this), 50));
       }
     }
   }

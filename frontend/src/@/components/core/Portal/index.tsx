@@ -3,7 +3,8 @@ import ReactDOM from "react-dom";
 import { InjectedScrollProps, listenToScroll } from "../ScrollController";
 
 interface Props extends InjectedScrollProps {
-  visible: boolean;
+  onHide?: () => void;
+  visible?: boolean;
   reference: React.ReactElement<any>;
   content: React.ReactNode;
   span?: number;
@@ -14,17 +15,21 @@ interface Props extends InjectedScrollProps {
 interface State {
   top?: number;
   left?: number;
+  id?: string;
+  visible?: boolean;
 }
 
 class Portal extends React.Component<Props, State> {
   public static defaultProps = {
+    visible: null,
     span: 0,
   };
 
   public state = {
+    visible: null,
     top: null,
     left: null,
-    oldId: null,
+    id: null,
   };
 
   public componentDidMount(): void {
@@ -35,23 +40,50 @@ class Portal extends React.Component<Props, State> {
       const newTop = rect.top + rect.height;
       const newLeft = rect.left;
 
-      this.setState({ top: newTop, left: newLeft });
+      let visible = null;
+
+      if (this.props.visible !== null) {
+        visible = this.props.visible;
+      }
+
+      this.setState({
+        top: newTop,
+        left: newLeft,
+        id: this.props.scrollId,
+        visible,
+      });
     }
   }
 
+  shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
+    return this.state.id !== nextProps.scrollId
+      || this.props.visible !== nextProps.visible;
+  }
+
   public componentDidUpdate(): void {
-    const { top: oldTop, left: oldLeft } = this.state;
+    const { id: oldId } = this.state;
 
     const node = ReactDOM.findDOMNode(this);
 
     if (node instanceof HTMLElement) {
-      const rect = this.props.getRect(node);
+      const newId = this.props.scrollId;
 
-      const newTop = rect.top + rect.height;
-      const newLeft = rect.left;
+      if (oldId !== newId) {
+        const rect = this.props.getRect(node);
+        const newTop = rect.top + rect.height;
+        const newLeft = rect.left;
 
-      if (newTop !== oldTop || newLeft !== oldLeft) {
-        this.setState({ top: newTop, left: newLeft });
+        let visible = this.props.visible;
+
+        if (this.props.visible === null) {
+          visible = false;
+        }
+
+        this.setState({ top: newTop, left: newLeft, id: newId, visible }, () => {
+          if (this.props.onHide) {
+            this.props.onHide();
+          }
+        });
       }
     }
   }
