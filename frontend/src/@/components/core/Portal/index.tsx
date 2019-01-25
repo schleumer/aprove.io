@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { InjectedScrollProps, listenToScroll } from "../ScrollController";
 
-interface Props extends InjectedScrollProps {
+interface Props {
   onHide?: () => void;
   visible?: boolean;
   reference: React.ReactElement<any>;
@@ -12,6 +12,8 @@ interface Props extends InjectedScrollProps {
   top?: number;
 }
 
+interface InnerProps extends Props, InjectedScrollProps {}
+
 interface State {
   top?: number;
   left?: number;
@@ -19,8 +21,13 @@ interface State {
   visible?: boolean;
 }
 
-class Portal extends React.Component<Props, State> {
+abstract class PortalImpl<P> extends React.Component<P & Props, State> {
+  public abstract contains(el: HTMLElement): boolean;
+}
 
+export type PortalRefType = PortalImpl<InnerProps>;
+
+class Portal extends PortalImpl<InnerProps> {
   public static defaultProps = {
     visible: null,
     span: 0,
@@ -58,7 +65,7 @@ class Portal extends React.Component<Props, State> {
     }
   }
 
-  public shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
+  public shouldComponentUpdate(nextProps: Readonly<InnerProps>, nextState: Readonly<State>, nextContext: any): boolean {
     return (nextProps.visible || this.props.visible) ||
       this.state.id !== nextProps.scrollId ||
       this.props.visible !== nextProps.visible;

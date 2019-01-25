@@ -3,13 +3,14 @@ import PropTypes from "prop-types";
 
 import { Box } from "@/components/styled";
 
-import { getSpace } from "@/components/styled/system";
+import { getFontSize, getSpace } from "@/components/styled/system";
 
 import { theme } from "styled-tools";
 
 const TableRow = styled(Box.withComponent("tr"))``;
 
 const TableColumn = styled(Box.withComponent("td"))`
+font-size: ${getFontSize(1)};
 padding: ${getSpace(2)};
 border-top: 1px solid ${theme("colors.light")};
 `;

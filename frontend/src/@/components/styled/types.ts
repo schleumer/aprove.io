@@ -23,6 +23,7 @@ export interface Box extends
   gentypes.WithBorders,
   gentypes.WithBorderColor,
   gentypes.WithVerticalAlign,
+  gentypes.WithBoxShadow,
   WithCSS {}
 
 export interface Flex extends

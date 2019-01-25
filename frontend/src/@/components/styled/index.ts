@@ -6,7 +6,7 @@ import {
   alignSelf,
   borderColor,
   borderRadius,
-  borders,
+  borders, boxShadow,
   color,
   flex,
   flexBasis,
@@ -52,6 +52,7 @@ export const Box: types.Styled<HTMLDivElement, types.Box> = styled("div")(
   borderColor,
   textDecoration,
   verticalAlign,
+  boxShadow,
   themed("Box"),
   css,
 );
@@ -69,6 +70,7 @@ Box.propTypes = {
   ...borders.propTypes,
   ...borderColor.propTypes,
   ...verticalAlign.propTypes,
+  ...boxShadow.propTypes,
 };
 
 export const SpanBox = styled(Box.withComponent("span"))(

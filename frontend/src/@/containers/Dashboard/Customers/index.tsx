@@ -16,9 +16,11 @@ import reducer from "./reducer";
 import saga from "./saga";
 import InstancesView from "./view";
 
+import messages from "./messages";
+
 const Home = ({ match, globalState }) => (
   <div>
-    <FormattedMessage id="instances.title">
+    <FormattedMessage {...messages.title}>
       {(t) => (
         <Helmet>
           <title>{t}</title>

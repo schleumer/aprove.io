@@ -63,16 +63,14 @@ interface PhoneFormProps extends FormikProps<any> {
 class PhoneForm extends React.Component<PhoneFormProps> {
   public render() {
     return (
-      <Form mb={1}>
-        <BoxGroup>
-          <Box width={1}>
-            <FastField name="phone" placeholder={messages.phone} country="BR" component={PhoneInput} />
-          </Box>
-          <Box flex="0 0 auto">
-            <Button type="submit" state="primary" width={1}>Adicionar</Button>
-          </Box>
-        </BoxGroup>
-      </Form>
+      <BoxGroup>
+        <Box width={1}>
+          <FastField name="phone" placeholder={messages.phone} country="BR" component={PhoneInput} />
+        </Box>
+        <Box flex="0 0 auto">
+          <Button type="submit" state="primary" width={1}>Adicionar</Button>
+        </Box>
+      </BoxGroup>
     );
   }
 }
@@ -113,8 +111,10 @@ class PhonesEditor extends React.Component<PhonesEditorProps> {
 
     const rows = values.map((item, index) => {
       return (
-        <TableRow>
-          <TableColumn verticalAlign="middle" width={1}>{ formatPhoneNumberIntl(item.phone) }</TableColumn>
+        <TableRow key={item.id}>
+          <TableColumn verticalAlign="middle" width={1}>
+            { formatPhoneNumberIntl(item.phone) }
+          </TableColumn>
           <TableColumn verticalAlign="middle">
             <Tooltip text="Remover">
               <ButtonTransparent
@@ -142,7 +142,9 @@ class PhonesEditor extends React.Component<PhonesEditorProps> {
           validateOnChange={false}
         />
         <Table>
-          { rows }
+          <tbody>
+            { rows }
+          </tbody>
         </Table>
       </React.Fragment>
     );
@@ -154,51 +156,53 @@ class EditorForm extends React.Component<FormProps> {
     const { options, isSubmitting } = this.props;
 
     return (
-      <Form>
-        <Box>
-          <BoxGroup spacing={3}>
-            <Box mb={3} width={1 / 3}>
-              <FastField name="code" label={messages.code} component={TextInput} disabled={true} />
-            </Box>
-            <Box mb={3} width={1 / 3}>
-              <FastField name="name" label={messages.name} component={TextInput} />
-            </Box>
-            <Box mb={3} width={1 / 3}>
-              <FastField
-                label={messages.status}
-                component={SelectInput}
-                options={options.statuses}
-                name="status"
-              />
-            </Box>
-          </BoxGroup>
-          <BoxGroup spacing={3}>
-            <Box mb={3} width={1 / 3}>
-              <FastField
-                label={messages.type}
-                component={SelectInput}
-                options={options.types}
-                name="type"
-              />
-            </Box>
-          </BoxGroup>
-          <BoxGroup spacing={3}>
-            <Box width={1 / 3}>
-              <Heading><FormattedMessage {...messages.phones} /></Heading>
-              <FieldArray name="phones" component={PhonesEditor}/>
-            </Box>
-          </BoxGroup>
-          <Padding spacing={3}>
-            <Button state="primary" disabled={isSubmitting} type="submit">
-              <Icon name="check" />
-              <FormattedMessage {...globalMessages.save} />
-            </Button>
-            <RouterButtonTransparent to="/customers" disabled={isSubmitting}>
-              <FormattedMessage {...globalMessages.cancel} />
-            </RouterButtonTransparent>
-          </Padding>
-        </Box>
-      </Form>
+      <Box>
+        <Form>
+          <Box>
+            <BoxGroup spacing={3}>
+              <Box mb={3} width={1 / 3}>
+                <FastField name="code" label={messages.code} component={TextInput} disabled={true} />
+              </Box>
+              <Box mb={3} width={1 / 3}>
+                <FastField name="name" label={messages.name} component={TextInput} />
+              </Box>
+              <Box mb={3} width={1 / 3}>
+                <FastField
+                  label={messages.status}
+                  component={SelectInput}
+                  options={options.statuses}
+                  name="status"
+                />
+              </Box>
+            </BoxGroup>
+            <BoxGroup spacing={3}>
+              <Box mb={3} width={1 / 3}>
+                <FastField
+                  label={messages.type}
+                  component={SelectInput}
+                  options={options.types}
+                  name="type"
+                />
+              </Box>
+            </BoxGroup>
+            <Padding spacing={3}>
+              <Button state="primary" disabled={isSubmitting} type="submit">
+                <Icon name="check" />
+                <FormattedMessage {...globalMessages.save} />
+              </Button>
+              <RouterButtonTransparent to="/customers" disabled={isSubmitting}>
+                <FormattedMessage {...globalMessages.cancel} />
+              </RouterButtonTransparent>
+            </Padding>
+          </Box>
+        </Form>
+        <BoxGroup spacing={3}>
+          <Box width={1 / 3}>
+            <Heading><FormattedMessage {...messages.phones} /></Heading>
+            <FieldArray name="phones" component={PhonesEditor}/>
+          </Box>
+        </BoxGroup>
+      </Box>
     );
   }
 }
@@ -232,7 +236,6 @@ class Editor extends React.Component<Props> {
 
   public submit(a, b) {
     this.props.isSubmitting(false);
-    console.log(":'(", a, b);
   }
 
   public render() {

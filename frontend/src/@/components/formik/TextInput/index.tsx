@@ -1,14 +1,15 @@
-import Label from "@/components/core/Label";
-import BaseTextInput from "@/components/core/TextInput";
+import R from "ramda";
+import { FormattedMessage, InjectedIntl, injectIntl } from "react-intl";
 import { FieldProps } from "formik";
 import invariant from "invariant";
 import memoize from "memoize-one";
 import React from "react";
+
+import Label from "@/components/core/Label";
+import BaseTextInput from "@/components/core/TextInput";
+
 import ErrorBag from "../ErrorBag";
 import { genid } from "../helpers";
-
-import R from "ramda";
-import { FormattedMessage, InjectedIntl, injectIntl } from "react-intl";
 
 interface Props extends FieldProps {
   fieldId: number;
@@ -54,6 +55,8 @@ class TextInput extends React.PureComponent<Props, State> {
     }
 
     const newProps = { ...props, label, placeholder, id };
+
+    newProps.field.value = R.isNil(newProps.field.value) ? '' : String(newProps.field.value);
 
     return (
       <div>

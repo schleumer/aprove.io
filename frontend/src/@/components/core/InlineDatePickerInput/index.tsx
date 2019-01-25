@@ -305,6 +305,7 @@ const getMonths = (reference: string | null, today: Luxon.DateTime, visibleMonth
 };
 
 export interface Props extends FieldProps {
+  onPick?: (value: string | null) => void,
   value?: string;
   visibleMonths?: number;
 }
@@ -346,6 +347,7 @@ class DatePicker extends React.Component<Props, State> {
   public static defaultProps = {
     visibleMonths: 3,
     reference: null,
+    onPick: null,
   };
 
   // public static getDerivedStateFromProps(props: Props, state: State) {
@@ -370,7 +372,6 @@ class DatePicker extends React.Component<Props, State> {
   }
 
   public shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
-    console.log(nextProps.value, this.props.value);
     return nextProps.value !== this.props.value
       || nextState.reference !== this.state.reference;
   }
@@ -387,6 +388,10 @@ class DatePicker extends React.Component<Props, State> {
     }
 
     this.setState({ reference: value });
+
+    if (this.props.onPick) {
+      this.props.onPick(value);
+    }
   }
 
   public minus(duration: Luxon.Duration | number | Luxon.DurationObject) {

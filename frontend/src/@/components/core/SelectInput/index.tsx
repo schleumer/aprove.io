@@ -223,6 +223,9 @@ const MenuList = (props) => {
 };
 
 class SelectInput extends React.Component<Props, State> {
+  // HAHA.
+  public isMounted: boolean;
+
   constructor(props, context) {
     super(props, context);
 
@@ -243,7 +246,10 @@ class SelectInput extends React.Component<Props, State> {
       const { options } = this.props;
 
       return options.single(value, this.props).then((res) => {
-        this.setState({ value, option: res, loading: false });
+        if (this.isMounted) {
+          this.setState({ value, option: res, loading: false });
+        }
+
         return res;
       });
     } else {
@@ -254,6 +260,7 @@ class SelectInput extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
+    this.isMounted = true;
     const { field } = this.props;
 
     if (R.isNil(field) || R.isNil(field.value)) {
@@ -261,6 +268,10 @@ class SelectInput extends React.Component<Props, State> {
     } else {
       this.setOption(field.value);
     }
+  }
+
+  public componentWillUnmount(): void {
+    this.isMounted = false;
   }
 
   public componentWillReceiveProps(a) {

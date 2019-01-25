@@ -2,13 +2,14 @@ import { translateSize } from "@/components/styled/system";
 import { FieldProps } from "formik";
 import R from "ramda";
 import React from "react";
+import { InjectedIntlProps, injectIntl } from "react-intl";
 import { theme } from "styled-tools";
 
 import { FocusStealEvent } from "@/components/core/FocusSteal/types";
 import FocusSteal from "../FocusSteal";
 import InlineDatePickerInput, { Props as InlineDatePickerInputProps } from "../InlineDatePickerInput";
 
-import Portal from "../Portal";
+import Portal, { PortalRefType } from "../Portal";
 
 import { Box } from "@/components/styled";
 
@@ -143,7 +144,7 @@ StyledTextInputBase.defaultProps = {
   borderColor: "gray",
 };
 
-interface Props extends FieldProps {
+interface Props extends FieldProps, InjectedIntlProps {
   placeholder: string | FormattedMessage.MessageDescriptor;
   label: string | FormattedMessage.MessageDescriptor;
   value: string;
@@ -162,7 +163,7 @@ class StyledTextInput extends React.Component<Props, State> {
     borderRadius: 2,
   };
 
-  public portal = React.createRef<Portal>();
+  public portal = React.createRef<PortalRefType>();
   public input = React.createRef<HTMLInputElement>();
 
   public state = {
@@ -202,7 +203,6 @@ class StyledTextInput extends React.Component<Props, State> {
       if (this.input.current !== evt.target &&
         !this.portal.current.contains(evt.target)) {
         this.hideDropdown();
-        console.log("real stole shit");
       }
     }
   }
@@ -210,11 +210,21 @@ class StyledTextInput extends React.Component<Props, State> {
   public render() {
     const { props } = this;
 
-    const filteredProps = R.omit(["state", "field", "onFocus", "onBlur", "onChange", "form", "value", "name", "children"], props);
+    const filteredProps = R.omit([
+      "state",
+      "field",
+      "onFocus",
+      "onBlur",
+      "onChange",
+      "form",
+      "value",
+      "name",
+      "children",
+    ], props);
 
     const fieldProps = {
       ...R.omit<Props, string>([], props),
-      visibleMonths: 1,
+      visibleMonths: 2,
       value: props.value || "",
     } as InlineDatePickerInputProps;
 
@@ -225,7 +235,7 @@ class StyledTextInput extends React.Component<Props, State> {
       <StyledTextInputBase
         readOnly
         ref={this.input}
-        value={props.value || ""}
+        value={props.value ? this.props.intl.formatDate(props.value) : ''}
         onFocus={this.focused}
         onClick={() => this.showDropdown()}
         {...newFilteredProps} />
@@ -235,9 +245,9 @@ class StyledTextInput extends React.Component<Props, State> {
 
     if (this.state.visible) {
       portalContent = (
-        <div style={{ padding: 5, backgroundColor: "white", width: 300 }}>
-          <InlineDatePickerInput {...fieldProps} />
-        </div>
+        <Box p={3} width={600} bg="white" boxShadow={2}>
+          <InlineDatePickerInput onPick={() => this.hideDropdown()} {...fieldProps} />
+        </Box>
       );
     }
 
@@ -255,4 +265,4 @@ class StyledTextInput extends React.Component<Props, State> {
   }
 }
 
-export default StyledTextInput;
+export default injectIntl(StyledTextInput);

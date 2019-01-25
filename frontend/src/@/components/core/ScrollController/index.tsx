@@ -124,8 +124,6 @@ export const listenToScroll = <P, S>(
 
       const id = `${nanoid()}-${rect.left}x${rect.top}:${rect.width}x${rect.height}:${rect.scrollLeft}x${rect.scrollTop}`;
 
-      console.log(id);
-
       this.setState({ rect, id });
     }
 
