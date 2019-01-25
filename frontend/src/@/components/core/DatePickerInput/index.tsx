@@ -231,11 +231,15 @@ class StyledTextInput extends React.Component<Props, State> {
         {...newFilteredProps} />
     );
 
-    const portalContent = (
-      <div style={{ padding: 5, backgroundColor: "white", width: 300 }}>
-        <InlineDatePickerInput {...fieldProps} />
-      </div>
-    );
+    let portalContent = null;
+
+    if (this.state.visible) {
+      portalContent = (
+        <div style={{ padding: 5, backgroundColor: "white", width: 300 }}>
+          <InlineDatePickerInput {...fieldProps} />
+        </div>
+      );
+    }
 
     return (
       <FocusSteal enabled={this.state.visible} onSteal={this.focusStolen}>
