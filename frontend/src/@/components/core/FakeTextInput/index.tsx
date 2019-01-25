@@ -150,6 +150,7 @@ const StyledInput = (props) => {
 };
 
 StyledInput.propTypes = {
+  defaultValue: PropTypes.string,
   placeholder: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({

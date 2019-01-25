@@ -43,7 +43,7 @@
     "test:watch": "cross-env NODE_ENV=test jest --watchAll",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "prettify": "prettier --write",
-    "check": "tsc --pretty --project tsconfig.json -w --noEmit"
+    "check": "tsc --skipLibCheck --pretty --project tsconfig.json -w --noEmit"
   },
   "lint-staged": {
     "*.js": [

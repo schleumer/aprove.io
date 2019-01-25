@@ -1,3 +1,5 @@
+import "@emotion/core";
+
 /**
  * app.js
  *
@@ -28,6 +30,8 @@ import App from "@/root";
 // Import Language Provider
 import LanguageProvider from "@/containers/LanguageProvider";
 
+import FocusStealProvider from "@/components/core/FocusSteal/provider";
+
 // Load the favicon and the .htaccess file
 import "!file-loader?name=[name].[ext]!./images/favicon.ico";
 import "file-loader?name=.htaccess!./.htaccess"; // eslint-disable-line import/extensions
@@ -57,7 +61,7 @@ const icons = require("raw-loader!./icons/light.raw-svg");
 
 const render = (messages) => {
   ReactDOM.render(
-    <div>
+    <FocusStealProvider>
       <Global styles={GlobalStyle} />
       <Provider store={store}>
         <LanguageProvider messages={messages}>
@@ -73,7 +77,7 @@ const render = (messages) => {
       </Provider>
       {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: icons }} id="icons-sprite" />
-    </div>,
+    </FocusStealProvider>,
     MOUNT_NODE,
   );
 };

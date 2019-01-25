@@ -1,7 +1,10 @@
 import { translateSize } from "@/components/styled/system";
 import R from "ramda";
-import React  from "react";
+import React from "react";
 import { theme } from "styled-tools";
+
+import { FocusStealEvent } from "@/components/core/FocusSteal/types";
+import FocusSteal  from "../FocusSteal";
 
 import Portal from "../Portal";
 
@@ -161,8 +164,15 @@ class StyledTextInput extends React.Component<Props, State> {
     visible: false,
   };
 
+  constructor(props, context) {
+    super(props, context);
+
+    this.blurred = this.blurred.bind(this);
+    this.focused = this.focused.bind(this);
+    this.focusStolen = this.focusStolen.bind(this);
+  }
+
   public showDropdown() {
-    console.log("???");
     this.setState({ visible: true });
   }
 
@@ -174,30 +184,44 @@ class StyledTextInput extends React.Component<Props, State> {
     this.setState({ visible: !this.state.visible });
   }
 
+  public blurred(evt: React.SyntheticEvent) {
+    this.hideDropdown();
+  }
+
+  public focused(evt: React.SyntheticEvent) {
+    this.showDropdown();
+  }
+
+  public focusStolen(evt: FocusStealEvent) {
+    console.log(evt);
+  }
+
   public render() {
     const { props } = this;
 
-    const filteredProps = R.omit(["state", "field", "onFocus", "onBlur", "onChange", "form"], props);
+    const filteredProps = R.omit(["state", "field", "onFocus", "onBlur", "onChange", "form", "value"], props);
 
     const state = states[props.state || "default"];
     const newFilteredProps = { ...state, ...filteredProps };
 
     const input = (
       <StyledTextInputBase
-        onFocus={() => this.showDropdown()}
-        onBlur={() => this.hideDropdown()}
+        readOnly
+        value={props.value || ""}
+        onFocus={this.focused}
+        onBlur={this.blurred}
         {...newFilteredProps} />
     );
 
     return (
-      <div>
+      <FocusSteal onSteal={this.focusStolen}>
         <Portal
           span={8}
           onHide={() => this.hideDropdown()}
           visible={this.state.visible}
           reference={input}
-          content={<div style={{ padding: 5, backgroundColor: 'white', width: 200 }}>xd</div>}/>
-      </div>
+          content={<div style={{ padding: 5, backgroundColor: "white", width: 200 }}>xd</div>}/>
+      </FocusSteal>
     );
   }
 }

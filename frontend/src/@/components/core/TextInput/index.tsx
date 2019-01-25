@@ -146,6 +146,9 @@ const StyledTextInput = (props) => {
 };
 
 StyledTextInput.propTypes = {
+  type: PropTypes.string,
+  value: PropTypes.string,
+  defaultValue: PropTypes.string,
   placeholder: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({

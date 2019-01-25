@@ -22,6 +22,7 @@ function NavLink({
                    strict,
                    style: styleProp,
                    to,
+                   css,
                    ...rest
                  }: NavLinkProps) {
   const path = typeof to === "object" ? to.pathname : to;

@@ -70,7 +70,7 @@ overflow-x: ${(props) => props.x ? "auto" : "visible"};
 overflow-y: ${(props) => props.y ? "auto" : "visible"};
 `;
 
-const omit = R.omit<string>(["name", "ctx"]);
+const omit = R.omit<string>(["name", "x", "y", "ctx"]);
 
 export const Context = React.createContext<ScrollContext>({
   enabled: true,
@@ -92,14 +92,21 @@ export const listenToScroll = <P, S>(
       super(props);
 
       this.getRect = this.getRect.bind(this);
+      this.scrolled = this.scrolled.bind(this);
+    }
+
+    public scrolled(event: ScrollEvent) {
+      this.updateContainerRect();
     }
 
     public componentDidMount(): void {
-      this.props.ctx.bus.addListener("scroll", (event: ScrollEvent) => {
-        this.updateContainerRect();
-      });
+      this.props.ctx.bus.addListener("scroll", this.scrolled);
 
       this.updateContainerRect();
+    }
+
+    public componentWillUnmount(): void {
+      this.props.ctx.bus.removeListener("scroll", this.scrolled);
     }
 
     public updateContainerRect() {
@@ -286,8 +293,12 @@ class ScrollController extends React.Component<Props, State> {
   }
 }
 
-export const RootScrollController = (props: Props) => {
-  return <ScrollController name="root" x={true} y={true} root={true} {...props} />;
-};
+interface RootProps {}
+
+export class RootScrollController extends React.Component<RootProps> {
+  public render() {
+    return <ScrollController name="root" x={true} y={true} root={true} {...this.props} />;
+  }
+}
 
 export default ScrollController;

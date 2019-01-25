@@ -40,7 +40,8 @@
     },
     "types": [
       "reflect-metadata",
-      "node"
+      "node",
+      "@emotion/core"
     ],
     "noUnusedLocals": true
   },

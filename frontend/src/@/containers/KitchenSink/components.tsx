@@ -451,7 +451,7 @@ export class ComponentsKitchenSink extends React.Component<Props> {
                 {sizes.map((size, index) => {
                   return (
                     // tslint:disable-next-line
-                    <BoxGroup width={1} key={`same-height-${size}`} name={`same-height-${size}`}
+                    <BoxGroup width={1} key={`same-height1-${size}`} name={`same-height1-${size}`}
                               style={{ width: 8000, position: "relative" }} mb={2}>
                       {/* tslint:disable-next-line */}
                       <div style={{
@@ -491,8 +491,9 @@ export class ComponentsKitchenSink extends React.Component<Props> {
                       }} />
                       {states.map((state) => {
                         return (
-                          <React.Fragment>
-                            <Box width={1} style={{ verticalAlign: "baseline", lineHeight: 0 }}>
+                          <React.Fragment key={`same-height1-1-${size}-${state}`}>
+                            <Box width={1}
+                                 style={{ verticalAlign: "baseline", lineHeight: 0 }}>
                               <Button state={state} size={size} width={1}>
                                 <Icon name="user" size={8 + (3 * index)}/>
                                 {size} {state}
@@ -518,7 +519,7 @@ export class ComponentsKitchenSink extends React.Component<Props> {
                 {sizes.map((size, index) => {
                   return (
                     // tslint:disable-next-line
-                    <BoxGroup width={1} key={`same-height-${size}`} name={`same-height-${size}`}
+                    <BoxGroup width={1} key={`same-height2-${size}`} name={`same-height2-${size}`}
                               style={{ width: 2400, position: "relative" }} mb={2}>
                       {/* tslint:disable-next-line */}
                       <div style={{
@@ -558,8 +559,9 @@ export class ComponentsKitchenSink extends React.Component<Props> {
                       }} />
                       {states.map((state) => {
                         return (
-                          <React.Fragment>
-                            <Box width={1} style={{ verticalAlign: "baseline", lineHeight: 0 }}>
+                          <React.Fragment key={`same-height2-1-${size}-${state}`}>
+                            <Box width={1}
+                                 style={{ verticalAlign: "baseline", lineHeight: 0 }}>
                               <ButtonOutline state={state} size={size} width={1}>
                                 <Icon name="user" size={8 + (3 * index)}/>
                                 {size} {state}
@@ -579,7 +581,7 @@ export class ComponentsKitchenSink extends React.Component<Props> {
                 {sizes.map((size, index) => {
                   return (
                     // tslint:disable-next-line
-                    <BoxGroup width={1} key={`same-height-${size}`} name={`same-height-${size}`}
+                    <BoxGroup width={1} key={`same-height3-${size}`} name={`same-height3-${size}`}
                               style={{ width: 2400, position: "relative" }} mb={2}>
                       {/* tslint:disable-next-line */}
                       <div style={{
@@ -619,8 +621,9 @@ export class ComponentsKitchenSink extends React.Component<Props> {
                       }} />
                       {states.map((state) => {
                         return (
-                          <React.Fragment>
-                            <Box width={1} style={{ verticalAlign: "baseline", lineHeight: 0 }}>
+                          <React.Fragment key={`same-height3-1-${size}-${state}`}>
+                            <Box width={1}
+                                 style={{ verticalAlign: "baseline", lineHeight: 0 }}>
                               <ButtonTransparent state={state} size={size} width={1}>
                                 <Icon name="user" size={8 + (3 * index)}/>
                                 {size} {state}

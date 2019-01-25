@@ -59,7 +59,7 @@ class Link extends React.Component<LinkProps> {
   }
 
   public render() {
-    const { replace, to, innerRef, ...props } = this.props; // eslint-disable-line no-unused-vars
+    const { replace, to, innerRef, css, ...props } = this.props; // eslint-disable-line no-unused-vars
 
     invariant(
       this.context.router,
