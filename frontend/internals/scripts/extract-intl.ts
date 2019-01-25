@@ -6,35 +6,35 @@
 
 // require('shelljs/global');
 
-import { mkdir } from 'shelljs';
+import { mkdir } from "shelljs";
 
-const fs = require('fs');
-const nodeGlob = require('glob');
-const { transform } = require('@babel/core');
-const get = require('lodash/get');
+const fs = require("fs");
+const nodeGlob = require("glob");
+const { transform } = require("@babel/core");
+const get = require("lodash/get");
 
-const animateProgress = require('./helpers/progress');
-const addCheckmark = require('./helpers/checkmark');
+const animateProgress = require("./helpers/progress");
+const addCheckmark = require("./helpers/checkmark");
 
-const { appLocales, DEFAULT_LOCALE } = require('../../src/@/i18n');
+const { appLocales, DEFAULT_LOCALE } = require("../../src/@/i18n");
 
-const babel = require('../../babel.config.js');
+const babel = require("../../babel.config.js");
 const { presets } = babel;
 let plugins = babel.plugins || [];
 
-plugins.push('react-intl');
+plugins.push("react-intl");
 
 // NOTE: styled-components plugin is filtered out as it creates errors when used with transform
-plugins = plugins.filter(p => p !== 'styled-components');
+plugins = plugins.filter((p) => p !== "styled-components");
 
 // Glob to match all js files except test files
-const FILES_TO_PARSE = 'src/**/!(*.test|*.d).ts';
+const FILES_TO_PARSE = "src/**/!(*.test|*.d).@(ts|tsx|js)";
 
-const newLine = () => process.stdout.write('\n');
+const newLine = () => process.stdout.write("\n");
 
 // Progress Logger
 let progress;
-const task = message => {
+const task = (message) => {
   progress = animateProgress(message);
   process.stdout.write(message);
 
@@ -48,7 +48,7 @@ const task = message => {
 };
 
 // Wrap async functions below into a promise
-const glob = pattern =>
+const glob = (pattern) =>
   new Promise((resolve, reject) => {
     nodeGlob(
       pattern,
@@ -56,11 +56,11 @@ const glob = pattern =>
     );
   });
 
-const readFile = fileName =>
+const readFile = (fileName) =>
   new Promise((resolve, reject) => {
     fs.readFile(
       fileName,
-      'utf8',
+      "utf8",
       (error, value) => (error ? reject(error) : resolve(value)),
     );
   });
@@ -83,7 +83,7 @@ for (const locale of appLocales) {
       oldLocaleMappings[locale][messageKey] = messages[messageKey];
     }
   } catch (error) {
-    if (error.code !== 'ENOENT') {
+    if (error.code !== "ENOENT") {
       process.stderr.write(
         `There was an error loading this translation file: ${translationFileName}
         \n${error}`,
@@ -92,18 +92,18 @@ for (const locale of appLocales) {
   }
 }
 
-const extractFromFile = async filename => {
+const extractFromFile = async (filename) => {
   try {
     const code = await readFile(filename);
 
     const output = await transform(code, { filename, presets, plugins });
-    const messages = get(output, 'metadata.react-intl.messages', []);
+    const messages = get(output, "metadata.react-intl.messages", []);
 
     for (const message of messages) {
       for (const locale of appLocales) {
         const oldLocaleMapping = oldLocaleMappings[locale][message.id];
         // Merge old translations into the babel extracted instances where react-intl is used
-        const newMsg = locale === DEFAULT_LOCALE ? message.defaultMessage : '';
+        const newMsg = locale === DEFAULT_LOCALE ? message.defaultMessage : "";
         localeMappings[locale][message.id] = oldLocaleMapping || newMsg;
       }
     }
@@ -113,21 +113,23 @@ const extractFromFile = async filename => {
 };
 
 const memoryTask = glob(FILES_TO_PARSE);
-const memoryTaskDone = task('Storing language files in memory');
+const memoryTaskDone = task("Storing language files in memory");
 
 memoryTask.then((files: any) => {
   memoryTaskDone();
 
+  console.log(files);
+
   const extractTask = Promise.all(
-    files.map(fileName => extractFromFile(fileName)),
+    files.map((fileName) => extractFromFile(fileName)),
   );
-  const extractTaskDone = task('Run extraction on all files');
+  const extractTaskDone = task("Run extraction on all files");
   // Run extraction on all files that match the glob on line 16
   extractTask.then(() => {
     extractTaskDone();
 
     // Make the directory if it doesn't exist, especially for first run
-    mkdir('-p', 'src/@/translations'); // eslint-disable-line
+    mkdir("-p", "src/@/translations"); // eslint-disable-line
 
     let localeTaskDone;
     let translationFileName;
@@ -143,7 +145,7 @@ memoryTask.then((files: any) => {
       const messages = {};
       Object.keys(localeMappings[locale])
         .sort()
-        .forEach(key => {
+        .forEach((key) => {
           messages[key] = localeMappings[locale][key];
         });
 

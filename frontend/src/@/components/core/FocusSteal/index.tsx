@@ -1,14 +1,17 @@
-import R from "ramda";
 import React from "react";
 
 import Context from "./context";
 
-import { FocusStealEvent, Props, PropsWithContext, State } from "./types";
+import { FocusStealEvent, Props, State } from "./types";
 
-const omit = R.omit<string>(["ctx"]);
+class FocusStealConsumer extends React.Component<Props, State> {
+  public static contextType = Context;
 
-class ContextualizedStealFocusController extends React.Component<Props & PropsWithContext, State> {
-  public containerRef: React.RefObject<HTMLDivElement> = React.createRef();
+  public static defaultProps = {
+    enabled: true,
+  };
+
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props) {
     super(props);
@@ -17,37 +20,21 @@ class ContextualizedStealFocusController extends React.Component<Props & PropsWi
   }
 
   public stolen(event: FocusStealEvent) {
-    console.log(event);
+    if (this.props.enabled && this.props.onSteal) {
+      this.props.onSteal(event);
+    }
   }
 
   public componentDidMount() {
-    this.props.ctx.bus.addListener("stolen", this.stolen);
+    this.context.bus.addListener("stolen", this.stolen);
   }
 
   public componentWillUnmount() {
-    this.props.ctx.bus.removeListener("stolen", this.stolen);
+    this.context.bus.removeListener("stolen", this.stolen);
   }
 
   public render() {
-    const safeProps = omit<Props>(this.props);
-
-    return (
-      <div ref={this.containerRef} {...safeProps} />
-    );
-  }
-}
-
-class FocusStealConsumer extends React.Component<Props, State> {
-  public static defaultProps = {
-    onSteal: (evt: FocusStealEvent) => null,
-  };
-
-  public render() {
-    return (
-      <Context.Consumer>
-        {(x) => <ContextualizedStealFocusController ctx={x} {...this.props} />}
-      </Context.Consumer>
-    );
+    return <React.Fragment>{this.props.children}</React.Fragment>;
   }
 }
 

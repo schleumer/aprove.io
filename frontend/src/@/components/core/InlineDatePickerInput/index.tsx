@@ -255,17 +255,21 @@ const buildCalendar = (ref: Luxon.DateTime, today: Luxon.DateTime): MonthValue =
   const weeks = splitWeeks(range).map((week) => {
     if (week.days.length < 7) {
       if (week.firstDay === 1) {
-        week.days = R.range(0, 7 - week.days.length).map((): DayValue => {
+        const day = R.head(week.days);
+        week.days = R.reverse(R.range(0, 7 - week.days.length)).map((value): DayValue => {
           return {
             isToday: false,
             isFaux: true,
+            value: day.date.minus({ days: value + 1 }).toFormat("yyyy-LL-dd"),
           };
         }).concat(week.days);
       } else {
-        week.days = week.days.concat(R.range(0, 7 - week.days.length).map((): DayValue => {
+        const day = R.last(week.days);
+        week.days = week.days.concat(R.range(0, 7 - week.days.length).map((value): DayValue => {
           return {
             isToday: false,
             isFaux: true,
+            value: day.date.plus({ days: value + 1 }).toFormat("yyyy-LL-dd"),
           };
         }));
       }
@@ -300,7 +304,7 @@ const getMonths = (reference: string | null, today: Luxon.DateTime, visibleMonth
   return months;
 };
 
-interface Props extends FieldProps {
+export interface Props extends FieldProps {
   value?: string;
   visibleMonths?: number;
 }
@@ -366,7 +370,9 @@ class DatePicker extends React.Component<Props, State> {
   }
 
   public shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
-    return nextProps.value !== this.props.value || nextState.reference !== this.state.reference;
+    console.log(nextProps.value, this.props.value);
+    return nextProps.value !== this.props.value
+      || nextState.reference !== this.state.reference;
   }
 
   public pick(day: DayValue, week: WeekValue, month: MonthValue) {
@@ -435,7 +441,7 @@ class DatePicker extends React.Component<Props, State> {
         <Flex mx={-3}>
           {this.state.months.map((month) => {
             return (
-              <Box mx={3} width={1}>
+              <Box mx={3} width={1} key={`month-${month.month}-${month.year}`}>
                 <div style={{display: "flex", justifyContent: "center"}}>
                   <div><FormattedMessage {...messages[month.alias]} /></div>
                   <div style={{ marginLeft: 5, marginRight: 5 }}>-</div>
@@ -444,7 +450,7 @@ class DatePicker extends React.Component<Props, State> {
                 <div>
                   <HeaderRow>
                     {weekDays.map((w) => (
-                      <WeekDayHeaderWrapper>
+                      <WeekDayHeaderWrapper key={`weekday-${month.month}-${w}-${month.year}`}>
                         <WeekDayHeaderContent>
                           <FormattedMessage {...messages[w + "_two"]}/>
                         </WeekDayHeaderContent>
@@ -453,11 +459,16 @@ class DatePicker extends React.Component<Props, State> {
                   </HeaderRow>
                   {month.weeks.map((week) => {
                     return (
-                      <DayRow>
+                      <DayRow key={`week-${month.month}-${week.week}-${month.year}`}>
                         {week.days.map((day) => {
                           if (day.isFaux) {
                             return (
-                              <DayCellWrapper selected={false} active={false} isFaux={day.isFaux}>
+                              <DayCellWrapper
+                                key={`month-${day.value}`}
+                                selected={false}
+                                active={false}
+                                isFaux={day.isFaux}
+                              >
                                 <DayCellContent>
                                   &nbsp;
                                 </DayCellContent>
@@ -466,6 +477,7 @@ class DatePicker extends React.Component<Props, State> {
                           } else {
                             return (
                               <DayCellWrapper
+                                key={`day-${day.value}`}
                                 onClick={() => this.pick(day, week, month)}
                                 active={day.isToday}
                                 selected={day.value === value}

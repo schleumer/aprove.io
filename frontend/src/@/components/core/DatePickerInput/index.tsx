@@ -1,10 +1,12 @@
 import { translateSize } from "@/components/styled/system";
+import { FieldProps } from "formik";
 import R from "ramda";
 import React from "react";
 import { theme } from "styled-tools";
 
 import { FocusStealEvent } from "@/components/core/FocusSteal/types";
-import FocusSteal  from "../FocusSteal";
+import FocusSteal from "../FocusSteal";
+import InlineDatePickerInput, { Props as InlineDatePickerInputProps } from "../InlineDatePickerInput";
 
 import Portal from "../Portal";
 
@@ -98,9 +100,9 @@ const themeIt = (props) => {
 
 const DefaultStyledTextInput = Box.withComponent("input");
 
-const StyledTextInputBase = styled(({ form, ...props }) => (
-  <DefaultStyledTextInput {...props} />
-))(
+const StyledTextInputBase = styled(React.forwardRef<any, any>(({ form, ...props }, ref) => (
+  <DefaultStyledTextInput ref={ref} {...props} />
+)))(
   {
     color: "black",
     appearance: "none",
@@ -141,7 +143,7 @@ StyledTextInputBase.defaultProps = {
   borderColor: "gray",
 };
 
-interface Props {
+interface Props extends FieldProps {
   placeholder: string | FormattedMessage.MessageDescriptor;
   label: string | FormattedMessage.MessageDescriptor;
   value: string;
@@ -159,6 +161,9 @@ class StyledTextInput extends React.Component<Props, State> {
     size: "md",
     borderRadius: 2,
   };
+
+  public portal = React.createRef<Portal>();
+  public input = React.createRef<HTMLInputElement>();
 
   public state = {
     visible: false,
@@ -193,13 +198,25 @@ class StyledTextInput extends React.Component<Props, State> {
   }
 
   public focusStolen(evt: FocusStealEvent) {
-    console.log(evt);
+    if (this.portal.current && this.input.current) {
+      if (this.input.current !== evt.target &&
+        !this.portal.current.contains(evt.target)) {
+        this.hideDropdown();
+        console.log("real stole shit");
+      }
+    }
   }
 
   public render() {
     const { props } = this;
 
-    const filteredProps = R.omit(["state", "field", "onFocus", "onBlur", "onChange", "form", "value"], props);
+    const filteredProps = R.omit(["state", "field", "onFocus", "onBlur", "onChange", "form", "value", "name", "children"], props);
+
+    const fieldProps = {
+      ...R.omit<Props, string>([], props),
+      visibleMonths: 1,
+      value: props.value || "",
+    } as InlineDatePickerInputProps;
 
     const state = states[props.state || "default"];
     const newFilteredProps = { ...state, ...filteredProps };
@@ -207,20 +224,28 @@ class StyledTextInput extends React.Component<Props, State> {
     const input = (
       <StyledTextInputBase
         readOnly
+        ref={this.input}
         value={props.value || ""}
         onFocus={this.focused}
-        onBlur={this.blurred}
+        onClick={() => this.showDropdown()}
         {...newFilteredProps} />
     );
 
+    const portalContent = (
+      <div style={{ padding: 5, backgroundColor: "white", width: 300 }}>
+        <InlineDatePickerInput {...fieldProps} />
+      </div>
+    );
+
     return (
-      <FocusSteal onSteal={this.focusStolen}>
+      <FocusSteal enabled={this.state.visible} onSteal={this.focusStolen}>
         <Portal
+          ref={this.portal}
           span={8}
           onHide={() => this.hideDropdown()}
           visible={this.state.visible}
           reference={input}
-          content={<div style={{ padding: 5, backgroundColor: "white", width: 200 }}>xd</div>}/>
+          content={portalContent}/>
       </FocusSteal>
     );
   }

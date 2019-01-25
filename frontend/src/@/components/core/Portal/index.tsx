@@ -20,10 +20,13 @@ interface State {
 }
 
 class Portal extends React.Component<Props, State> {
+
   public static defaultProps = {
     visible: null,
     span: 0,
   };
+
+  public portal = React.createRef<HTMLDivElement>();
 
   public state = {
     visible: null,
@@ -55,9 +58,10 @@ class Portal extends React.Component<Props, State> {
     }
   }
 
-  shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
-    return this.state.id !== nextProps.scrollId
-      || this.props.visible !== nextProps.visible;
+  public shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
+    return (nextProps.visible || this.props.visible) ||
+      this.state.id !== nextProps.scrollId ||
+      this.props.visible !== nextProps.visible;
   }
 
   public componentDidUpdate(): void {
@@ -88,12 +92,20 @@ class Portal extends React.Component<Props, State> {
     }
   }
 
+  public contains(el: HTMLElement) {
+    if (el && this.portal.current) {
+      return this.portal.current.contains(el);
+    }
+
+    return false;
+  }
+
   public render() {
     let portal = null;
 
     if (this.props.scrollIsEnabled && this.props.visible) {
       portal = ReactDOM.createPortal(
-        <div style={{
+        <div ref={this.portal} style={{
           position: "absolute",
           zIndex: 9999,
           top: this.state.top + this.props.span,

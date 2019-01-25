@@ -5,10 +5,12 @@ export interface State {
 }
 
 export interface Props extends BoxType {
+  enabled?: boolean;
   onSteal: (evt: FocusStealEvent) => void;
 }
 
 export interface FocusStealEvent {
+  type: "mousedown" | "focusin";
   target: HTMLElement;
 }
 

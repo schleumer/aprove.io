@@ -9,12 +9,12 @@ export default class FocusStealProvider extends React.Component {
   public bus = new EventEmitter();
 
   public componentDidMount() {
-    window.addEventListener("click", (evt) => {
-      this.bus.emit("stolen", { target: evt.target } as FocusStealEvent);
+    window.addEventListener("mousedown", (evt) => {
+      this.bus.emit("stolen", { type: "mousedown", target: evt.target } as FocusStealEvent);
     });
 
     window.addEventListener("focusin", (evt) => {
-      this.bus.emit("stolen", { target: evt.target } as FocusStealEvent);
+      this.bus.emit("stolen", { type: "focusin", target: evt.target } as FocusStealEvent);
     });
   }
 

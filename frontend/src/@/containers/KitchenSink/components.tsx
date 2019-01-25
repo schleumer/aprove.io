@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import * as yup from "yup";
 
-import { defineMessages, FormattedMessage } from "react-intl";
+import { FormattedMessage } from "react-intl";
 
 import {
   Box,
@@ -41,6 +41,7 @@ import {
 import breadcrumbMessages from "@/messages/breadcrumbs";
 import { makeSelectAuth } from "@/root/selectors";
 import injectReducer from "@/utils/injectReducer";
+import messages from "./messages";
 import reducer from "./reducer";
 import Section from "./section";
 
@@ -358,13 +359,6 @@ class TestForm extends React.Component<FormProps, FormState> {
     );
   }
 }
-
-const messages = defineMessages({
-  welcome: {
-    id: "kitchen-sink.welcome",
-    defaultMessage: "Test {name}",
-  },
-});
 
 const sizes = [
   "xs",
