@@ -62,6 +62,7 @@ db.then(async (conn) => {
     for (const _ of R.range(1, 100)) {
         const x = await Customer.create({
             name: faker.name.findName(),
+            notes: faker.lorem.words(random(0, 300)),
             document: faker.random.alphaNumeric(16),
             type: randonElement(['NATURAL', 'JURIDICAL']),
             streetName: faker.address.streetName(),

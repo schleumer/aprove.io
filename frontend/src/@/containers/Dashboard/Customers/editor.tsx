@@ -21,7 +21,14 @@ import {
 } from "@/components/core";
 import { ArrayOptions } from "@/components/core/SelectInput/adapter";
 import Tooltip from "@/components/core/Tooltip";
-import { Channel, Form, PhoneInput, SelectInput, TextInput } from "@/components/formik";
+import {
+  Channel,
+  Form,
+  PhoneInput,
+  SelectInput,
+  TextInput,
+  TextAreaInput,
+} from "@/components/formik";
 import globalMessages from "@/messages/global";
 
 import messages from "./messages";
@@ -63,14 +70,16 @@ interface PhoneFormProps extends FormikProps<any> {
 class PhoneForm extends React.Component<PhoneFormProps> {
   public render() {
     return (
-      <BoxGroup>
-        <Box width={1}>
-          <FastField name="phone" placeholder={messages.phone} country="BR" component={PhoneInput} />
-        </Box>
-        <Box flex="0 0 auto">
-          <Button type="submit" state="primary" width={1}>Adicionar</Button>
-        </Box>
-      </BoxGroup>
+      <Form>
+        <BoxGroup py={3}>
+          <Box width={1}>
+            <FastField name="phone" placeholder={messages.phone} country="BR" component={PhoneInput} />
+          </Box>
+          <Box flex="0 0 auto">
+            <Button type="submit" state="primary" width={1}>Adicionar</Button>
+          </Box>
+        </BoxGroup>
+      </Form>
     );
   }
 }
@@ -111,7 +120,7 @@ class PhonesEditor extends React.Component<PhonesEditorProps> {
 
     const rows = values.map((item, index) => {
       return (
-        <TableRow key={item.id}>
+        <TableRow key={item.phone + "-" + item.id}>
           <TableColumn verticalAlign="middle" width={1}>
             { formatPhoneNumberIntl(item.phone) }
           </TableColumn>
@@ -159,6 +168,7 @@ class EditorForm extends React.Component<FormProps> {
       <Box>
         <Form>
           <Box>
+            <Heading><FormattedMessage {...messages.infos} /></Heading>
             <BoxGroup spacing={3}>
               <Box mb={3} width={1 / 3}>
                 <FastField name="code" label={messages.code} component={TextInput} disabled={true} />
@@ -185,20 +195,30 @@ class EditorForm extends React.Component<FormProps> {
                 />
               </Box>
             </BoxGroup>
-            <Padding spacing={3}>
-              <Button state="primary" disabled={isSubmitting} type="submit">
-                <Icon name="check" />
-                <FormattedMessage {...globalMessages.save} />
-              </Button>
-              <RouterButtonTransparent to="/customers" disabled={isSubmitting}>
-                <FormattedMessage {...globalMessages.cancel} />
-              </RouterButtonTransparent>
-            </Padding>
+            <BoxGroup spacing={3}>
+              <Box mb={3} width={1}>
+                <FastField
+                  label={messages.notes}
+                  component={TextAreaInput}
+                  name="notes"
+                  rows={4}
+                />
+              </Box>
+            </BoxGroup>
           </Box>
+          <Padding spacing={3} inverse>
+            <Button state="primary" disabled={isSubmitting} type="submit">
+              <Icon name="check" />
+              <FormattedMessage {...globalMessages.save} />
+            </Button>
+            <RouterButtonTransparent to="/customers" disabled={isSubmitting}>
+              <FormattedMessage {...globalMessages.cancel} />
+            </RouterButtonTransparent>
+          </Padding>
         </Form>
-        <BoxGroup spacing={3}>
-          <Box width={1 / 3}>
-            <Heading><FormattedMessage {...messages.phones} /></Heading>
+        <BoxGroup spacing={3} mt={3}>
+          <Box width={1 / 2}>
+            <Heading mb={0}><FormattedMessage {...messages.phones} /></Heading>
             <FieldArray name="phones" component={PhonesEditor}/>
           </Box>
         </BoxGroup>

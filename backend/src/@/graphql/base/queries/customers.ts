@@ -1,12 +1,12 @@
-import {search, sf, sfOutput} from "@/helpers/search";
+import * as types from "@/graphql/shared/types/customer";
 import InstanceType from "@/graphql/shared/types/instance";
-import * as types from "@/graphql/shared/types/customer"
+import {search, sf, sfOutput} from "@/helpers/search";
 
-import {memoAsync} from "@/helpers/prelude";
 import {Customer} from "@/entity/customer";
-import {listOf} from "@/helpers/graphql/dsl";
-import auth from '@/helpers/auth';
 import { AuthenticatedContext } from "@/graphql/shared/context";
+import auth from "@/helpers/auth";
+import {listOf} from "@/helpers/graphql/dsl";
+import {memoAsync} from "@/helpers/prelude";
 
 export const Search = memoAsync(async () => {
     return await search("Customer", "Customers", Customer, [
@@ -15,6 +15,7 @@ export const Search = memoAsync(async () => {
         sf("type", true),
         sf("status", true),
         sf("name", true),
+        sf("notes", true),
 
         sf("document", true),
 
@@ -42,20 +43,20 @@ export const Search = memoAsync(async () => {
         }),
 
         sfOutput("phones", listOf(types.CustomerPhone), async (row: Customer, args, context: AuthenticatedContext) => {
-            return await context.loader('customerPhones').load(row.id);
+            return await context.loader("customerPhones").load(row.id);
         }),
 
         sfOutput("emails", listOf(types.CustomerEmail), async (row: Customer, args, context: AuthenticatedContext) => {
-            return await context.loader('customerEmails').load(row.id);
+            return await context.loader("customerEmails").load(row.id);
         }),
 
         sfOutput("phone", types.CustomerPhone, async (row: Customer, args, context: AuthenticatedContext) => {
-            return await context.loader('firstCustomerPhone').load(row.id);
+            return await context.loader("firstCustomerPhone").load(row.id);
         }),
 
         sfOutput("email", types.CustomerEmail, async (row: Customer, args, context: AuthenticatedContext) => {
-            return await context.loader('firstCustomerEmail').load(row.id);
-        })
+            return await context.loader("firstCustomerEmail").load(row.id);
+        }),
     ], (t, q, s) => {
         return q
             .leftJoinAndSelect(`${t}.instance`, "instance")
@@ -70,6 +71,6 @@ export default async () => {
 
     return {
         customers: auth(customersSearch.All),
-        customer: auth(customersSearch.Single)
+        customer: auth(customersSearch.Single),
     };
-}
+};

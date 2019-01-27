@@ -98,7 +98,9 @@ const breadcrumb = (values) => {
 
 const PageTitle = (props) => (
   <PageTitleWrapper>
-    <TitleWraper>{props.title}</TitleWraper>
+    <TitleWraper>
+      {props.title}
+    </TitleWraper>
     <BreadcrumbWrapper fontSize={1}>
       {breadcrumb(props.breadcrumb)}
     </BreadcrumbWrapper>

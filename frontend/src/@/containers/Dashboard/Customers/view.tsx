@@ -5,6 +5,7 @@ import { compose } from "redux";
 import {
   createStructuredSelector,
 } from "reselect";
+import { FormattedMessage } from "react-intl";
 
 import { Loading } from "@/components/core";
 import { PageBody, PageTitle } from "@/components/elite";
@@ -45,7 +46,7 @@ class View extends React.Component<IProps> {
       breadcrumb = breadcrumb.concat({
           id: "customer.view",
           name: messages.view,
-          values: { name: data.name },
+          values: data,
           path: `/customers/${data.id}`,
       });
     }
@@ -54,7 +55,9 @@ class View extends React.Component<IProps> {
       <Loading name="customers/view">
         {() => (
           <React.Fragment>
-            <PageTitle title="meh" breadcrumb={breadcrumb} />
+            <PageTitle title={
+              <FormattedMessage {...messages.view} values={data} />
+            } breadcrumb={breadcrumb} />
             <PageBody>
               <Editor data={data} />
             </PageBody>

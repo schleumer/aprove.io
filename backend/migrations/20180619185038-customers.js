@@ -43,6 +43,9 @@ exports.up = async function(db) {
       name: {
         type: 'string'
       },
+      notes: {
+        type: 'string'
+      },
       document: {
         type: 'string'
       },

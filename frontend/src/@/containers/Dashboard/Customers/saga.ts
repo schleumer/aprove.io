@@ -16,6 +16,7 @@ const viewQuery = gql`
       id
       code
       name
+      notes
       status
       type
       document
