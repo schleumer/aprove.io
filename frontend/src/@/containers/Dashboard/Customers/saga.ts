@@ -2,11 +2,11 @@ import { call, put, takeEvery } from "redux-saga/effects";
 
 import gql from "graphql-tag";
 
-import { query } from "@/utils/graphql";
+import { mutate, query } from "@/utils/graphql";
 
 import * as loadingActions from "@/components/core/Loading/actions";
 
-import { VIEW } from "./constants";
+import { REMOVE_PHONE, VIEW } from "./constants";
 
 import { setView } from "./actions";
 
@@ -34,7 +34,38 @@ const viewQuery = gql`
   }
 `;
 
+const removePhoneQuery = gql`
+  mutation($customerId: Long!, $customerPhoneId: Long!) {
+    result: removeCustomerPhone(customerId: $customerId, customerPhoneId: $customerPhoneId)
+  }
+`;
+
 interface HandleView {
+  data: {
+    id: string,
+  };
+}
+
+interface HandleCreatePhone {
+  data: {
+    id: string,
+  };
+}
+
+interface HandleCreateEmail {
+  data: {
+    id: string,
+  };
+}
+
+interface HandleRemovePhone {
+  data: {
+    customerId: string,
+    customerPhoneId: string,
+  };
+}
+
+interface HandleRemoveEmail {
   data: {
     id: string,
   };
@@ -57,6 +88,31 @@ export function* handleView(action: HandleView) {
   yield put(loadingActions.setState("customers/view", false));
 }
 
+export function* handleCreatePhone(action: HandleCreatePhone) {
+
+}
+
+export function* handleCreateEmail(action: HandleCreateEmail) {
+
+}
+
+export function* handleRemovePhone(action: HandleRemovePhone) {
+  const { data: { customerId, customerPhoneId } }: HandleRemovePhone = action;
+
+  yield call(mutate, {
+    mutation: removePhoneQuery,
+    variables: {
+      customerId: parseInt(customerId, 0),
+      customerPhoneId: parseInt(customerPhoneId, 0),
+    },
+  });
+}
+
+export function* handleRemoveEmail(action: HandleRemoveEmail) {
+
+}
+
 export default function* cutomers() {
   yield takeEvery(VIEW, handleView);
+  yield takeEvery(REMOVE_PHONE, handleRemovePhone);
 }

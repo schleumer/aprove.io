@@ -3,8 +3,14 @@ import * as R from "ramda";
 // import store from "@/store";
 
 class GraphQLError extends Error {
-  constructor(message, public errors, public data = null) {
+  public errors: any[] = [];
+  public data: any = null;
+
+  constructor(message, errors: any[], data: any = null) {
     super(message);
+
+    this.errors = errors;
+    this.data = data;
   }
 }
 
@@ -28,6 +34,7 @@ export const mutate = (options) => wrap(client.mutate(options));
 export const query = (options) => wrap(client.query(options));
 
 export const upgradeErrors = (e, resultKey = "result") => {
+  console.log([e]);
   if (e instanceof GraphQLError) {
     return e.errors.map((x) => {
       let path = null;

@@ -24,6 +24,7 @@ import RouterLink from "./RouterLink";
 import Select from "./SelectInput";
 import TextAreaInput from "./TextAreaInput";
 import TextInput from "./TextInput";
+import Tooltip from "./Tooltip";
 
 import { Box, Flex, Heading, Image, Link, SpanBox, Text } from "@/components/styled";
 
@@ -63,4 +64,5 @@ export {
   DatePicker,
   FakeTextInput,
   Portal,
+  Tooltip,
 };

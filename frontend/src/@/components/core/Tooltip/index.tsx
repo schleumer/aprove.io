@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { ReactElement } from 'react';
 import ReactDOM from "react-dom";
 
 import * as R from "ramda";
@@ -153,7 +153,8 @@ class Tooltip extends React.Component<Props, State> {
 
     const { children, text } = this.props;
 
-    const child = React.Children.only(children);
+    // TODO: verify runtime type pl0x
+    const child = React.Children.only(children) as ReactElement<any>;
     const childProps: {
       onMouseEnter?: (evt: any) => void;
       onMouseLeave?: (evt: any) => void;

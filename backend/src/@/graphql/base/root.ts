@@ -23,7 +23,7 @@ export default async (): Promise<IResult> => {
         Q.ping,
         Q.currentSession,
         Q.users,
-        Q.customers
+        Q.customers,
     );
 
     const mutationFields = await mergeFields(

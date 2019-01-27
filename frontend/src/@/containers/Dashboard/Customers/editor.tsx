@@ -1,7 +1,6 @@
-import { FastField, FieldArray, FieldArrayRenderProps, Formik, FormikProps } from "formik";
+import { FastField, FieldArray, Formik, FormikProps } from "formik";
 import React from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
-import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import * as yup from "yup";
@@ -10,42 +9,26 @@ import {
   Box,
   BoxGroup,
   Button,
-  ButtonTransparent,
   Heading,
   Icon,
   Padding,
   RouterButtonTransparent,
-  Table,
-  TableColumn,
-  TableRow,
 } from "@/components/core";
 import { ArrayOptions } from "@/components/core/SelectInput/adapter";
-import Tooltip from "@/components/core/Tooltip";
 import {
   Channel,
   Form,
-  PhoneInput,
   SelectInput,
-  TextInput,
   TextAreaInput,
+  TextInput,
 } from "@/components/formik";
 import globalMessages from "@/messages/global";
 
+import PhonesEditor from "./Editor/phones";
 import messages from "./messages";
 
 const validationSchema = yup.object().shape({
   id: yup.number().required(),
-});
-
-const phoneValidationSchema = yup.object().shape({
-  phone: yup
-    .string()
-    .test(
-      "phone",
-      "#invalidPhone",
-      (value) => isValidPhoneNumber(String(value)),
-    )
-    .nullable(true),
 });
 
 const options = {
@@ -61,103 +44,6 @@ const options = {
 
 interface FormProps extends FormikProps<any> {
   options: typeof options;
-}
-
-interface PhoneFormProps extends FormikProps<any> {
-  parent: any;
-}
-
-class PhoneForm extends React.Component<PhoneFormProps> {
-  public render() {
-    return (
-      <Form>
-        <BoxGroup py={3}>
-          <Box width={1}>
-            <FastField name="phone" placeholder={messages.phone} country="BR" component={PhoneInput} />
-          </Box>
-          <Box flex="0 0 auto">
-            <Button type="submit" state="primary" width={1}>Adicionar</Button>
-          </Box>
-        </BoxGroup>
-      </Form>
-    );
-  }
-}
-
-interface PhonesEditorProps extends FieldArrayRenderProps {}
-
-class PhonesEditor extends React.Component<PhonesEditorProps> {
-  public form?: React.RefObject<any>;
-
-  constructor(a, b) {
-    super(a, b);
-
-    this.submit = this.submit.bind(this);
-    this.form = React.createRef();
-  }
-
-  public shouldComponentUpdate(
-    nextProps: Readonly<PhonesEditorProps>,
-    nextState: Readonly<{}>, nextContext: any,
-  ): boolean {
-    const values = this.props.form.values[this.props.name];
-    const newValues = nextProps.form.values[nextProps.name];
-
-    return values !== newValues;
-  }
-
-  public remove(item, index) {
-    this.props.remove(index);
-  }
-
-  public submit({ phone }) {
-    this.props.push({ phone });
-    this.form.current.resetForm();
-  }
-
-  public render() {
-    const values = this.props.form.values[this.props.name];
-
-    const rows = values.map((item, index) => {
-      return (
-        <TableRow key={item.phone + "-" + item.id}>
-          <TableColumn verticalAlign="middle" width={1}>
-            { formatPhoneNumberIntl(item.phone) }
-          </TableColumn>
-          <TableColumn verticalAlign="middle">
-            <Tooltip text="Remover">
-              <ButtonTransparent
-                size="sm"
-                state="danger"
-                onClick={() => this.remove(item, index)}><Icon name="trash" /></ButtonTransparent>
-            </Tooltip>
-          </TableColumn>
-        </TableRow>
-      );
-    });
-
-    return (
-      <React.Fragment>
-        <Formik
-          ref={this.form}
-          initialValues={{
-            phone: null,
-          }}
-          validationSchema={phoneValidationSchema}
-          onSubmit={this.submit}
-          render={(props) => {
-            return <PhoneForm parent={this.props} {...props} />;
-          }}
-          validateOnChange={false}
-        />
-        <Table>
-          <tbody>
-            { rows }
-          </tbody>
-        </Table>
-      </React.Fragment>
-    );
-  }
 }
 
 class EditorForm extends React.Component<FormProps> {
