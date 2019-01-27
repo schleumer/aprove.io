@@ -1,7 +1,7 @@
 import { FastField, FieldArrayRenderProps, Formik, FormikProps } from "formik";
+import gql from "graphql-tag";
 import React from "react";
-import { injectIntl } from "react-intl";
-import { connect } from "react-redux";
+import { InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
 import {
@@ -17,9 +17,26 @@ import {
   Tooltip,
 } from "@/components/core";
 import { Form, TextInput } from "@/components/formik";
+import { mutate } from "@/utils/graphql";
 
-import * as actions from "../actions";
 import messages from "../messages";
+
+const removeEmailQuery = gql`
+  mutation($customerId: Long!, $customerEmailId: Long!) {
+    result: removeCustomerEmail(customerId: $customerId, customerEmailId: $customerEmailId)
+  }
+`;
+
+const createEmailQuery = gql`
+  mutation($customerId: Long!, $input: CreateCustomerEmailInput!) {
+    result: createCustomerEmail(customerId: $customerId, input: $input) {
+      id
+      customerId
+      email
+      position
+    }
+  }
+`;
 
 const emailValidationSchema = yup.object().shape({
   email: yup
@@ -49,13 +66,9 @@ class EmailForm extends React.Component<EmailFormProps> {
   }
 }
 
-interface EmailsEditorProps extends FieldArrayRenderProps {}
+interface EmailsEditorProps extends FieldArrayRenderProps, InjectedIntlProps {}
 
-interface EmailsEditorDispatchProps {
-  removeEmail(customerId: string, customerEmailId: string): void;
-}
-
-class EmailsEditor extends React.Component<EmailsEditorProps & EmailsEditorDispatchProps> {
+class EmailsEditor extends React.Component<EmailsEditorProps> {
   public form?: React.RefObject<any>;
 
   constructor(a, b) {
@@ -124,30 +137,34 @@ class EmailsEditor extends React.Component<EmailsEditorProps & EmailsEditorDispa
     );
   }
 
-  private remove(item, index) {
+  private async remove(item, index) {
     const customer = this.props.form.values;
 
-    this.props.removeEmail(customer.id, item.id);
+    await mutate({
+      mutation: removeEmailQuery,
+      variables: {
+        customerId: parseInt(customer.id, 0),
+        customerEmailId: parseInt(item.id, 0),
+      },
+    });
 
     this.props.remove(index);
   }
 
-  private submit({ email }) {
-    this.props.push({ email });
+  private async submit({ email }) {
+    const customer = this.props.form.values;
+
+    const result = await mutate({
+      mutation: createEmailQuery,
+      variables: {
+        customerId: parseInt(customer.id, 0),
+        input: { email },
+      },
+    });
+
+    this.props.push(result.data.result);
     this.form.current.resetForm();
   }
 }
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    removeEmail: (customerId: string, customerEmailId: string) =>
-      dispatch(actions.removeEmail({ customerId, customerEmailId })),
-  };
-}
-
-const withConnect = connect<any, EmailsEditorDispatchProps, EmailsEditorProps>(
-  (state, ownProps) => ownProps,
-  mapDispatchToProps,
-);
-
-export default withConnect(injectIntl(EmailsEditor));
+export default injectIntl<EmailsEditorProps>(EmailsEditor);

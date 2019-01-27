@@ -1,7 +1,7 @@
 import { FastField, FieldArrayRenderProps, Formik, FormikProps } from "formik";
 import gql from "graphql-tag";
 import React from "react";
-import { injectIntl } from "react-intl";
+import { InjectedIntlProps, injectIntl } from "react-intl";
 import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
 import * as yup from "yup";
 
@@ -71,7 +71,7 @@ class PhoneForm extends React.Component<PhoneFormProps> {
   }
 }
 
-interface PhonesEditorProps extends FieldArrayRenderProps {}
+interface PhonesEditorProps extends FieldArrayRenderProps, InjectedIntlProps {}
 
 class PhonesEditor extends React.Component<PhonesEditorProps> {
   public form?: React.RefObject<any>;
@@ -172,4 +172,4 @@ class PhonesEditor extends React.Component<PhonesEditorProps> {
   }
 }
 
-export default injectIntl(PhonesEditor);
+export default injectIntl<PhonesEditorProps>(PhonesEditor);

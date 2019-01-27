@@ -1,4 +1,6 @@
 import { FastField, FieldArray, Formik, FormikProps } from "formik";
+import gql from "graphql-tag";
+import R from "ramda";
 import React from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
 import { connect } from "react-redux";
@@ -24,13 +26,60 @@ import {
 } from "@/components/formik";
 import globalMessages from "@/messages/global";
 
-import PhonesEditor from "./Editor/phones";
+import { mutate } from "@/utils/graphql";
 import EmailsEditor from "./Editor/emails";
+import PhonesEditor from "./Editor/phones";
 import messages from "./messages";
+
+const viewFragment = gql`
+  fragment ViewFragment on CustomersItem {
+    id
+    code
+    name
+    notes
+    status
+    type
+    document
+    phones {
+      id
+      position
+      phone
+    }
+    emails {
+      id
+      position
+      email
+    }
+  }
+`;
+
+const viewQuery = gql`
+  ${viewFragment}
+
+  query($id: Long!) {
+    result: customer(id: $id) {
+      ...ViewFragment
+    }
+  }
+`;
+
+const updateQuery = gql`
+  ${viewFragment}
+
+  mutation($input: UpdateCustomerInput!) {
+    result: updateCustomer(input: $input) {
+      ...ViewFragment
+    }
+  }
+`;
 
 const validationSchema = yup.object().shape({
   id: yup.number().required(),
-});
+  name: yup.string().required(),
+  status: yup.string(),
+  type: yup.string(),
+  notes: yup.string(),
+}).noUnknown();
 
 const options = {
   statuses: new ArrayOptions([
@@ -136,7 +185,7 @@ const initialValues = (base: any): any => {
 };
 
 class Editor extends React.Component<Props> {
-  public form?: React.RefObject<any>;
+  public form?: React.RefObject<Formik>;
 
   constructor(a, b) {
     super(a, b);
@@ -145,8 +194,17 @@ class Editor extends React.Component<Props> {
     this.form = React.createRef();
   }
 
-  public submit(a, b) {
-    this.props.isSubmitting(false);
+  public async submit(values) {
+    const customer = await validationSchema.validate(values);
+
+    const result = await mutate({
+      mutation: updateQuery,
+      variables: {
+        input: customer,
+      },
+    });
+
+    console.log(result);
   }
 
   public render() {

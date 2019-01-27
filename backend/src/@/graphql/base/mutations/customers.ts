@@ -22,6 +22,7 @@ const UpdateCustomerInput = new GraphQLInputObjectType({
         type: {type: nonNull(CustomerType)},
         status: {type: nonNull(CustomerStatus)},
         name: {type: nonNull(GraphQLString)},
+        notes: {type: nonNull(GraphQLString)},
 
         document: {type: GraphQLString},
         streetName: {type: GraphQLString},
@@ -87,10 +88,10 @@ export default async () => {
                 input: {type: CreateCustomerPhoneInput},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session();
+                const {instance} = await ctx.session();
                 const customer = await getCustomer(instance.id, args.customerId);
 
-                const { phone } = await createCustomerPhoneSchema(args.input);
+                const {phone} = await createCustomerPhoneSchema(args.input);
 
                 const result = await CustomerPhone.create({
                     phone,
@@ -107,11 +108,11 @@ export default async () => {
                 input: {type: CreateCustomerEmailInput},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session();
+                const {instance} = await ctx.session();
 
                 const customer = await getCustomer(instance.id, args.customerId);
 
-                const { email } = await createCustomerEmailSchema(args.input);
+                const {email} = await createCustomerEmailSchema(args.input);
 
                 const result = await CustomerEmail.create({
                     email,
@@ -128,7 +129,7 @@ export default async () => {
                 customerPhoneId: {type: LongType},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session();
+                const {instance} = await ctx.session();
 
                 const customer = await qb
                     .select()
@@ -154,7 +155,7 @@ export default async () => {
                 customerEmailId: {type: LongType},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session();
+                const {instance} = await ctx.session();
 
                 const customer = await qb
                     .select()
@@ -179,7 +180,7 @@ export default async () => {
                 input: {type: UpdateCustomerInput},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session();
+                const {instance} = await ctx.session();
 
                 const input = args.input;
 
