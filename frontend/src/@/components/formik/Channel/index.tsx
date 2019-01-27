@@ -6,6 +6,8 @@ import { createStructuredSelector } from "reselect";
 import * as actions from "./actions";
 import reducer from "./reducer";
 
+import { Formik } from "formik";
+
 interface Props {
   name: string;
   isSubmitting: Function;
@@ -19,7 +21,10 @@ interface Props {
 interface State {}
 
 class Channel extends React.Component<Props, State> {
+  public formRef = React.createRef<Formik>();
+
   public static actions = actions;
+
   constructor(props) {
     super(props);
 
@@ -27,6 +32,8 @@ class Channel extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
+    console.log(this);
+
     if (!this.props.name) {
       console.error("Invalid <Channel />, name is required.");
       return;
@@ -38,15 +45,10 @@ class Channel extends React.Component<Props, State> {
   }
 
   public componentDidUpdate() {
-    const { channelState, children } = this.props;
-    const el = React.Children.only(children);
+    const { channelState } = this.props;
 
-    // XXX: ???
-    // @ts-ignore
-    const formRef = el && el.ref && el.ref.current;
-
-    if (formRef) {
-      formRef.setSubmitting(channelState.isSubmitting);
+    if (this.formRef.current) {
+      this.formRef.current.setSubmitting(channelState.isSubmitting);
     }
   }
 
@@ -73,6 +75,7 @@ class Channel extends React.Component<Props, State> {
       const child = _child as React.ReactElement<any>;
 
       return React.cloneElement(child, {
+        ref: this.formRef,
         onSubmit: this.onSubmit(child.props, child.props.onSubmit),
       });
     });

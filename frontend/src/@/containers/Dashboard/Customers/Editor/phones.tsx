@@ -1,8 +1,8 @@
 import { FastField, FieldArrayRenderProps, Formik, FormikProps } from "formik";
+import gql from "graphql-tag";
 import React from "react";
 import { injectIntl } from "react-intl";
 import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
-import { connect } from "react-redux";
 import * as yup from "yup";
 
 import {
@@ -15,12 +15,29 @@ import {
   Table,
   TableColumn,
   TableRow,
-  Tooltip
+  Tooltip,
 } from "@/components/core";
 import { Form, PhoneInput } from "@/components/formik";
+import { mutate } from "@/utils/graphql";
 
-import * as actions from "../actions";
 import messages from "../messages";
+
+const removePhoneQuery = gql`
+  mutation($customerId: Long!, $customerPhoneId: Long!) {
+    result: removeCustomerPhone(customerId: $customerId, customerPhoneId: $customerPhoneId)
+  }
+`;
+
+const createPhoneQuery = gql`
+  mutation($customerId: Long!, $input: CreateCustomerPhoneInput!) {
+    result: createCustomerPhone(customerId: $customerId, input: $input) {
+      id
+      customerId
+      phone
+      position
+    }
+  }
+`;
 
 const phoneValidationSchema = yup.object().shape({
   phone: yup
@@ -56,11 +73,7 @@ class PhoneForm extends React.Component<PhoneFormProps> {
 
 interface PhonesEditorProps extends FieldArrayRenderProps {}
 
-interface PhonesEditorDispatchProps {
-  removePhone(customerId: string, customerPhoneId: string): void;
-}
-
-class PhonesEditor extends React.Component<PhonesEditorProps & PhonesEditorDispatchProps> {
+class PhonesEditor extends React.Component<PhonesEditorProps> {
   public form?: React.RefObject<any>;
 
   constructor(a, b) {
@@ -129,30 +142,34 @@ class PhonesEditor extends React.Component<PhonesEditorProps & PhonesEditorDispa
     );
   }
 
-  private remove(item, index) {
+  private async remove(item, index) {
     const customer = this.props.form.values;
 
-    this.props.removePhone(customer.id, item.id);
+    await mutate({
+      mutation: removePhoneQuery,
+      variables: {
+        customerId: parseInt(customer.id, 0),
+        customerPhoneId: parseInt(item.id, 0),
+      },
+    });
 
     this.props.remove(index);
   }
 
-  private submit({ phone }) {
-    this.props.push({ phone });
+  private async submit({ phone }) {
+    const customer = this.props.form.values;
+
+    const result = await mutate({
+      mutation: createPhoneQuery,
+      variables: {
+        customerId: parseInt(customer.id, 0),
+        input: { phone },
+      },
+    });
+
+    this.props.push(result.data.result);
     this.form.current.resetForm();
   }
 }
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    removePhone: (customerId: string, customerPhoneId: string) =>
-      dispatch(actions.removePhone({ customerId, customerPhoneId })),
-  };
-}
-
-const withConnect = connect<any, PhonesEditorDispatchProps, PhonesEditorProps>(
-  (state, ownProps) => ownProps,
-  mapDispatchToProps,
-);
-
-export default withConnect(injectIntl(PhonesEditor));
+export default injectIntl(PhonesEditor);

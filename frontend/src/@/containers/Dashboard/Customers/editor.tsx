@@ -25,6 +25,7 @@ import {
 import globalMessages from "@/messages/global";
 
 import PhonesEditor from "./Editor/phones";
+import EmailsEditor from "./Editor/emails";
 import messages from "./messages";
 
 const validationSchema = yup.object().shape({
@@ -106,6 +107,10 @@ class EditorForm extends React.Component<FormProps> {
           <Box width={1 / 2}>
             <Heading mb={0}><FormattedMessage {...messages.phones} /></Heading>
             <FieldArray name="phones" component={PhonesEditor}/>
+          </Box>
+          <Box width={1 / 2}>
+            <Heading mb={0}><FormattedMessage {...messages.emails} /></Heading>
+            <FieldArray name="emails" component={EmailsEditor}/>
           </Box>
         </BoxGroup>
       </Box>

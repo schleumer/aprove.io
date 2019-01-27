@@ -1,21 +1,21 @@
-import {BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn} from "typeorm";
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Customer} from "./customer";
 
 @Entity({name: "customer_phones"})
 export class CustomerPhone extends BaseEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    public id: number;
 
     @Column()
-    customerId: number;
+    public customerId: number;
 
     @Column()
-    position: number;
+    public position: number;
 
     @Column()
-    phone: string;
+    public phone: string;
 
-    @ManyToOne(type => Customer)
+    @ManyToOne((type) => Customer)
     @JoinColumn({ name: "customer_id" })
-    customer?: Customer;
+    public customer?: Customer;
 }

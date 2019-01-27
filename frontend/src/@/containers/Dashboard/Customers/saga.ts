@@ -6,9 +6,9 @@ import { mutate, query } from "@/utils/graphql";
 
 import * as loadingActions from "@/components/core/Loading/actions";
 
-import { REMOVE_PHONE, VIEW } from "./constants";
+import { REMOVE_EMAIL, REMOVE_PHONE, VIEW } from "./constants";
 
-import { setView } from "./actions";
+import { RemoveEmailData, RemovePhoneData, setView, ViewData } from "./actions";
 
 const viewQuery = gql`
   query($id: Long!) {
@@ -40,10 +40,14 @@ const removePhoneQuery = gql`
   }
 `;
 
+const removeEmailQuery = gql`
+  mutation($customerId: Long!, $customerEmailId: Long!) {
+    result: removeCustomerEmail(customerId: $customerId, customerEmailId: $customerEmailId)
+  }
+`;
+
 interface HandleView {
-  data: {
-    id: string,
-  };
+  data: ViewData;
 }
 
 interface HandleCreatePhone {
@@ -54,21 +58,16 @@ interface HandleCreatePhone {
 
 interface HandleCreateEmail {
   data: {
-    id: string,
+    id: string;
   };
 }
 
 interface HandleRemovePhone {
-  data: {
-    customerId: string,
-    customerPhoneId: string,
-  };
+  data: RemovePhoneData;
 }
 
 interface HandleRemoveEmail {
-  data: {
-    id: string,
-  };
+  data: RemoveEmailData;
 }
 
 export function* handleView(action: HandleView) {
@@ -97,7 +96,7 @@ export function* handleCreateEmail(action: HandleCreateEmail) {
 }
 
 export function* handleRemovePhone(action: HandleRemovePhone) {
-  const { data: { customerId, customerPhoneId } }: HandleRemovePhone = action;
+  const { data: { customerId, customerPhoneId } } = action;
 
   yield call(mutate, {
     mutation: removePhoneQuery,
@@ -109,10 +108,19 @@ export function* handleRemovePhone(action: HandleRemovePhone) {
 }
 
 export function* handleRemoveEmail(action: HandleRemoveEmail) {
+  const { data: { customerId, customerEmailId } } = action;
 
+  yield call(mutate, {
+    mutation: removeEmailQuery,
+    variables: {
+      customerId: parseInt(customerId, 0),
+      customerPhoneId: parseInt(customerEmailId, 0),
+    },
+  });
 }
 
-export default function* cutomers() {
+export default function* customers() {
   yield takeEvery(VIEW, handleView);
   yield takeEvery(REMOVE_PHONE, handleRemovePhone);
+  yield takeEvery(REMOVE_EMAIL, handleRemoveEmail);
 }

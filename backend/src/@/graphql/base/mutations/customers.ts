@@ -1,22 +1,22 @@
 import {GraphQLBoolean, GraphQLInputObjectType, GraphQLString} from "graphql";
 
-import LongType from '@/graphql/shared/scalars/long';
-import {Search as CustomersSearch} from '@/graphql/base/queries/customers';
-import {Customer, CustomerPhone, CustomerEmail} from "@/entity";
+import {Customer, CustomerEmail, CustomerPhone} from "@/entity";
+import {Search as CustomersSearch} from "@/graphql/base/queries/customers";
+import LongType from "@/graphql/shared/scalars/long";
+import auth from "@/helpers/auth";
 import {nonNull} from "@/helpers/graphql/dsl";
-import auth from '@/helpers/auth'
 
-import ajv from '@/helpers/ajv'
+import ajv from "@/helpers/ajv";
 
 import {
-    CustomerType,
-    CustomerStatus,
     CustomerEmail as CustomerEmailType,
-    CustomerPhone as CustomerPhoneType
+    CustomerPhone as CustomerPhoneType,
+    CustomerStatus,
+    CustomerType,
 } from "@/graphql/shared/types/customer";
 
 const UpdateCustomerInput = new GraphQLInputObjectType({
-    name: 'UpdateCustomerInput',
+    name: "UpdateCustomerInput",
     fields: {
         id: {type: nonNull(LongType)},
         type: {type: nonNull(CustomerType)},
@@ -31,162 +31,166 @@ const UpdateCustomerInput = new GraphQLInputObjectType({
         city: {type: GraphQLString},
         zipcode: {type: GraphQLString},
         state: {type: GraphQLString},
-    }
-})
+    },
+});
 
 const CreateCustomerPhoneInput = new GraphQLInputObjectType({
-    name: 'CreateCustomerPhoneInput',
+    name: "CreateCustomerPhoneInput",
     fields: {
         phone: {type: nonNull(GraphQLString)},
-    }
-})
+    },
+});
 
 const createCustomerPhoneSchema = ajv.compile({
     $async: true,
     properties: {
         phone: {
-            type: 'string',
-            pattern: '[0-9\\*]+'
-        }
-    }
-})
+            type: "string",
+            pattern: "[0-9\\*]+",
+        },
+    },
+});
 
 const CreateCustomerEmailInput = new GraphQLInputObjectType({
-    name: 'CreateCustomerEmailInput',
+    name: "CreateCustomerEmailInput",
     fields: {
         email: {type: nonNull(GraphQLString)},
-    }
-})
+    },
+});
 
 const createCustomerEmailSchema = ajv.compile({
     $async: true,
     properties: {
         email: {
-            type: 'string',
-            format: 'email'
-        }
-    }
-})
+            type: "string",
+            format: "email",
+        },
+    },
+});
 
 export default async () => {
-    const CustomersSearchType = await CustomersSearch()
-    const qb = Customer.getRepository().createQueryBuilder()
-    const phonesQb = CustomerPhone.getRepository().createQueryBuilder()
-    const emailsQb = CustomerEmail.getRepository().createQueryBuilder()
+    const CustomersSearchType = await CustomersSearch();
+    const qb = Customer.getRepository().createQueryBuilder();
+    const phonesQb = CustomerPhone.getRepository().createQueryBuilder();
+    const emailsQb = CustomerEmail.getRepository().createQueryBuilder();
 
     const getCustomer = async (instanceId: number, id: number): Promise<Customer> => await qb
         .select()
-        .where('id = :id AND instance_id = :instance', {id, instance: instanceId})
-        .getOne()
+        .where("id = :id AND instance_id = :instance", {id, instance: instanceId})
+        .getOne();
 
     return {
         createCustomerPhone: auth({
             type: CustomerPhoneType,
             args: {
                 customerId: {type: nonNull(LongType)},
-                input: {type: CreateCustomerPhoneInput}
+                input: {type: CreateCustomerPhoneInput},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session()
-                const customer = await getCustomer(instance.id, args.customerId)
+                const { instance } = await ctx.session();
+                const customer = await getCustomer(instance.id, args.customerId);
 
-                const { phone } = await createCustomerPhoneSchema(args.input)
+                const { phone } = await createCustomerPhoneSchema(args.input);
 
-                return await CustomerPhone.create({
+                const result = await CustomerPhone.create({
                     phone,
-                    customer
-                }).save()
-            }
+                    customer,
+                }).save();
+
+                return CustomerPhone.findOne(result.id);
+            },
         }),
         createCustomerEmail: auth({
             type: CustomerEmailType,
             args: {
                 customerId: {type: nonNull(LongType)},
-                input: {type: CreateCustomerEmailInput}
+                input: {type: CreateCustomerEmailInput},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session()
+                const { instance } = await ctx.session();
 
-                const customer = await getCustomer(instance.id, args.customerId)
+                const customer = await getCustomer(instance.id, args.customerId);
 
-                const { email } = await createCustomerEmailSchema(args.input)
+                const { email } = await createCustomerEmailSchema(args.input);
 
-                return await CustomerEmail.create({
+                const result = await CustomerEmail.create({
                     email,
-                    customer
-                }).save()
-            }
+                    customer,
+                }).save();
+
+                return CustomerEmail.findOne(result.id);
+            },
         }),
         removeCustomerPhone: auth({
             type: GraphQLBoolean,
             args: {
                 customerId: {type: LongType},
-                customerPhoneId: {type: LongType}
+                customerPhoneId: {type: LongType},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session()
+                const { instance } = await ctx.session();
 
                 const customer = await qb
                     .select()
-                    .where('id = :id AND instance_id = :instance', {id: args.customerId, instance: instance.id})
-                    .getOne()
+                    .where("id = :id AND instance_id = :instance", {id: args.customerId, instance: instance.id})
+                    .getOne();
 
                 if (customer === undefined) {
-                    throw new Error("[ERR8] Not found")
+                    throw new Error("[ERR8] Not found");
                 }
 
                 await phonesQb
                     .delete()
-                    .where('id = :id', {id: args.customerPhoneId, customerId: customer.id})
-                    .execute()
+                    .where("id = :id", {id: args.customerPhoneId, customerId: customer.id})
+                    .execute();
 
-                return true
-            }
+                return true;
+            },
         }),
         removeCustomerEmail: auth({
             type: GraphQLBoolean,
             args: {
                 customerId: {type: LongType},
-                customerEmailId: {type: LongType}
+                customerEmailId: {type: LongType},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session()
+                const { instance } = await ctx.session();
 
                 const customer = await qb
                     .select()
-                    .where('id = :id AND instance_id = :instance', {id: args.customerId, instance: instance.id})
-                    .getOne()
+                    .where("id = :id AND instance_id = :instance", {id: args.customerId, instance: instance.id})
+                    .getOne();
 
                 if (customer === undefined) {
-                    throw new Error("[ERR9] Not found")
+                    throw new Error("[ERR9] Not found");
                 }
 
                 await emailsQb
                     .delete()
-                    .where('id = :id', {id: args.customerEmailId, customerId: customer.id})
-                    .execute()
+                    .where("id = :id", {id: args.customerEmailId, customerId: customer.id})
+                    .execute();
 
-                return true
-            }
+                return true;
+            },
         }),
         updateCustomer: auth({
             type: CustomersSearchType.ItemType,
             args: {
-                input: {type: UpdateCustomerInput}
+                input: {type: UpdateCustomerInput},
             },
             async resolve(source, args, ctx, info) {
-                const { instance } = await ctx.session()
+                const { instance } = await ctx.session();
 
-                const input = args.input
+                const input = args.input;
 
                 await qb
                     .update()
-                    .set({...input, updatedAt: new Date})
-                    .where('id = :id AND instance_id = :instance', {id: input.id, instance: instance.id})
-                    .execute()
+                    .set({...input, updatedAt: new Date()})
+                    .where("id = :id AND instance_id = :instance", {id: input.id, instance: instance.id})
+                    .execute();
 
-                return await Customer.findOne(input.id)
-            }
-        })
-    }
-}
+                return await Customer.findOne(input.id);
+            },
+        }),
+    };
+};
