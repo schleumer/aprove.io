@@ -14,6 +14,7 @@ import { FormattedMessage, InjectedIntl, injectIntl } from "react-intl";
 interface Props extends types.Box, FieldProps {
   fieldId: number;
   debugId: boolean;
+  isClearable: boolean;
   label: string | FormattedMessage.MessageDescriptor;
   placeholder: string | FormattedMessage.MessageDescriptor;
   intl: InjectedIntl;
@@ -21,6 +22,10 @@ interface Props extends types.Box, FieldProps {
 interface State {}
 
 class SelectInput extends React.PureComponent<Props, State> {
+  public static defaultProps = {
+    isClearable: true,
+  };
+
   public id = memoize((actualId) => genid("select-input", actualId));
 
   public render() {

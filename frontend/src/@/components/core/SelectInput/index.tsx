@@ -154,6 +154,7 @@ interface Props extends FieldProps {
   options: Adapter;
   theme: Theme;
   id: any;
+  isClearable: boolean;
 }
 
 interface State {
@@ -305,7 +306,7 @@ class SelectInput extends React.Component<Props, State> {
   public render() {
     const portalDOM = document.getElementById("portal-target");
 
-    const { field, options, theme, id } = this.props;
+    const { field, options, theme, id, isClearable } = this.props;
 
     const { option, loading } = this.state;
 
@@ -322,7 +323,7 @@ class SelectInput extends React.Component<Props, State> {
           onBlur={this.onBlur}
           value={loading ? null : option}
           inputId={id}
-          isClearable={true}
+          isClearable={isClearable}
           isSearchable={!loading}
           menuPortalTarget={portalDOM}
           isLoading={loading}

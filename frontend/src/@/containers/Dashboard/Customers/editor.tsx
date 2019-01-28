@@ -1,10 +1,6 @@
 import { FastField, FieldArray, Formik, FormikProps } from "formik";
-import gql from "graphql-tag";
-import R from "ramda";
 import React from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import * as yup from "yup";
 
 import {
@@ -18,66 +14,26 @@ import {
 } from "@/components/core";
 import { ArrayOptions } from "@/components/core/SelectInput/adapter";
 import {
-  Channel,
   Form,
   SelectInput,
   TextAreaInput,
   TextInput,
 } from "@/components/formik";
 import globalMessages from "@/messages/global";
-
 import { mutate } from "@/utils/graphql";
+
 import EmailsEditor from "./Editor/emails";
 import PhonesEditor from "./Editor/phones";
+import { updateQuery } from "./graphql";
 import messages from "./messages";
-
-const viewFragment = gql`
-  fragment ViewFragment on CustomersItem {
-    id
-    code
-    name
-    notes
-    status
-    type
-    document
-    phones {
-      id
-      position
-      phone
-    }
-    emails {
-      id
-      position
-      email
-    }
-  }
-`;
-
-const viewQuery = gql`
-  ${viewFragment}
-
-  query($id: Long!) {
-    result: customer(id: $id) {
-      ...ViewFragment
-    }
-  }
-`;
-
-const updateQuery = gql`
-  ${viewFragment}
-
-  mutation($input: UpdateCustomerInput!) {
-    result: updateCustomer(input: $input) {
-      ...ViewFragment
-    }
-  }
-`;
 
 const validationSchema = yup.object().shape({
   id: yup.number().required(),
   name: yup.string().required(),
-  status: yup.string(),
-  type: yup.string(),
+  status: yup.string()
+    .required("#required"),
+  type: yup.string()
+    .required("#required"),
   notes: yup.string(),
 }).noUnknown();
 
@@ -116,6 +72,7 @@ class EditorForm extends React.Component<FormProps> {
                 <FastField
                   label={messages.status}
                   component={SelectInput}
+                  isClearable={false}
                   options={options.statuses}
                   name="status"
                 />
@@ -126,6 +83,7 @@ class EditorForm extends React.Component<FormProps> {
                 <FastField
                   label={messages.type}
                   component={SelectInput}
+                  isClearable={false}
                   options={options.types}
                   name="type"
                 />
@@ -169,7 +127,7 @@ class EditorForm extends React.Component<FormProps> {
 
 interface Props extends InjectedIntlProps {
   data: any;
-  isSubmitting: (_: boolean) => void;
+  onChange(newValue: any): void;
 }
 
 const initialValues = (base: any): any => {
@@ -195,16 +153,23 @@ class Editor extends React.Component<Props> {
   }
 
   public async submit(values) {
-    const customer = await validationSchema.validate(values);
+    try {
+      const customer = await validationSchema.validate(values);
 
-    const result = await mutate({
-      mutation: updateQuery,
-      variables: {
-        input: customer,
-      },
-    });
+      const response = await mutate({
+        mutation: updateQuery,
+        variables: {
+          input: customer,
+        },
+      });
 
-    console.log(result);
+      // should not be after onChange.
+      this.form.current.setSubmitting(false);
+
+      this.props.onChange(response.data.result);
+    } catch (err) {
+      this.form.current.setSubmitting(false);
+    }
   }
 
   public render() {
@@ -217,37 +182,20 @@ class Editor extends React.Component<Props> {
 
     return (
       <React.Fragment>
-        <Channel name="customers/editor">
-          <Formik
-            ref={this.form}
-            validationSchema={validationSchema}
-            initialValues={initialValues(data)}
-            onSubmit={this.submit}
-            render={(props) => {
-              return <EditorForm
-                options={intlOptions}
-                {...props} />;
-            }}
-            validateOnChange={false}
-          />
-        </Channel>
+        <Formik
+          ref={this.form}
+          validationSchema={validationSchema}
+          initialValues={initialValues(data)}
+          onSubmit={this.submit}
+          render={(props) => {
+            return <EditorForm
+              options={intlOptions}
+              {...props} />;
+          }}
+          validateOnChange={false}
+        />
       </React.Fragment>
     );
   }
 }
-
-export function mapDispatchToProps(dispatch) {
-  return {
-    isSubmitting: (state) =>
-      dispatch(Channel.actions.isSubmitting("customers/editor", state)),
-  };
-}
-
-const mapStateToProps = createStructuredSelector({});
-
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-);
-
-export default withConnect(injectIntl(Editor));
+export default injectIntl(Editor);

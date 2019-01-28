@@ -19,10 +19,10 @@ const UpdateCustomerInput = new GraphQLInputObjectType({
     name: "UpdateCustomerInput",
     fields: {
         id: {type: nonNull(LongType)},
-        type: {type: nonNull(CustomerType)},
+        type: {type: CustomerType},
         status: {type: nonNull(CustomerStatus)},
         name: {type: nonNull(GraphQLString)},
-        notes: {type: nonNull(GraphQLString)},
+        notes: {type: GraphQLString},
 
         document: {type: GraphQLString},
         streetName: {type: GraphQLString},
@@ -71,11 +71,11 @@ const createCustomerEmailSchema = ajv.compile({
 
 export default async () => {
     const CustomersSearchType = await CustomersSearch();
-    const qb = Customer.getRepository().createQueryBuilder();
-    const phonesQb = CustomerPhone.getRepository().createQueryBuilder();
-    const emailsQb = CustomerEmail.getRepository().createQueryBuilder();
+    const qb = () => Customer.getRepository().createQueryBuilder();
+    const phonesQb = () => CustomerPhone.getRepository().createQueryBuilder();
+    const emailsQb = () => CustomerEmail.getRepository().createQueryBuilder();
 
-    const getCustomer = async (instanceId: number, id: number): Promise<Customer> => await qb
+    const getCustomer = async (instanceId: number, id: number): Promise<Customer> => await qb()
         .select()
         .where("id = :id AND instance_id = :instance", {id, instance: instanceId})
         .getOne();
@@ -131,7 +131,7 @@ export default async () => {
             async resolve(source, args, ctx, info) {
                 const {instance} = await ctx.session();
 
-                const customer = await qb
+                const customer = await qb()
                     .select()
                     .where("id = :id AND instance_id = :instance", {id: args.customerId, instance: instance.id})
                     .getOne();
@@ -140,7 +140,7 @@ export default async () => {
                     throw new Error("[ERR8] Not found");
                 }
 
-                await phonesQb
+                await phonesQb()
                     .delete()
                     .where("id = :id", {id: args.customerPhoneId, customerId: customer.id})
                     .execute();
@@ -157,7 +157,7 @@ export default async () => {
             async resolve(source, args, ctx, info) {
                 const {instance} = await ctx.session();
 
-                const customer = await qb
+                const customer = await qb()
                     .select()
                     .where("id = :id AND instance_id = :instance", {id: args.customerId, instance: instance.id})
                     .getOne();
@@ -166,7 +166,7 @@ export default async () => {
                     throw new Error("[ERR9] Not found");
                 }
 
-                await emailsQb
+                await emailsQb()
                     .delete()
                     .where("id = :id", {id: args.customerEmailId, customerId: customer.id})
                     .execute();
@@ -184,7 +184,7 @@ export default async () => {
 
                 const input = args.input;
 
-                await qb
+                await qb()
                     .update()
                     .set({...input, updatedAt: new Date()})
                     .where("id = :id AND instance_id = :instance", {id: input.id, instance: instance.id})

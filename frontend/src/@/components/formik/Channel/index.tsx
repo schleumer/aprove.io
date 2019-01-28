@@ -32,8 +32,6 @@ class Channel extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    console.log(this);
-
     if (!this.props.name) {
       console.error("Invalid <Channel />, name is required.");
       return;
