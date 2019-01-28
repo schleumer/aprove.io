@@ -1,5 +1,4 @@
 import { translateSize } from "@/components/styled/system";
-import { FieldProps } from "formik";
 import R from "ramda";
 import React from "react";
 import { InjectedIntlProps, injectIntl } from "react-intl";
@@ -144,7 +143,7 @@ StyledTextInputBase.defaultProps = {
   borderColor: "gray",
 };
 
-interface Props extends FieldProps, InjectedIntlProps {
+interface Props extends InjectedIntlProps {
   placeholder: string | FormattedMessage.MessageDescriptor;
   label: string | FormattedMessage.MessageDescriptor;
   value: string;
@@ -235,7 +234,7 @@ class StyledTextInput extends React.Component<Props, State> {
       <StyledTextInputBase
         readOnly
         ref={this.input}
-        value={props.value ? this.props.intl.formatDate(props.value) : ''}
+        value={props.value ? this.props.intl.formatDate(props.value) : ""}
         onFocus={this.focused}
         onClick={() => this.showDropdown()}
         {...newFilteredProps} />

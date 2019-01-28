@@ -53,7 +53,6 @@ interface ScrollContainerInfo extends ElementRect {
 
 interface ListenerProps {
   forwardedRef: React.Ref<any>;
-  ctx: ScrollContext;
 }
 
 interface ListenerState {
@@ -87,6 +86,10 @@ export const listenToScroll = <P, S>(
   WrappedComponent: React.ComponentType<P & { children?: React.ReactNode } & InjectedScrollProps>,
 ): React.ComponentClass<Pick<P, Exclude<keyof P, keyof InjectedScrollProps>>> => {
   class Listener extends React.Component<P & ListenerProps, ListenerState> {
+    public static contextType = Context;
+
+    public context!: React.ContextType<typeof Context>;
+
     public state = {
       rect: null,
       id: null,
@@ -104,17 +107,17 @@ export const listenToScroll = <P, S>(
     }
 
     public componentDidMount(): void {
-      this.props.ctx.bus.addListener("scroll", this.scrolled);
+      this.context.bus.addListener("scroll", this.scrolled);
 
       this.updateContainerRect();
     }
 
     public componentWillUnmount(): void {
-      this.props.ctx.bus.removeListener("scroll", this.scrolled);
+      this.context.bus.removeListener("scroll", this.scrolled);
     }
 
     public updateContainerRect() {
-      const { ctx } = this.props;
+      const ctx = this.context;
 
       if (!ctx.enabled) {
         return;
@@ -122,19 +125,18 @@ export const listenToScroll = <P, S>(
 
       const rect = ctx.getMyInfo();
 
+      // tslint:disable-next-line:max-line-length
       const id = `${nanoid()}-${rect.left}x${rect.top}:${rect.width}x${rect.height}:${rect.scrollLeft}x${rect.scrollTop}`;
 
       this.setState({ rect, id });
     }
 
     public getRect(el: HTMLElement): ElementRect {
-      const { ctx } = this.props;
-
-      return ctx.getRect(el);
+      return this.context.getRect(el);
     }
 
     public render() {
-      const { ctx } = this.props;
+      const ctx = this.context;
 
       if (this.state.rect) {
         return (
@@ -154,11 +156,7 @@ export const listenToScroll = <P, S>(
   }
 
   const Enhance = React.forwardRef((props: P, ref) => {
-    return (
-      <Context.Consumer>
-        {(ctx) => <Listener ctx={ctx} forwardedRef={ref} {...props} />}
-      </Context.Consumer>
-    );
+    return <Listener forwardedRef={ref} {...props} />;
   });
 
   return hoistNonReactStatic(Enhance, WrappedComponent);
