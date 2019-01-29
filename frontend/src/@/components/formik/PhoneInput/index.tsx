@@ -23,10 +23,31 @@ interface State {}
 class PhoneInput extends React.PureComponent<Props, State> {
   public id = memoize((actualId) => genid("text-input", actualId));
 
-  public render() {
-    const { fieldId, debugId, intl, ...props } = this.props;
+  constructor(props) {
+    super(props);
 
-    invariant(props.field, "Must be on Formik <Field/> or <FastField/>");
+    this.changed = this.changed.bind(this);
+    this.blurred = this.blurred.bind(this);
+  }
+
+  public changed(value) {
+    const { name } = this.props.field;
+    const { setFieldValue } = this.props.form;
+
+    setFieldValue(name, value);
+  }
+
+  public blurred() {
+    const { name } = this.props.field;
+    const { handleBlur } = this.props.form;
+
+    handleBlur(name);
+  }
+
+  public render() {
+    const { fieldId, debugId, intl, field,  ...props } = this.props;
+
+    invariant(field, "Must be on Formik <Field/> or <FastField/>");
 
     const id = this.id(fieldId);
 
@@ -58,8 +79,8 @@ class PhoneInput extends React.PureComponent<Props, State> {
     return (
       <div>
         {labelComponent}
-        <BasePhoneInput id={id} {...newProps.field} {...newProps} />
-        <ErrorBag mt={1} field={props.field.name} />
+        <BasePhoneInput id={id} onBlur={this.blurred} onChange={this.changed} value={field.value} {...newProps} />
+        <ErrorBag mt={1} field={field.name} />
       </div>
     );
   }

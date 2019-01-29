@@ -1,5 +1,4 @@
 import { translateSize } from "@/components/styled/system";
-import { FieldProps } from "formik";
 import PropTypes from "prop-types";
 import R from "ramda";
 import React from "react";
@@ -314,7 +313,10 @@ const InputWrapper = styled(StyledInputBase)`
   }
 `;
 
-interface StyledInputProps extends FieldProps {
+interface StyledInputProps {
+  onChange?: (value?: string) => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
   placeholder: string | FormattedMessage.MessageDescriptor;
   label: string | FormattedMessage.MessageDescriptor;
   value: string;
@@ -355,21 +357,31 @@ class StyledInput extends React.Component<StyledInputProps, StyledInputState> {
   }
 
   public onChange(value) {
-    const { field, form } = this.props;
-
     if (R.isNil(value) || R.isEmpty(value)) {
-      form.setFieldValue(field.name, null);
+      if (this.props.onChange) {
+        this.props.onChange(null);
+      }
     } else {
-      form.setFieldValue(field.name, value);
+      if (this.props.onChange) {
+        this.props.onChange(value);
+      }
     }
   }
 
   public onFocus() {
     this.setState({ focused: true });
+
+    if (this.props.onBlur) {
+      this.props.onBlur();
+    }
   }
 
   public onBlur() {
     this.setState({ focused: false });
+
+    if (this.props.onBlur) {
+      this.props.onBlur();
+    }
   }
 
   public render() {

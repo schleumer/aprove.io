@@ -1,6 +1,5 @@
 import messages from "@/messages/calendar";
 import styled from "@emotion/styled";
-import { FieldProps } from "formik";
 import * as Luxon from "luxon";
 import R from "ramda";
 import React from "react";
@@ -304,8 +303,8 @@ const getMonths = (reference: string | null, today: Luxon.DateTime, visibleMonth
   return months;
 };
 
-export interface Props extends FieldProps {
-  onPick?: (value: string | null) => void,
+export interface Props {
+  onChange?: (value: string | null) => void;
   value?: string;
   visibleMonths?: number;
 }
@@ -377,21 +376,15 @@ class DatePicker extends React.Component<Props, State> {
   }
 
   public pick(day: DayValue, week: WeekValue, month: MonthValue) {
-    const { field, form } = this.props;
-
     const value = (day && day.value) || null;
 
     if (R.isNil(value)) {
-      form.setFieldValue(field.name, null);
+      this.props.onChange(null);
     } else {
-      form.setFieldValue(field.name, value);
+      this.props.onChange(value);
     }
 
     this.setState({ reference: value });
-
-    if (this.props.onPick) {
-      this.props.onPick(value);
-    }
   }
 
   public minus(duration: Luxon.Duration | number | Luxon.DurationObject) {
