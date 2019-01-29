@@ -1,0 +1,80 @@
+.headerRow {
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.headerTruncatedText {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.headerColumn,
+.rowColumn {
+  text-transform: none;
+  font-size: 12px;
+  margin-right: 10px;
+  min-width: 0;
+}
+
+.rowColumn {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerColumn:first-of-type,
+.rowColumn:first-of-type {
+  margin-left: 10px;
+}
+.sortableHeaderColumn {
+  cursor: pointer;
+}
+
+.sortableHeaderIconContainer {
+  display: flex;
+  align-items: center;
+}
+.sortableHeaderIcon {
+  flex: 0 0 24px;
+  height: 1em;
+  width: 1em;
+  fill: currentColor;
+}
+
+.Table {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.headerRow,
+.evenRow,
+.oddRow {
+  border-bottom: 1px solid #e0e0e0;
+}
+.oddRow {
+  background-color: #fafafa;
+}
+
+.noRows {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  color: #bdbdbd;
+  padding: 40px;
+}
