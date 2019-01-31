@@ -5,28 +5,29 @@ import produce from "immer";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
+import { FormattedMessage } from "react-intl";
+import * as yup from "yup";
 
 import {
-  Box,
   BoxGroup,
   Button,
   ButtonOutline,
   Icon,
   Padding,
+} from "@b6y/ui/core";
+import search from "@b6y/ui/core/Search";
+import Tooltip from "@b6y/ui/core/Tooltip";
+import { TextInput } from "@b6y/ui/formik";
+import Channel from "@b6y/ui/formik/Channel";
+import {
   RouterButtonOutline,
-} from "@/components/core";
+} from "@b6y/ui/router";
+import { Box } from "@b6y/ui/styled";
+
 import {
   PageBody,
   PageTitle,
 } from "@/components/elite";
-
-import search from "@/components/core/Search";
-import Tooltip from "@/components/core/Tooltip";
-import { TextInput } from "@/components/formik";
-import Channel from "@/components/formik/Channel";
-
-import { FormattedMessage } from "react-intl";
-import * as yup from "yup";
 
 import breadcrumbs from "./breadcrumbs";
 

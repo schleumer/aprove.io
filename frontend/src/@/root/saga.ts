@@ -13,7 +13,7 @@ import history from "@/history";
 
 import { mutate, query, upgradeErrors } from "@/utils/graphql";
 
-import * as loadingActions from "@/components/core/Loading/actions";
+import * as loadingActions from "@b6y/ui/core/Loading/actions";
 
 import {
   AUTHENTICATE,

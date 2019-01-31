@@ -4,9 +4,11 @@ import styled from "@emotion/styled";
 
 import NotFound from "@/containers/NotFound/Loadable";
 
-import { Box, Flex, RouterLink } from "@/components/core";
+import { Box, Flex } from "@b6y/ui/styled";
 
-import { getSpace } from "@/components/styled/system";
+import { RouterLink } from "@b6y/ui/router";
+
+import { getSpace } from "@b6y/ui/styled/system";
 
 import PropTypes from "prop-types";
 import { FormattedMessage } from "react-intl";
@@ -21,8 +23,8 @@ import { theme } from "styled-tools";
 import { makeSelectAuth } from "@/root/selectors";
 import injectReducer from "@/utils/injectReducer";
 
-import Icon from "@/components/core/Icon";
-import Tooltip from "@/components/core/Tooltip";
+import Icon from "@b6y/ui/core/Icon";
+import Tooltip from "@b6y/ui/core/Tooltip";
 
 import reducer from "./reducer";
 

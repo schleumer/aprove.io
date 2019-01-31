@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import { Box } from "@/components/styled";
+import { Box } from "@b6y/ui/styled";
 
 const PageBody = styled(Box)``;
 

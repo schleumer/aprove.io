@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import { Box, Flex } from "@/components/core";
+import { Box, Flex } from "@b6y/ui/core";
 import { PageTitle } from "@/components/elite";
 import { createStructuredSelector } from "reselect";
 

@@ -1,6 +1,6 @@
-import { genTypes } from "./@/components/styled/system";
+import { genTypes } from "./@b6y/ui/styled/system";
 
-// import y = require('./@/components/styled');
+// import y = require('./@b6y/ui/styled');
 // console.log(y.Box.propTypes);
 
 genTypes();

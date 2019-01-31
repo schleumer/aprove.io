@@ -135,7 +135,6 @@
     "reflect-metadata": "^0.1.13",
     "reselect": "4.0.0",
     "sanitize.css": "8.0.0",
-    "string": "^3.3.3",
     "styled-tools": "^1.7.1",
     "ts-optchain": "^0.1.2",
     "warning": "4.0.2",

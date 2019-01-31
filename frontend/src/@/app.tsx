@@ -30,7 +30,7 @@ import App from "@/root";
 // Import Language Provider
 import LanguageProvider from "@/containers/LanguageProvider";
 
-import FocusStealProvider from "@/components/core/FocusSteal/provider";
+import FocusStealProvider from "@b6y/ui/core/FocusSteal/provider";
 
 // Load the favicon and the .htaccess file
 import "!file-loader?name=[name].[ext]!./images/favicon.ico";

@@ -11,14 +11,14 @@ import {
   Icon,
   Padding,
   RouterButtonTransparent,
-} from "@/components/core";
-import { ArrayOptions } from "@/components/core/SelectInput/adapter";
+} from "@b6y/ui/core";
+import { ArrayOptions } from "@b6y/ui/core/SelectInput/adapter";
 import {
   Form,
   SelectInput,
   TextAreaInput,
   TextInput,
-} from "@/components/formik";
+} from "@b6y/ui/formik";
 import globalMessages from "@/messages/global";
 import { mutate } from "@/utils/graphql";
 

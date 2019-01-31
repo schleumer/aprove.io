@@ -16,8 +16,8 @@ import {
   TableColumn,
   TableRow,
   Tooltip,
-} from "@/components/core";
-import { Form, PhoneInput } from "@/components/formik";
+} from "@b6y/ui/core";
+import { Form, PhoneInput } from "@b6y/ui/formik";
 import { mutate } from "@/utils/graphql";
 
 import messages from "../messages";

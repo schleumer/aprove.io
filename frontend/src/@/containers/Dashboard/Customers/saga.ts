@@ -1,6 +1,6 @@
 import { call, put, takeEvery } from "redux-saga/effects";
 
-import * as loadingActions from "@/components/core/Loading/actions";
+import * as loadingActions from "@b6y/ui/core/Loading/actions";
 import { query } from "@/utils/graphql";
 
 import { setView, ViewData } from "./actions";

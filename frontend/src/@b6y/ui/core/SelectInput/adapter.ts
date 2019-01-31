@@ -1,8 +1,8 @@
 import { client } from "@/utils";
+import { latinise } from "@b6y/commons";
 import R from "ramda";
 import React from "react";
 import { FormattedMessage, InjectedIntl } from "react-intl";
-import S from "string";
 
 interface OptionType {
   label: string | FormattedMessage.MessageDescriptor;
@@ -171,7 +171,7 @@ export class ArrayOptions extends Adapter {
 
     this.options = options.map((o) => {
       if (!R.is(Object, o.label)) {
-        return { ...o, text: S(o.label).latinise().s };
+        return { ...o, text: latinise(o.label as string) };
       } else {
         return { ...o, text: "NOT_TRANSLATED" };
       }
@@ -181,10 +181,10 @@ export class ArrayOptions extends Adapter {
   public intl(intl: InjectedIntl) {
     const translatedOptions = this.options.map((o) => {
       if (!R.is(Object, o.label)) {
-        return { ...o, text: S(o.label).latinise().s };
+        return { ...o, text: latinise(o.label as string) };
       } else {
         const label = intl.formatMessage(o.label as FormattedMessage.MessageDescriptor);
-        return { ...o, label, text: S(label).latinise().s };
+        return { ...o, label, text: latinise(label) };
       }
     });
     return new ArrayOptions(translatedOptions);
@@ -195,7 +195,7 @@ export class ArrayOptions extends Adapter {
       if (R.isNil(input) || input === "") {
         resolve(this.options);
       } else {
-        const text = S(input).latinise().s;
+        const text = latinise(input);
         resolve(
           this.options.filter((o) => o.text.includes(text)),
         );

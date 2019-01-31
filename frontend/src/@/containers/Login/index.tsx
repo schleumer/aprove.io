@@ -13,13 +13,13 @@ import * as actions from "@/root/actions";
 import { makeSelectAuth } from "@/root/selectors";
 import { AuthState } from "@/root/types";
 
-import { Box, Button, Flex, Label } from "@/components/core";
+import { Box, Button, Flex, Label } from "@b6y/ui/core";
 
 import { FastField, Form, Formik } from "formik";
 
 import * as yup from "yup";
 
-import { ErrorBag, TextInput } from "@/components/formik";
+import { ErrorBag, TextInput } from "@b6y/ui/formik";
 
 import loginBg from "@/images/bg.jpg";
 

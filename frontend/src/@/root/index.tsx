@@ -15,14 +15,14 @@ import Login from "@/containers/Login/Loadable";
 import Logout from "@/containers/Logout/Loadable";
 import NotFound from "@/containers/NotFound/Loadable";
 
-import { Box, Container, Flex, ProtectedRoute } from "@/components/core";
+import { Box, Container, Flex, ProtectedRoute } from "@b6y/ui/core";
 
 import { Root as Dashboard } from "@/containers/Dashboard";
 
 import { makeSelectAuth, makeSelectLoading } from "@/root/selectors";
 
-import Loading from "@/components/core/Loading";
-import { RootScrollController } from "@/components/core/ScrollController";
+import Loading from "@b6y/ui/core/Loading";
+import { RootScrollController } from "@b6y/ui/core/ScrollController";
 
 import * as actions from "./actions";
 import saga from "./saga";

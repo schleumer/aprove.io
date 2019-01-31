@@ -1,10 +1,10 @@
-import { getValue, translateSize } from "../../styled/system";
-import Theme from "../../types/theme";
 import { withTheme } from "emotion-theming";
 import { FieldProps } from "formik";
 import R from "ramda";
 import React from "react";
 import AsyncSelect from "react-select/lib/Async";
+import { getValue, translateSize } from "../../styled/system";
+import Theme from "../../types/theme";
 import { Adapter } from "./adapter";
 
 import * as emotion from "emotion";

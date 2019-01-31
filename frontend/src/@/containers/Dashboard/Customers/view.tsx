@@ -7,7 +7,7 @@ import {
 } from "reselect";
 import { FormattedMessage } from "react-intl";
 
-import { Loading } from "@/components/core";
+import { Loading } from "@b6y/ui/core";
 import { PageBody, PageTitle } from "@/components/elite";
 import { makeSelectAuth } from "@/root/selectors";
 

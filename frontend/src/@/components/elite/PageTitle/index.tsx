@@ -3,12 +3,12 @@ import React from "react";
 import { FormattedMessage } from "react-intl";
 import { theme } from "styled-tools";
 
-import { getSpace } from "@/components/styled/system";
+import { getSpace } from "@b6y/ui/styled/system";
 
-import { Box, Flex } from "@/components/styled";
+import { Box, Flex } from "@b6y/ui/styled";
 
-import Icon from "@/components/core/Icon";
-import RouterLink from "@/components/core/RouterLink";
+import Icon from "@b6y/ui/core/Icon";
+import RouterLink from "@b6y/ui/router/RouterLink";
 
 const PageTitleWrapper = styled(Flex)((props) => {
   const nSpace = getSpace(-3)(props);

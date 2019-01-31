@@ -1,7 +1,7 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 
-import { Heading } from "@/components/core";
+import { Heading } from "@b6y/ui/core";
 import messages from "./messages";
 
 export default function NotFound() {

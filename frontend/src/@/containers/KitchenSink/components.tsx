@@ -18,7 +18,7 @@ import {
   Group,
   Icon,
   TextInput,
-} from "@/components/core";
+} from "@b6y/ui/core";
 
 import {
   PageBody,
@@ -36,7 +36,7 @@ import {
   SelectInput as FormikSelectInput,
   TextAreaInput as FormikTextAreaInput,
   TextInput as FormikTextInput,
-} from "@/components/formik";
+} from "@b6y/ui/formik";
 
 import breadcrumbMessages from "@/messages/breadcrumbs";
 import { makeSelectAuth } from "@/root/selectors";
@@ -48,7 +48,7 @@ import Section from "./section";
 import { AuthState } from "@/root/types";
 import defineBreadcrumbs from "@/utils/defineBreadcrumbs";
 
-import { ArrayOptions, RemoteGraphQLOptions } from "@/components/core/SelectInput/adapter";
+import { ArrayOptions, RemoteGraphQLOptions } from "@b6y/ui/core/SelectInput/adapter";
 import gql from "graphql-tag";
 
 const customersOptions = new RemoteGraphQLOptions(

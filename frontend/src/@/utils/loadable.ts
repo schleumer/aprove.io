@@ -1,6 +1,6 @@
 import Loadable from "react-loadable";
 
-import LoadingIndicator from "@/components/core/LoadingIndicator";
+import LoadingIndicator from "@b6y/ui/core/LoadingIndicator";
 
 export default (promise) =>
   Loadable({

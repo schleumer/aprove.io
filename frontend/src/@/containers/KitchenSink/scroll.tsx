@@ -1,5 +1,5 @@
-import { Portal } from "@/components/core";
-import ScrollController from "@/components/core/ScrollController";
+import { Portal } from "@b6y/ui/core";
+import ScrollController from "@b6y/ui/core/ScrollController";
 import React from "react";
 
 interface Props {
