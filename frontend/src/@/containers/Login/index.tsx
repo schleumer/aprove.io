@@ -13,7 +13,8 @@ import * as actions from "@/root/actions";
 import { makeSelectAuth } from "@/root/selectors";
 import { AuthState } from "@/root/types";
 
-import { Box, Button, Flex, Label } from "@b6y/ui/core";
+import { Button, Label } from "@b6y/ui/core";
+import { Box, Flex } from "@b6y/ui/styled";
 
 import { FastField, Form, Formik } from "formik";
 

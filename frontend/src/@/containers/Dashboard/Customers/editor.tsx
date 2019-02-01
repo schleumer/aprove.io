@@ -3,14 +3,13 @@ import React from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
+import globalMessages from "@/messages/global";
+import { mutate } from "@/utils/graphql";
 import {
-  Box,
   BoxGroup,
   Button,
-  Heading,
   Icon,
   Padding,
-  RouterButtonTransparent,
 } from "@b6y/ui/core";
 import { ArrayOptions } from "@b6y/ui/core/SelectInput/adapter";
 import {
@@ -19,8 +18,8 @@ import {
   TextAreaInput,
   TextInput,
 } from "@b6y/ui/formik";
-import globalMessages from "@/messages/global";
-import { mutate } from "@/utils/graphql";
+import { RouterButtonTransparent } from "@b6y/ui/router";
+import { Box, Heading } from "@b6y/ui/styled";
 
 import EmailsEditor from "./Editor/emails";
 import PhonesEditor from "./Editor/phones";

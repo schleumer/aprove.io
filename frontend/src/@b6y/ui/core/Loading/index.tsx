@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 
 import LoadingIndicator from "../../core/LoadingIndicator";
-import injectReducer from "../../utils/injectReducer";
+import injectReducer from "../../redux/injectReducer";
 import * as actions from "./actions";
 import reducer from "./reducer";
 

@@ -6,7 +6,7 @@ import { createStructuredSelector } from "reselect";
 import { Helmet } from "react-helmet";
 import { Route, Switch, withRouter } from "react-router-dom";
 
-import injectSaga from "@/utils/injectSaga";
+import injectSaga from "@b6y/ui/redux/injectSaga";
 
 import styled from "@emotion/styled";
 
@@ -15,7 +15,9 @@ import Login from "@/containers/Login/Loadable";
 import Logout from "@/containers/Logout/Loadable";
 import NotFound from "@/containers/NotFound/Loadable";
 
-import { Box, Container, Flex, ProtectedRoute } from "@b6y/ui/core";
+import { ProtectedRoute } from "@/components/router";
+import { Container } from "@b6y/ui/core";
+import { Box, Flex } from "@b6y/ui/styled";
 
 import { Root as Dashboard } from "@/containers/Dashboard";
 

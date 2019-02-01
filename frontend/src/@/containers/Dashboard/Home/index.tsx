@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import { Box, Flex } from "@b6y/ui/core";
+import { Box, Flex } from "@b6y/ui/styled";
 import { PageTitle } from "@/components/elite";
 import { createStructuredSelector } from "reselect";
 
@@ -11,7 +11,7 @@ import breadcrumbMessages from "@/messages/breadcrumbs";
 import { makeSelectAuth } from "@/root/selectors";
 import { AuthState } from "@/root/types";
 import defineBreadcrumbs from "@/utils/defineBreadcrumbs";
-import injectReducer from "@/utils/injectReducer";
+import injectReducer from "@b6y/ui/redux/injectReducer";
 import reducer from "./reducer";
 
 const breadcrumbs = defineBreadcrumbs({

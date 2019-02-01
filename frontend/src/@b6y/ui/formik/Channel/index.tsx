@@ -6,7 +6,7 @@ import { createStructuredSelector } from "reselect";
 
 import * as actions from "./actions";
 import reducer from "./reducer";
-import injectReducer from "../../commons/injectReducer";
+import injectReducer from "../../redux/injectReducer";
 
 interface Props {
   name: string;

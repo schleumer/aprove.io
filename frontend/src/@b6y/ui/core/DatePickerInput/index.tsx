@@ -4,11 +4,11 @@ import React from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
 import { theme } from "styled-tools";
 
-import { FocusStealEvent } from "../../core/FocusSteal/types";
+import { FocusStealEvent } from "../FocusSteal/types";
 import { Box } from "../../styled";
 import { translateSize } from "../../styled/system";
 import FocusSteal from "../FocusSteal";
-import InlineDatePickerInput, { Props as InlineDatePickerInputProps } from "../InlineDatePickerInput";
+import InlineDatePickerInput/*, { Props as InlineDatePickerInputProps }*/ from "../InlineDatePickerInput";
 import Portal, { PortalRefType } from "../Portal";
 
 export const defaultState = {
@@ -229,11 +229,11 @@ class StyledTextInput extends React.Component<Props, State> {
       "children",
     ], props);
 
-    const fieldProps = {
-      ...R.omit<Props, string>([], props),
-      visibleMonths: 2,
-      value: props.value || "",
-    } as InlineDatePickerInputProps;
+    // const fieldProps = {
+    //   ...R.omit<Props, string>([], props),
+    //   visibleMonths: 2,
+    //   value: props.value || "",
+    // } as InlineDatePickerInputProps;
 
     const state = states[props.state || "default"];
     const newFilteredProps = { ...state, ...filteredProps };

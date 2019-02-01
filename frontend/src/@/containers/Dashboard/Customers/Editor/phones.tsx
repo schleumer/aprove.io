@@ -5,12 +5,11 @@ import { InjectedIntlProps, injectIntl } from "react-intl";
 import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
 import * as yup from "yup";
 
+import { mutate } from "@/utils/graphql";
 import {
-  Box,
   BoxGroup,
   Button,
   ButtonTransparent,
-  Flex,
   Icon,
   Table,
   TableColumn,
@@ -18,7 +17,7 @@ import {
   Tooltip,
 } from "@b6y/ui/core";
 import { Form, PhoneInput } from "@b6y/ui/formik";
-import { mutate } from "@/utils/graphql";
+import { Box, Flex } from "@b6y/ui/styled";
 
 import messages from "../messages";
 

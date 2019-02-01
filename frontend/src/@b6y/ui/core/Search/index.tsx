@@ -16,9 +16,9 @@ import { compose } from "redux";
 
 import { createStructuredSelector } from "reselect";
 
-import injectReducer from "@/utils/injectReducer";
+import injectReducer from "@b6y/ui/redux/injectReducer";
 
-import injectSaga from "@/utils/injectSaga";
+import injectSaga from "@b6y/ui/redux/injectSaga";
 
 import { makeSelectAuth } from "@/root/selectors";
 
@@ -37,7 +37,7 @@ import { BaseCellElementProps, BuiltSearchMeta, OuterProps, Props, State, TypesM
 
 import messages from "./messages";
 
-import { get } from "@/utils";
+import { get } from "@b6y/commons";
 
 import * as libphonenumber from "google-libphonenumber";
 

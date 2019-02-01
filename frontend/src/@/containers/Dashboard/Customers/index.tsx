@@ -9,7 +9,7 @@ import {
 } from "reselect";
 
 import { makeSelectAuth } from "@/root/selectors";
-import { injectReducer, injectSaga } from "@/utils";
+import { injectReducer, injectSaga } from "@b6y/ui/redux";
 
 import InstancesList from "./list";
 import reducer from "./reducer";

@@ -21,7 +21,7 @@ import { createStructuredSelector } from "reselect";
 import { theme } from "styled-tools";
 
 import { makeSelectAuth } from "@/root/selectors";
-import injectReducer from "@/utils/injectReducer";
+import injectReducer from "@b6y/ui/redux/injectReducer";
 
 import Icon from "@b6y/ui/core/Icon";
 import Tooltip from "@b6y/ui/core/Tooltip";

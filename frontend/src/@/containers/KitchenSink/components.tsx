@@ -8,17 +8,17 @@ import * as yup from "yup";
 import { FormattedMessage } from "react-intl";
 
 import {
-  Box,
   BoxGroup,
   Button,
   ButtonOutline,
   ButtonTransparent,
   FakeTextInput,
-  Flex,
   Group,
   Icon,
   TextInput,
 } from "@b6y/ui/core";
+
+import { Box, Flex } from "@b6y/ui/styled";
 
 import {
   PageBody,
@@ -40,7 +40,7 @@ import {
 
 import breadcrumbMessages from "@/messages/breadcrumbs";
 import { makeSelectAuth } from "@/root/selectors";
-import injectReducer from "@/utils/injectReducer";
+import injectReducer from "@b6y/ui/redux/injectReducer";
 import messages from "./messages";
 import reducer from "./reducer";
 import Section from "./section";

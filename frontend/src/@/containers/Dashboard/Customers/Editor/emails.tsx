@@ -4,12 +4,11 @@ import React from "react";
 import { InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
+import { mutate } from "@/utils/graphql";
 import {
-  Box,
   BoxGroup,
   Button,
   ButtonTransparent,
-  Flex,
   Icon,
   Table,
   TableColumn,
@@ -17,7 +16,7 @@ import {
   Tooltip,
 } from "@b6y/ui/core";
 import { Form, TextInput } from "@b6y/ui/formik";
-import { mutate } from "@/utils/graphql";
+import { Box, Flex } from "@b6y/ui/styled";
 
 import messages from "../messages";
 

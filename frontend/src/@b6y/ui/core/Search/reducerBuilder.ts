@@ -2,7 +2,7 @@ import produce from "immer";
 
 import { BuiltSearch } from "./index";
 
-import { get } from "@/utils";
+import { get } from "@b6y/commons";
 import { View } from "./types";
 
 const defaultView = (): View => ({
