@@ -1,3 +1,5 @@
+import Theme, { Colors } from "../../types/theme";
+
 import { darken, lighten, transparentize } from "polished";
 import R from "ramda";
 
@@ -37,108 +39,6 @@ const baseColors = {
   teal: color("#20c997", [darkVariant, lightVariant]),
   cyan: color("#01c0c8", [darkVariant, lightVariant]),
 };
-
-interface Colors {
-  black: string;
-  alphablack: string;
-  white: string;
-  alphawhite: string;
-  darker: string;
-  alphadarker: string;
-  darken: string;
-  alphadarken: string;
-  grayer: string;
-  alphagrayer: string;
-  gray: string;
-  alphagray: string;
-  light: string;
-  alphalight: string;
-
-  blue: string;
-  alphablue: string;
-  darkblue: string;
-  lightblue: string;
-  alphalightblue: string;
-  alphadarkblue: string;
-
-  indigo: string;
-  alphaindigo: string;
-  darkindigo: string;
-  lightindigo: string;
-  alphalightindigo: string;
-  alphadarkindigo: string;
-
-  violet: string;
-  alphaviolet: string;
-  darkviolet: string;
-  lightviolet: string;
-  alphalightviolet: string;
-  alphadarkviolet: string;
-
-  fuchsia: string;
-  alphafuchsia: string;
-  darkfuchsia: string;
-  lightfuchsia: string;
-  alphalightfuchsia: string;
-  alphadarkfuchsia: string;
-
-  pink: string;
-  alphapink: string;
-  darkpink: string;
-  lightpink: string;
-  alphalightpink: string;
-  alphadarkpink: string;
-
-  red: string;
-  alphared: string;
-  darkred: string;
-  lightred: string;
-  alphalightred: string;
-  alphadarkred: string;
-
-  orange: string;
-  alphaorange: string;
-  darkorange: string;
-  lightorange: string;
-  alphalightorange: string;
-  alphadarkorange: string;
-
-  yellow: string;
-  alphayellow: string;
-  darkyellow: string;
-  lightyellow: string;
-  alphalightyellow: string;
-  alphadarkyellow: string;
-
-  lime: string;
-  alphalime: string;
-  darklime: string;
-  lightlime: string;
-  alphalightlime: string;
-  alphadarklime: string;
-
-  green: string;
-  alphagreen: string;
-  darkgreen: string;
-  lightgreen: string;
-  alphalightgreen: string;
-  alphadarkgreen: string;
-
-  teal: string;
-  alphateal: string;
-  darkteal: string;
-  lightteal: string;
-  alphalightteal: string;
-  alphadarkteal: string;
-
-  cyan: string;
-  alphacyan: string;
-  darkcyan: string;
-  lightcyan: string;
-  alphalightcyan: string;
-  alphadarkcyan: string;
-
-}
 
 const colors = R.pipe(
   R.toPairs,
@@ -233,20 +133,6 @@ export const defaults = {
   },
 };
 
-export interface Theme {
-  defaults: typeof defaults;
-  breakpoints: typeof breakpoints;
-  space: typeof space;
-  fontSizes: typeof fontSizes;
-  fontWeights: typeof fontWeights;
-  fonts: typeof fonts;
-  colors: Colors;
-  radii: typeof radii;
-  shadows: typeof shadows;
-  rectangularPaddings: typeof rectangularPaddings;
-  squarePaddings: typeof squarePaddings;
-}
-
 export default {
   defaults,
   breakpoints,
@@ -260,4 +146,4 @@ export default {
   rectangularPaddings,
   squarePaddings,
   sizes,
-};
+} as Theme;

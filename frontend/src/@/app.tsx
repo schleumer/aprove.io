@@ -1,3 +1,11 @@
+import Application from "@b6y/ui/core/Application";
+import definition from "@b6y/ui/definition";
+import rootReducer from "./root/reducer";
+
+const app = definition({
+  reducers: { global: rootReducer },
+});
+
 import "@emotion/core";
 
 /**
@@ -11,35 +19,19 @@ import "@emotion/core";
 import "@babel/polyfill";
 
 // Import all the third party stuff
-import { ConnectedRouter } from "connected-react-router";
 import FontFaceObserver from "fontfaceobserver";
 import React from "react";
 import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
 import "sanitize.css/sanitize.css";
-
-import { ThemeProvider } from "emotion-theming";
-
-import { Global } from "@emotion/core";
-
-import GlobalStyle from "@/global-styles";
 
 // Import root app
 import App from "@/root";
-
-// Import Language Provider
-import LanguageProvider from "@/containers/LanguageProvider";
-
-import FocusStealProvider from "@b6y/ui/core/FocusSteal/provider";
 
 // Load the favicon and the .htaccess file
 import "!file-loader?name=[name].[ext]!./images/favicon.ico";
 import "file-loader?name=.htaccess!./.htaccess"; // eslint-disable-line import/extensions
 
-import history from "@/history";
 import store from "@/store";
-
-import theme from "@/theme";
 
 // Import i18n messages
 import { translationMessages } from "@/i18n";
@@ -57,27 +49,14 @@ fontObserver.load().then(() => {
 const MOUNT_NODE = document.getElementById("app");
 
 // tslint:disable-next-line
-const icons = require("raw-loader!./icons/light.raw-svg");
+// const icons = require("raw-loader!./icons/light.raw-svg");
+// <div dangerouslySetInnerHTML={{ __html: icons }} id="icons-sprite" />
 
 const render = (messages) => {
   ReactDOM.render(
-    <FocusStealProvider>
-      <Global styles={GlobalStyle} />
-      <Provider store={store}>
-        <LanguageProvider messages={messages}>
-          <ConnectedRouter history={history}>
-            <ThemeProvider theme={theme}>
-              <div>
-                <div id="portal-target" />
-                <App />
-              </div>
-            </ThemeProvider>
-          </ConnectedRouter>
-        </LanguageProvider>
-      </Provider>
-      {/* eslint-disable-next-line react/no-danger */}
-      <div dangerouslySetInnerHTML={{ __html: icons }} id="icons-sprite" />
-    </FocusStealProvider>,
+    <Application definition={{...app, ...messages}}>
+      <App />
+    </Application>,
     MOUNT_NODE,
   );
 };

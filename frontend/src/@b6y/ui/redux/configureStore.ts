@@ -3,13 +3,13 @@
  */
 
 import { routerMiddleware } from "connected-react-router";
-import { applyMiddleware, compose, createStore } from "redux";
+import { applyMiddleware, compose, createStore, Reducer } from "redux";
 import createSagaMiddleware from "redux-saga";
-import createReducer from "./reducers";
+import reducerCreatorFactory from "./reducerCreatorFactory";
 
 const sagaMiddleware = createSagaMiddleware();
 
-export default function configureStore(initialState = {}, history) {
+export default function configureStore(initialState = {}, history, reducers: { [key: string]: Reducer }) {
   // Create the store with two middlewares
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
@@ -29,13 +29,17 @@ export default function configureStore(initialState = {}, history) {
       : compose;
   /* eslint-enable */
 
+  const rootReducerCreator = reducerCreatorFactory(history, reducers);
+
   const store: any = createStore(
-    createReducer(),
+    rootReducerCreator(),
     initialState,
     composeEnhancers(...enhancers),
   );
 
   // Extensions
+  store.history = history;
+  store.reducers = reducers;
   store.runSaga = sagaMiddleware.run;
   store.injectedReducers = {}; // Reducer registry
   store.injectedSagas = {}; // Saga registry
@@ -44,7 +48,9 @@ export default function configureStore(initialState = {}, history) {
   /* istanbul ignore next */
   if (module.hot) {
     module.hot.accept("./reducers", () => {
-      store.replaceReducer(createReducer(store.injectedReducers));
+      const rootReducerCreator = reducerCreatorFactory(history, reducers);
+
+      store.replaceReducer(rootReducerCreator(store.injectedReducers));
     });
   }
 

@@ -7,4 +7,3 @@ export const AUTHENTICATED = "aprove-io/App/Authenticated";
 export const SET_TOKEN = "aprove-io/App/SetToken";
 export const PERSIST_AUTHENTICATE = "aprove-io/App/PersistAuthenticate";
 export const GO_TO_LOGIN = "aprove-io/App/GoToLogin";
-export const DEFAULT_LOCALE = "pt";

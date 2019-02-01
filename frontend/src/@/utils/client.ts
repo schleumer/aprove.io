@@ -2,12 +2,11 @@ import "whatwg-fetch";
 
 import { InMemoryCache } from "apollo-cache-inmemory";
 import ApolloClient from "apollo-client";
+import { DefaultOptions } from "apollo-client/ApolloClient";
 import { setContext } from "apollo-link-context";
 import { createHttpLink } from "apollo-link-http";
 
 import store from "@/store";
-
-import { DefaultOptions } from "apollo-client/ApolloClient";
 
 const defaultOptions: DefaultOptions = {
   watchQuery: {

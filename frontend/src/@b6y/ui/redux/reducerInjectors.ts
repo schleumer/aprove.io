@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import { isEmpty, isFunction, isString } from "lodash";
 
-import createReducer from "@/reducers";
 import checkStore from "./checkStore";
 
 export function injectReducerFactory(store, isValid) {
@@ -22,8 +21,7 @@ export function injectReducerFactory(store, isValid) {
       return;
     }
 
-    store.injectedReducers[key] = reducer; // eslint-disable-line no-param-reassign
-    store.replaceReducer(createReducer(store.injectedReducers));
+    store.mergeReducers({ [key]: reducer });
   };
 }
 

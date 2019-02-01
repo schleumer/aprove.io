@@ -1,10 +1,8 @@
-import { DEFAULT_LOCALE } from "@/root/constants";
-
 import produce from "immer";
 import { CHANGE_LOCALE } from "./constants";
 
 const initialState = {
-  locale: DEFAULT_LOCALE,
+  locale: "pt",
 };
 
 function languageProviderReducer(state = initialState, action) {
