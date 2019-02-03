@@ -1,3 +1,5 @@
 import React from "react";
 
-export default React.createContext({});
+import { Definition } from "../../definition";
+
+export default React.createContext<Definition>({});

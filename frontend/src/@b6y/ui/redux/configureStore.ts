@@ -43,6 +43,13 @@ export default function configureStore(initialState = {}, history, reducers: { [
   store.runSaga = sagaMiddleware.run;
   store.injectedReducers = {}; // Reducer registry
   store.injectedSagas = {}; // Saga registry
+  store.mergeReducers = (newReducers) => {
+    const rootReducerCreator = reducerCreatorFactory(history, reducers);
+
+    store.injectedReducers = {...store.injectedReducers, ...newReducers};
+
+    store.replaceReducer(rootReducerCreator(store.injectedReducers));
+  };
 
   // Make reducers hot reloadable, see http://mxs.is/googmo
   /* istanbul ignore next */

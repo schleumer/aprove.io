@@ -28,7 +28,7 @@ class Application extends React.Component<InnerProps> {
       <ReduxProvider store={definition.store}>
         <FocusStealProvider>
           <Global styles={GlobalStyle}/>
-          <LanguageProvider messages={{}}>
+          <LanguageProvider messages={definition.messages}>
             <ConnectedRouter history={definition.history}>
               <ThemeProvider theme={theme}>
                 <div>

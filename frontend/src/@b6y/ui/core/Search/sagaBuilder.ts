@@ -1,10 +1,12 @@
-import { client } from "@/utils";
+import { makeSelectAuth } from "@/root/selectors";
 import gql from "graphql-tag";
+import graphQLCreator from "@b6y/ui/graphql";
 import { call, put, select, takeEvery } from "redux-saga/effects";
 
 import { BuiltSearch } from "./index";
 
 const querySearch = ({
+  client,
   argsHeader,
   argsRefs,
   field,
@@ -48,6 +50,9 @@ export default (builtSearch: BuiltSearch) => {
       name,
     },
   }) {
+    const auth = yield select(makeSelectAuth());
+    const client = graphQLCreator({ headers: { Authorization: `Bearer ${auth.token}`}});
+
     const state = yield select(builtSearch.selector(name));
 
     const {
@@ -100,6 +105,7 @@ export default (builtSearch: BuiltSearch) => {
     );
 
     const response = yield call(querySearch, {
+      client,
       argsHeader,
       argsRefs,
       field,

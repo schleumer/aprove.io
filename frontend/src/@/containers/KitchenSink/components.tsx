@@ -1,3 +1,4 @@
+import R from "ramda";
 import { FastField, Field, Form, Formik, FormikProps } from "formik";
 import React from "react";
 import { Helmet } from "react-helmet";
@@ -17,16 +18,7 @@ import {
   Icon,
   TextInput,
 } from "@b6y/ui/core";
-
-import { Box, Flex } from "@b6y/ui/styled";
-
-import {
-  PageBody,
-  PageTitle,
-} from "@/components/elite";
-
-import { createStructuredSelector } from "reselect";
-
+import { ArrayAdapter } from "@b6y/ui/core/SelectInput/adapter";
 import {
   Channel,
   DatePickerInput as FormikDatePickerInput,
@@ -37,10 +29,19 @@ import {
   TextAreaInput as FormikTextAreaInput,
   TextInput as FormikTextInput,
 } from "@b6y/ui/formik";
+import { GraphQLAdapter, GraphQLAdapterOptions, withGraphQLAdapter } from "@b6y/ui/graphql/SelectInputAdapter";
+import injectReducer from "@b6y/ui/redux/injectReducer";
+import { Box, Flex } from "@b6y/ui/styled";
+
+import {
+  PageBody,
+  PageTitle,
+} from "@/components/elite";
+
+import { createStructuredSelector } from "reselect";
 
 import breadcrumbMessages from "@/messages/breadcrumbs";
 import { makeSelectAuth } from "@/root/selectors";
-import injectReducer from "@b6y/ui/redux/injectReducer";
 import messages from "./messages";
 import reducer from "./reducer";
 import Section from "./section";
@@ -48,10 +49,9 @@ import Section from "./section";
 import { AuthState } from "@/root/types";
 import defineBreadcrumbs from "@/utils/defineBreadcrumbs";
 
-import { ArrayOptions, RemoteGraphQLOptions } from "@b6y/ui/core/SelectInput/adapter";
 import gql from "graphql-tag";
 
-const customersOptions = new RemoteGraphQLOptions(
+const customersAdapterOptions = new GraphQLAdapterOptions(
   (params) => ({
     query: gql`
       query ($request: CustomersRequest!) {
@@ -93,9 +93,16 @@ const customersOptions = new RemoteGraphQLOptions(
     },
     transform: (item) => ({ label: item.name, value: item.id }),
   }),
+  (def) => {
+    const token = R.path(["global", "auth", "token"], def.store.getState());
+
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  },
 );
 
-const testOptions = new ArrayOptions([
+const testOptions = new ArrayAdapter([
   { value: 0, label: "vázio", option: <b>vázio</b> },
   { value: 1, label: "top", option: <s>top</s> },
   { value: 2, label: "top2", option: <i>top2</i> },
@@ -124,13 +131,14 @@ const validationSchema = yup.object({
 
 interface FormProps extends FormikProps<any> {
   auth: AuthState;
+  customers: GraphQLAdapter;
 }
 
 interface FormState {
   testid: string;
 }
 
-class TestForm extends React.Component<FormProps, FormState> {
+class TestFormPure extends React.Component<FormProps, FormState> {
   public state = {
     testid: "test",
   };
@@ -151,6 +159,7 @@ class TestForm extends React.Component<FormProps, FormState> {
 
   public render() {
     const { testid } = this.state;
+    const { customers } = this.props;
 
     return (
       <Form>
@@ -219,7 +228,7 @@ class TestForm extends React.Component<FormProps, FormState> {
                         label="SelectInput Label"
                         placeholder="SelectInput Placeholder"
                         component={FormikSelectInput}
-                        options={customersOptions}
+                        options={customers}
                         name="test1"
                         debugId
                       />
@@ -253,7 +262,7 @@ class TestForm extends React.Component<FormProps, FormState> {
                     label="SelectInput Label"
                     placeholder="SelectInput Placeholder"
                     component={FormikSelectInput}
-                    options={customersOptions}
+                    options={customers}
                     name="test6"
                     debugId
                   />
@@ -360,6 +369,8 @@ class TestForm extends React.Component<FormProps, FormState> {
   }
 }
 
+const TestForm = withGraphQLAdapter("customers", TestFormPure, customersAdapterOptions);
+
 const sizes = [
   "xs",
   "sm",
@@ -420,6 +431,8 @@ export class ComponentsKitchenSink extends React.Component<Props> {
           <Box mt={3}>
             <Channel name="kitchen-sink">
               <Formik
+                validateOnChange={false}
+                validateOnBlur={false}
                 validationSchema={validationSchema}
                 initialValues={{
                   test1: 82,

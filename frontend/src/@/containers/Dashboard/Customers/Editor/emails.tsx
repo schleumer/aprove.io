@@ -4,7 +4,6 @@ import React from "react";
 import { InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
-import { mutate } from "@/utils/graphql";
 import {
   BoxGroup,
   Button,

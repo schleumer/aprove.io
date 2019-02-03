@@ -1,20 +1,3 @@
-import Application from "@b6y/ui/core/Application";
-import definition from "@b6y/ui/definition";
-import rootReducer from "./root/reducer";
-
-const app = definition({
-  reducers: { global: rootReducer },
-});
-
-import "@emotion/core";
-
-/**
- * app.js
- *
- * This is the entry file for the application, only setup and boilerplate
- * code.
- */
-
 // Needed for redux-saga es6 generator support
 import "@babel/polyfill";
 
@@ -24,17 +7,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "sanitize.css/sanitize.css";
 
-// Import root app
-import App from "@/root";
+import Application from "@b6y/ui/core/Application";
+import definition from "@b6y/ui/definition";
 
-// Load the favicon and the .htaccess file
-import "!file-loader?name=[name].[ext]!./images/favicon.ico";
-import "file-loader?name=.htaccess!./.htaccess"; // eslint-disable-line import/extensions
-
-import store from "@/store";
-
-// Import i18n messages
 import { translationMessages } from "@/i18n";
+import App from "@/root";
+import history from "@/history";
+
+import rootReducer from "./root/reducer";
 
 // Observe loading of Open Sans (to remove open sans, remove the <link> tag in
 // the index.html file and this observer)
@@ -45,18 +25,24 @@ fontObserver.load().then(() => {
   document.body.classList.add("fontLoaded");
 });
 
-// Create redux store with history
 const MOUNT_NODE = document.getElementById("app");
 
 // tslint:disable-next-line
-// const icons = require("raw-loader!./icons/light.raw-svg");
-// <div dangerouslySetInnerHTML={{ __html: icons }} id="icons-sprite" />
+const icons = require("raw-loader!./icons/light.raw-svg");
+
+const app = definition({
+  history,
+  reducers: { global: rootReducer },
+});
 
 const render = (messages) => {
   ReactDOM.render(
-    <Application definition={{...app, ...messages}}>
-      <App />
-    </Application>,
+    <div>
+      <Application definition={{...app, messages}}>
+        <App />
+      </Application>
+      <div dangerouslySetInnerHTML={{ __html: icons }} id="icons-sprite" />
+    </div>,
     MOUNT_NODE,
   );
 };
@@ -98,6 +84,6 @@ if (process.env.NODE_ENV === "production") {
   require("offline-plugin/runtime").install(); // eslint-disable-line global-require
 }
 
-// @ts-ignore
-// tslint:disable-next-line
-window.__utils = require("./utils");
+// Load the favicon and the .htaccess file
+import "!file-loader?name=[name].[ext]!./images/favicon.ico";
+import "file-loader?name=.htaccess!./.htaccess"; // eslint-disable-line import/extensions

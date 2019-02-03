@@ -5,7 +5,6 @@ import { InjectedIntlProps, injectIntl } from "react-intl";
 import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
 import * as yup from "yup";
 
-import { mutate } from "@/utils/graphql";
 import {
   BoxGroup,
   Button,

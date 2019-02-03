@@ -11,7 +11,7 @@ import gql from "graphql-tag";
 
 import history from "@/history";
 
-import { mutate, query, upgradeErrors } from "@/utils/graphql";
+import graphQLCreator from "@b6y/ui/graphql";
 
 import * as loadingActions from "@b6y/ui/core/Loading/actions";
 
@@ -24,6 +24,7 @@ import {
 } from "./constants";
 
 export function* tryAuthenticate(form) {
+  const { mutate, upgradeErrors } = graphQLCreator({});
   const { data } = form;
 
   const options = {
@@ -102,6 +103,12 @@ export function* reauthenticate(action) {
 
     return;
   }
+
+  const { query, upgradeErrors } = graphQLCreator({
+    headers: {
+      Authorization: `Bearer ${data.token}`,
+    },
+  });
 
   yield put(setToken(data.token));
 

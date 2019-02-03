@@ -4,14 +4,13 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
 import globalMessages from "@/messages/global";
-import { mutate } from "@/utils/graphql";
 import {
   BoxGroup,
   Button,
   Icon,
   Padding,
 } from "@b6y/ui/core";
-import { ArrayOptions } from "@b6y/ui/core/SelectInput/adapter";
+import { ArrayAdapter } from "@b6y/ui/core/SelectInput/adapter";
 import {
   Form,
   SelectInput,
@@ -37,11 +36,11 @@ const validationSchema = yup.object().shape({
 }).noUnknown();
 
 const options = {
-  statuses: new ArrayOptions([
+  statuses: new ArrayAdapter([
     { value: "ACTIVE", label: messages.statusActive },
     { value: "INACTIVE", label: messages.statusInactive },
   ]),
-  types: new ArrayOptions([
+  types: new ArrayAdapter([
     { value: "NATURAL", label: messages.typeNatural },
     { value: "JURIDICAL", label: messages.typeJuridical },
   ]),

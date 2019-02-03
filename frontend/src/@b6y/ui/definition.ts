@@ -1,9 +1,7 @@
 import { History } from "history";
 import { AnyAction, Reducer, Store } from "redux";
 
-import historyFactory from "./historyFactory";
 import configureStore from "./redux/configureStore";
-import reducerCreatorFactory from "./redux/reducerCreatorFactory";
 import Theme from "./types/theme";
 
 export interface Definition {
@@ -17,16 +15,14 @@ export interface Definition {
 
 export const initialState = {};
 
-const storeFactory = (reducerCreator, history) => configureStore(reducerCreator, initialState, history);
+const storeFactory = (history, reducers) => configureStore(initialState, history, reducers);
 
 const mergeWithDefaultDefinition = (definition: Definition): Definition => {
+  const history = definition.history;
   const messages =  {...definition.messages};
-  const history = historyFactory();
-  const reducerCreator = reducerCreatorFactory(history, definition.reducers || {});
-  const store = storeFactory(reducerCreator, history);
+  const store = storeFactory(history, definition.reducers || {});
 
   return {
-    reducerCreator,
     history,
     store,
     messages,
