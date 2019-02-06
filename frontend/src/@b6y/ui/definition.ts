@@ -11,6 +11,7 @@ export interface Definition {
   history?: History;
   store?: Store;
   theme?: (defaultTheme: Theme) => Theme;
+  [key: string]: any;
 }
 
 export const initialState = {};

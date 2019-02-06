@@ -9,11 +9,8 @@ import {
 } from "reselect";
 
 import { makeSelectAuth } from "@/root/selectors";
-import { injectReducer, injectSaga } from "@b6y/ui/redux";
 
 import InstancesList from "./list";
-import reducer from "./reducer";
-import saga from "./saga";
 import InstancesView from "./view";
 
 import messages from "./messages";
@@ -49,9 +46,6 @@ Home.propTypes = {
   // }),
 };
 
-const withSaga = injectSaga({ key: "instances", saga });
-const withReducer = injectReducer({ key: "instances", reducer });
-
 export function mapDispatchToProps() {
   return {};
 }
@@ -67,7 +61,5 @@ const withConnect = connect(
 );
 
 export default compose(
-  withReducer,
   withConnect,
-  withSaga,
 )(Home);

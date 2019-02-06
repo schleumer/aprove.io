@@ -1,6 +1,6 @@
 import { FastField, FieldArrayRenderProps, Formik, FormikProps } from "formik";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useRef } from "react";
 import { InjectedIntlProps, injectIntl } from "react-intl";
 import { formatPhoneNumberIntl, isValidPhoneNumber } from "react-phone-number-input";
 import * as yup from "yup";
@@ -17,6 +17,8 @@ import {
 } from "@b6y/ui/core";
 import { Form, PhoneInput } from "@b6y/ui/formik";
 import { Box, Flex } from "@b6y/ui/styled";
+
+import * as graphql from "@/hooks/graphql";
 
 import messages from "../messages";
 
@@ -71,103 +73,97 @@ class PhoneForm extends React.Component<PhoneFormProps> {
 
 interface PhonesEditorProps extends FieldArrayRenderProps, InjectedIntlProps {}
 
-class PhonesEditor extends React.Component<PhonesEditorProps> {
-  public form?: React.RefObject<any>;
+const PhonesEditor = (props: PhonesEditorProps) => {
+  const methods = graphql.useGraphQLMethods();
+  const formRef = useRef(null);
 
-  constructor(a, b) {
-    super(a, b);
+  const values = props.form.values[props.name];
 
-    this.submit = this.submit.bind(this);
-    this.form = React.createRef();
-  }
+  const submit = ({ phone }) => {
+    const customer = props.form.values;
 
-  public shouldComponentUpdate(
-    nextProps: Readonly<PhonesEditorProps>,
-    nextState: Readonly<{}>, nextContext: any,
-  ): boolean {
-    const values = this.props.form.values[this.props.name];
-    const newValues = nextProps.form.values[nextProps.name];
-
-    return values !== newValues;
-  }
-
-  public render() {
-    const values = this.props.form.values[this.props.name];
-
-    const rows = values.map((item, index) => {
-      return (
-        <TableRow key={item.phone + "-" + item.id}>
-          <TableColumn verticalAlign="middle" width={1}>
-            { formatPhoneNumberIntl(item.phone) }
-          </TableColumn>
-          <TableColumn verticalAlign="middle">
-            <Tooltip text="Remover">
-              <ButtonTransparent
-                size="sm"
-                state="danger"
-                onClick={() => this.remove(item, index)}><Icon name="trash" /></ButtonTransparent>
-            </Tooltip>
-          </TableColumn>
-        </TableRow>
-      );
-    });
-
-    return (
-      <React.Fragment>
-        <Formik
-          ref={this.form}
-          initialValues={{
-            phone: null,
-          }}
-          validationSchema={phoneValidationSchema}
-          onSubmit={this.submit}
-          render={(props) => {
-            return <PhoneForm parent={this.props} {...props} />;
-          }}
-          validateOnChange={false}
-        />
-        {rows.length > 0 && (
-          <Table>
-            <tbody>
-            { rows }
-            </tbody>
-          </Table>
-        )}
-        {rows.length < 1 && (
-          <Flex justifyContent="center" p={3}>Não há telefones</Flex>
-        )}
-      </React.Fragment>
-    );
-  }
-
-  private async remove(item, index) {
-    const customer = this.props.form.values;
-
-    await mutate({
-      mutation: removePhoneQuery,
-      variables: {
-        customerId: parseInt(customer.id, 0),
-        customerPhoneId: parseInt(item.id, 0),
-      },
-    });
-
-    this.props.remove(index);
-  }
-
-  private async submit({ phone }) {
-    const customer = this.props.form.values;
-
-    const result = await mutate({
+    methods.mutate("result", {
       mutation: createPhoneQuery,
       variables: {
         customerId: parseInt(customer.id, 0),
         input: { phone },
       },
+    }).then((response) => {
+      if (response.successful) {
+        props.push(response.result);
+        formRef.current.resetForm();
+      }
     });
+  };
 
-    this.props.push(result.data.result);
-    this.form.current.resetForm();
-  }
-}
+  const remove = (item, index) => {
+    const customer = props.form.values;
 
-export default injectIntl<PhonesEditorProps>(PhonesEditor);
+    methods.mutate("result", {
+      mutation: removePhoneQuery,
+      variables: {
+        customerId: parseInt(customer.id, 0),
+        customerPhoneId: parseInt(item.id, 0),
+      },
+    }).then((response) => {
+      props.remove(index);
+    });
+  };
+
+  const rows = values.map((item, index) => {
+    return (
+      <TableRow key={item.phone + "-" + item.id}>
+        <TableColumn verticalAlign="middle" width={1}>
+        { formatPhoneNumberIntl(item.phone) }
+        </TableColumn>
+        <TableColumn verticalAlign="middle">
+          <Tooltip text="Remover">
+            <ButtonTransparent
+              size="sm"
+              state="danger"
+              onClick={() => remove(item, index)}><Icon name="trash" /></ButtonTransparent>
+          </Tooltip>
+        </TableColumn>
+      </TableRow>
+    );
+  });
+
+  return (
+    <>
+      <Formik
+        ref={formRef}
+        initialValues={{
+          phone: null,
+        }}
+        validationSchema={phoneValidationSchema}
+        onSubmit={submit}
+        render={(props) => {
+          return <PhoneForm parent={props} {...props} />;
+        }}
+        validateOnChange={false}
+      />
+      {rows.length > 0 && (
+        <Table>
+          <tbody>
+          { rows }
+          </tbody>
+        </Table>
+      )}
+      {rows.length < 1 && (
+        <Flex justifyContent="center" p={3}>Não há telefones</Flex>
+      )}
+    </>
+  );
+};
+
+const SafePhonesEditor = React.memo(PhonesEditor, (
+  props: Readonly<PhonesEditorProps>,
+  nextProps: Readonly<PhonesEditorProps>,
+): boolean => {
+  const values = props.form.values[props.name];
+  const newValues = nextProps.form.values[nextProps.name];
+
+  return values === newValues;
+});
+
+export default injectIntl<PhonesEditorProps>(SafePhonesEditor);

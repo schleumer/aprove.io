@@ -5,6 +5,7 @@ import { Definition } from "../../definition";
 import ApplicationContext from "../../core/Application/context";
 import { Adapter, OptionType } from "../../core/SelectInput/adapter";
 import clientCreator from "../client";
+import { DocumentNode } from "graphql";
 
 interface GraphQLParams {
   headers: { [key: string]: string };
@@ -46,14 +47,14 @@ interface GraphQLAdapterOptionsSingleResult {
 }
 
 interface GraphQLAdapterOptionsSingleQuery {
-  query: string;
+  query: DocumentNode;
   variables: any;
   transformResponse?: (response: any) => GraphQLAdapterOptionsSingleResult;
   transform: (item: any, a: GraphQLAdapterOptionsSingleResult) => OptionType;
 }
 
 interface GraphQLAdapterOptionsSearchQuery {
-  query: string;
+  query: DocumentNode;
   variables: any;
   transformResponse?: (response: any) => GraphQLAdapterOptionsResult;
   transform: (item: any, a: GraphQLAdapterOptionsResult) => OptionType;

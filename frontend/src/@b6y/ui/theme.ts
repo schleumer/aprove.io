@@ -1,4 +1,4 @@
-import Theme, { Colors } from "../../types/theme";
+import Theme, { Colors } from "./types/theme";
 
 import { darken, lighten, transparentize } from "polished";
 import R from "ramda";

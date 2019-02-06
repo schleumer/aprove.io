@@ -11,7 +11,7 @@ import gql from "graphql-tag";
 
 import history from "@/history";
 
-import graphQLCreator from "@b6y/ui/graphql";
+import graphQLCreator, { Response } from "@b6y/ui/graphql";
 
 import * as loadingActions from "@b6y/ui/core/Loading/actions";
 
@@ -24,7 +24,7 @@ import {
 } from "./constants";
 
 export function* tryAuthenticate(form) {
-  const { mutate, upgradeErrors } = graphQLCreator({});
+  const { mutate } = graphQLCreator({});
   const { data } = form;
 
   const options = {
@@ -49,28 +49,24 @@ export function* tryAuthenticate(form) {
     },
   };
 
-  try {
-    const response = yield call(mutate, options);
+  const response: Response<{}> = yield call(mutate, "result", options);
 
-    if (!response.data) {
-      yield put(authenticateErrors(upgradeErrors(new Error("failed"))));
-
-      yield put(loadingActions.setState("global", false));
-
-      return;
-    }
-
+  if (response.successful) {
     yield put(authenticateErrors([]));
 
-    const { result } = response.data;
+    const { result } = response;
 
-    result.$managed = true;
+    Object.defineProperty(result, "$managed", {
+      value: true,
+    });
 
     localStorage.setItem("aprove-io:auth", JSON.stringify(result));
 
     yield persistAuthenticate(result);
-  } catch (e) {
-    yield put(authenticateErrors(upgradeErrors(e)));
+  } else {
+    yield put(authenticateErrors(response.errors));
+
+    yield put(loadingActions.setState("global", false));
   }
 }
 
@@ -104,7 +100,7 @@ export function* reauthenticate(action) {
     return;
   }
 
-  const { query, upgradeErrors } = graphQLCreator({
+  const { query } = graphQLCreator({
     headers: {
       Authorization: `Bearer ${data.token}`,
     },
@@ -124,25 +120,18 @@ export function* reauthenticate(action) {
     `,
   };
 
-  try {
-    const response = yield call(query, options);
+  const response: Response<{}> = yield call(query, "result", options);
 
-    if (!response.data) {
-      yield put(authenticateErrors(upgradeErrors(new Error("failed"))));
-
-      yield put(loadingActions.setState("global", false));
-
-      return;
-    }
-
+  if (response.successful) {
     yield put(authenticateErrors([]));
 
     yield put(loadingActions.setState("global", false));
+
     yield persistAuthenticate(data);
 
     history.push(from || "/");
-  } catch (e) {
-    yield put(authenticateErrors(upgradeErrors(e)));
+  } else {
+    yield put(authenticateErrors(response.errors));
 
     yield put(loadingActions.setState("global", false));
 

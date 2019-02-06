@@ -1,6 +1,6 @@
 import { FastField, FieldArrayRenderProps, Formik, FormikProps } from "formik";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useRef } from "react";
 import { InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
@@ -16,6 +16,8 @@ import {
 } from "@b6y/ui/core";
 import { Form, TextInput } from "@b6y/ui/formik";
 import { Box, Flex } from "@b6y/ui/styled";
+
+import * as graphql from "@/hooks/graphql";
 
 import messages from "../messages";
 
@@ -66,103 +68,97 @@ class EmailForm extends React.Component<EmailFormProps> {
 
 interface EmailsEditorProps extends FieldArrayRenderProps, InjectedIntlProps {}
 
-class EmailsEditor extends React.Component<EmailsEditorProps> {
-  public form?: React.RefObject<any>;
+const EmailsEditor = (props: EmailsEditorProps) => {
+  const methods = graphql.useGraphQLMethods();
+  const formRef = useRef(null);
 
-  constructor(a, b) {
-    super(a, b);
+  const values = props.form.values[props.name];
 
-    this.submit = this.submit.bind(this);
-    this.form = React.createRef();
-  }
+  const submit = ({ email }) => {
+    const customer = props.form.values;
 
-  public shouldComponentUpdate(
-    nextProps: Readonly<EmailsEditorProps>,
-    nextState: Readonly<{}>, nextContext: any,
-  ): boolean {
-    const values = this.props.form.values[this.props.name];
-    const newValues = nextProps.form.values[nextProps.name];
-
-    return values !== newValues;
-  }
-
-  public render() {
-    const values = this.props.form.values[this.props.name];
-
-    const rows = values.map((item, index) => {
-      return (
-        <TableRow key={item.email + "-" + item.id}>
-          <TableColumn verticalAlign="middle" width={1}>
-            { item.email }
-          </TableColumn>
-          <TableColumn verticalAlign="middle">
-            <Tooltip text="Remover">
-              <ButtonTransparent
-                size="sm"
-                state="danger"
-                onClick={() => this.remove(item, index)}><Icon name="trash" /></ButtonTransparent>
-            </Tooltip>
-          </TableColumn>
-        </TableRow>
-      );
-    });
-
-    return (
-      <React.Fragment>
-        <Formik
-          ref={this.form}
-          initialValues={{
-            email: null,
-          }}
-          validationSchema={emailValidationSchema}
-          onSubmit={this.submit}
-          render={(props) => {
-            return <EmailForm parent={this.props} {...props} />;
-          }}
-          validateOnChange={false}
-        />
-        {rows.length > 0 && (
-          <Table>
-            <tbody>
-            { rows }
-            </tbody>
-          </Table>
-        )}
-        {rows.length < 1 && (
-          <Flex justifyContent="center" p={3}>Não há telefones</Flex>
-        )}
-      </React.Fragment>
-    );
-  }
-
-  private async remove(item, index) {
-    const customer = this.props.form.values;
-
-    await mutate({
-      mutation: removeEmailQuery,
-      variables: {
-        customerId: parseInt(customer.id, 0),
-        customerEmailId: parseInt(item.id, 0),
-      },
-    });
-
-    this.props.remove(index);
-  }
-
-  private async submit({ email }) {
-    const customer = this.props.form.values;
-
-    const result = await mutate({
+    methods.mutate("result", {
       mutation: createEmailQuery,
       variables: {
         customerId: parseInt(customer.id, 0),
         input: { email },
       },
+    }).then((response) => {
+      if (response.successful) {
+        props.push(response.result);
+        formRef.current.resetForm();
+      }
     });
+  };
 
-    this.props.push(result.data.result);
-    this.form.current.resetForm();
-  }
-}
+  const remove = (item, index) => {
+    const customer = props.form.values;
 
-export default injectIntl<EmailsEditorProps>(EmailsEditor);
+    methods.mutate("result", {
+      mutation: removeEmailQuery,
+      variables: {
+        customerId: parseInt(customer.id, 0),
+        customerEmailId: parseInt(item.id, 0),
+      },
+    }).then((response) => {
+      props.remove(index);
+    });
+  };
+
+  const rows = values.map((item, index) => {
+    return (
+      <TableRow key={item.email + "-" + item.id}>
+        <TableColumn verticalAlign="middle" width={1}>
+          { item.email }
+        </TableColumn>
+        <TableColumn verticalAlign="middle">
+          <Tooltip text="Remover">
+            <ButtonTransparent
+              size="sm"
+              state="danger"
+              onClick={() => remove(item, index)}><Icon name="trash" /></ButtonTransparent>
+          </Tooltip>
+        </TableColumn>
+      </TableRow>
+    );
+  });
+
+  return (
+    <>
+      <Formik
+        ref={formRef}
+        initialValues={{
+          email: null,
+        }}
+        validationSchema={emailValidationSchema}
+        onSubmit={submit}
+        render={(props) => {
+          return <EmailForm parent={props} {...props} />;
+        }}
+        validateOnChange={false}
+      />
+      {rows.length > 0 && (
+        <Table>
+          <tbody>
+          { rows }
+          </tbody>
+        </Table>
+      )}
+      {rows.length < 1 && (
+        <Flex justifyContent="center" p={3}>Não há telefones</Flex>
+      )}
+    </>
+  );
+};
+
+const SafeEmailsEditor = React.memo(EmailsEditor, (
+  props: Readonly<EmailsEditorProps>,
+  nextProps: Readonly<EmailsEditorProps>,
+): boolean => {
+  const values = props.form.values[props.name];
+  const newValues = nextProps.form.values[nextProps.name];
+
+  return values === newValues;
+});
+
+export default injectIntl<EmailsEditorProps>(SafeEmailsEditor);

@@ -1,8 +1,9 @@
 import { FastField, FieldArray, Formik, FormikProps } from "formik";
-import React from "react";
+import React, { useRef } from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
+import * as graphql from "@/hooks/graphql";
 import globalMessages from "@/messages/global";
 import {
   BoxGroup,
@@ -125,7 +126,7 @@ class EditorForm extends React.Component<FormProps> {
 
 interface Props extends InjectedIntlProps {
   data: any;
-  onChange(newValue: any): void;
+  onChange?: (newValue: any) => void;
 }
 
 const initialValues = (base: any): any => {
@@ -140,60 +141,55 @@ const initialValues = (base: any): any => {
   };
 };
 
-class Editor extends React.Component<Props> {
-  public form?: React.RefObject<Formik>;
+const Editor2 = (props: Props) => {
+  const methods = graphql.useGraphQLMethods();
 
-  constructor(a, b) {
-    super(a, b);
+  const formRef = useRef(null);
 
-    this.submit = this.submit.bind(this);
-    this.form = React.createRef();
-  }
+  const intlOptions = {
+    statuses: options.statuses.intl(props.intl),
+    types: options.types.intl(props.intl),
+  };
 
-  public async submit(values) {
-    try {
-      const customer = await validationSchema.validate(values);
+  const submit = (values) => {
+    validationSchema
+      .validate(values)
+      .then((customer) => {
+        return methods.mutate("result", {
+          mutation: updateQuery,
+          variables: {
+            input: customer,
+          },
+        });
+      })
+      .then((response) => {
+        formRef.current.setSubmitting(false);
 
-      const response = await mutate({
-        mutation: updateQuery,
-        variables: {
-          input: customer,
-        },
+        props.onChange(response.result);
+      })
+      .catch(() => {
+        formRef.current.setSubmitting(false);
       });
+  };
 
-      // should not be after onChange.
-      this.form.current.setSubmitting(false);
+  const { data } = props;
 
-      this.props.onChange(response.data.result);
-    } catch (err) {
-      this.form.current.setSubmitting(false);
-    }
-  }
+  return (
+    <React.Fragment>
+      <Formik
+        ref={formRef}
+        validationSchema={validationSchema}
+        initialValues={initialValues(data)}
+        onSubmit={submit}
+        render={(props) => {
+          return <EditorForm
+            options={intlOptions}
+            {...props} />;
+        }}
+        validateOnChange={false}
+      />
+    </React.Fragment>
+  );
+};
 
-  public render() {
-    const intlOptions = {
-      statuses: options.statuses.intl(this.props.intl),
-      types: options.types.intl(this.props.intl),
-    };
-
-    const { data } = this.props;
-
-    return (
-      <React.Fragment>
-        <Formik
-          ref={this.form}
-          validationSchema={validationSchema}
-          initialValues={initialValues(data)}
-          onSubmit={this.submit}
-          render={(props) => {
-            return <EditorForm
-              options={intlOptions}
-              {...props} />;
-          }}
-          validateOnChange={false}
-        />
-      </React.Fragment>
-    );
-  }
-}
-export default injectIntl(Editor);
+export default injectIntl(Editor2);

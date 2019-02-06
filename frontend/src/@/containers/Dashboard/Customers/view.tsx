@@ -1,87 +1,64 @@
 import React from "react";
-import { connect } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import { compose } from "redux";
-import {
-  createStructuredSelector,
-} from "reselect";
 import { FormattedMessage } from "react-intl";
+import { RouteComponentProps } from "react-router-dom";
 
-import { Loading } from "@b6y/ui/core";
 import { PageBody, PageTitle } from "@/components/elite";
-import { makeSelectAuth } from "@/root/selectors";
+import { LoadingIndicator } from "@b6y/ui/core";
 
-import * as actions from "./actions";
+import * as graphql from "@/hooks/graphql";
+
 import breadcrumbs from "./breadcrumbs";
 import Editor from "./editor";
+import { viewQuery } from "./graphql";
 import messages from "./messages";
-import { makeSelectView } from "./selectors";
 
-interface IParams {
+interface Params {
   customerId: string;
 }
 
-interface IProps extends RouteComponentProps<IParams> {
-  view: (...args: any[]) => void;
-  data?: any;
-}
+interface Props extends RouteComponentProps<Params> {}
 
-class View extends React.Component<IProps> {
-  public componentDidMount() {
-    const { match, view } = this.props;
+const View = (props: Props) => {
+  const { match } = props;
 
-    if (match.params.customerId) {
-      view({
-        id: match.params.customerId,
-      });
-    }
+  const [response, state] = graphql.query(match.params.customerId, "result", {
+    query: viewQuery,
+    variables: {
+      id: parseInt(match.params.customerId, 0),
+    },
+  });
+
+  if (state === graphql.states.running) {
+    return <LoadingIndicator />;
   }
 
-  public render() {
-    const { data } = this.props;
-
-    let breadcrumb = breadcrumbs.view;
-
-    if (data) {
-      breadcrumb = breadcrumb.concat({
-          id: "customer.view",
-          name: messages.view,
-          values: data,
-          path: `/customers/${data.id}`,
-      });
-    }
-
-    return (
-      <Loading name="customers/view">
-        {() => (
-          <React.Fragment>
-            <PageTitle title={
-              <FormattedMessage {...messages.view} values={data} />
-            } breadcrumb={breadcrumb} />
-            <PageBody>
-              <Editor data={data} />
-            </PageBody>
-          </React.Fragment>
-        )}
-      </Loading>
-    );
+  if (state === graphql.states.failed) {
+    return <b>Failed</b>;
   }
-}
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    view: (data) => dispatch(actions.view(data)),
-  };
-}
+  const { result } = response;
 
-const mapStateToProps = createStructuredSelector({
-  auth: makeSelectAuth(),
-  data: makeSelectView(),
-});
+  let breadcrumb = breadcrumbs.view;
 
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-);
+  if (result) {
+    breadcrumb = breadcrumb.concat({
+        id: "customer.view",
+        name: messages.view,
+        values: result,
+        path: `/customers/${result.id}`,
+    });
+  }
 
-export default compose(withConnect)(View);
+  return (
+    <>
+      <PageTitle title={
+        <FormattedMessage {...messages.view} values={result} />
+      } breadcrumb={breadcrumb} />
+      <PageBody>
+        <Editor data={result} />
+      </PageBody>
+    </>
+  );
+};
+
+export default View;

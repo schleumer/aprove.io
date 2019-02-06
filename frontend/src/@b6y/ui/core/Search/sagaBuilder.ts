@@ -1,22 +1,27 @@
 import { makeSelectAuth } from "@/root/selectors";
+import graphQLCreator, { GraphQLMethods, Response } from "@b6y/ui/graphql";
 import gql from "graphql-tag";
-import graphQLCreator from "@b6y/ui/graphql";
 import { call, put, select, takeEvery } from "redux-saga/effects";
 
 import { BuiltSearch } from "./index";
 
+interface QuerySearchParams {
+  methods: GraphQLMethods;
+  [key: string]: any;
+}
+
 const querySearch = ({
-  client,
+  methods,
   argsHeader,
   argsRefs,
   field,
   graphqlFields,
   variables,
-}) =>
-  client.query({
+}: QuerySearchParams) =>
+  methods.query("result", {
     query: gql`
         query (${argsHeader}) {
-          ${field} (${argsRefs}) {
+          result: ${field} (${argsRefs}) {
             total
             totalUnfiltered
             remaining
@@ -51,7 +56,7 @@ export default (builtSearch: BuiltSearch) => {
     },
   }) {
     const auth = yield select(makeSelectAuth());
-    const client = graphQLCreator({ headers: { Authorization: `Bearer ${auth.token}`}});
+    const methods = graphQLCreator({ headers: { Authorization: `Bearer ${auth.token}`}});
 
     const state = yield select(builtSearch.selector(name));
 
@@ -104,8 +109,8 @@ export default (builtSearch: BuiltSearch) => {
       {},
     );
 
-    const response = yield call(querySearch, {
-      client,
+    const response: Response = yield call(querySearch, {
+      methods,
       argsHeader,
       argsRefs,
       field,
@@ -113,7 +118,7 @@ export default (builtSearch: BuiltSearch) => {
       variables,
     });
 
-    yield put(setCurrent(name, response.data[field], search));
+    yield put(setCurrent(name, response.result, search));
   }
 
   function* doRegister({ data }) {

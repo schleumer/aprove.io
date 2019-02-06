@@ -10,6 +10,8 @@ interface CreateClientParams {
   headers?: { [key: string]: string };
 }
 
+export type GraphQLClient = ApolloClient<any>;
+
 export default (params: CreateClientParams) => {
   const defaultOptions: DefaultOptions = {
     watchQuery: {

@@ -1,18 +1,8 @@
+import { FetchResult } from "apollo-link";
+import { DocumentNode } from "graphql";
 import * as R from "ramda";
 
 import clientCreator from "./client";
-
-class GraphQLError extends Error {
-  public errors: any[] = [];
-  public data: any = null;
-
-  constructor(message, errors: any[], data: any = null) {
-    super(message);
-
-    this.errors = errors;
-    this.data = data;
-  }
-}
 
 interface CreateGraphQLParams {
   headers?: { [key: string]: string };
@@ -25,73 +15,94 @@ interface UpgradedError {
   extensions: any;
 }
 
-interface GraphQLMethods {
-  query(options: any): any;
-  mutate(options: any): any;
-  upgradeErrors(e: any, resultKey?: string): UpgradedError[];
+export interface Variables {
+  [key: string]: any;
 }
 
+export interface QueryOptions<TVariables = Variables> {
+  query: DocumentNode;
+  variables?: TVariables;
+}
+
+export interface MutateOptions<TVariables = Variables> {
+  mutation: DocumentNode;
+  variables?: TVariables;
+}
+
+export interface Response<TResponse = any> {
+  result?: TResponse;
+  errors: ReadonlyArray<UpgradedError>;
+  successful: boolean;
+}
+
+export interface GraphQLMethods {
+  query<TResponse = {}>(resultKey: string, options: QueryOptions): Promise<Response<TResponse>>;
+  mutate<TResponse = {}>(resultKey: string, options: MutateOptions): Promise<Response<TResponse>>;
+}
+
+const upgradeErrors = (resultKey = "result", errors: any[]): UpgradedError[] => {
+  return errors.map((x) => {
+    let path = null;
+
+    if (x.path) {
+      const [head] = x.path;
+      let [, ...localPath] = x.path;
+
+      if (head !== resultKey) {
+        localPath = [head, ...localPath];
+      }
+
+      localPath = ["$", ...localPath];
+
+      path = localPath;
+    } else {
+      path = ["$"];
+    }
+
+    return {
+      path,
+      key: path.join("."),
+      message: x.message,
+      extensions: x.extensions || {},
+    };
+  });
+
+  // return [
+  //   {
+  //     path: ["$"],
+  //     key: "$",
+  //     message: e.message,
+  //     extensions: {},
+  //   } as UpgradedError,
+  // ];
+};
+
 export default function createGraphQL(params: CreateGraphQLParams): GraphQLMethods {
-  const wrap = (promise) =>
+  const wrap = <TResponse>(resultKey: string, promise: Promise<FetchResult<any>>): Promise<Response<TResponse>> =>
     promise
       .catch((ex) => {
-        throw new GraphQLError(
-          "Request failed",
-          R.pathOr([], ["networkError", "result", "errors"], ex),
-        );
+        return {
+          errors: upgradeErrors(resultKey, R.pathOr([], ["networkError", "result", "errors"], ex)),
+          result: null,
+          successful: false,
+        } as Response<TResponse>;
       })
       .then((res) => {
-        if (res.errors && res.errors.length > 0) {
-          const newEx = new GraphQLError("Request failed", res.errors, res.data);
-          throw newEx;
-        }
-        return res;
+        const errors = upgradeErrors(resultKey, R.pathOr([], ["errors"], res));
+
+        return {
+          errors,
+          result: R.pathOr(null, ["data", resultKey], res),
+          successful: errors.length < 1,
+        } as Response<TResponse>;
       });
 
   const client = clientCreator(params);
 
-  const mutate = (options) => wrap(client.mutate(options));
-  const query = (options) => wrap(client.query(options));
+  const mutate = <TResponse>(resultKey: string, options: MutateOptions): Promise<Response<TResponse>> =>
+    wrap(resultKey, client.mutate<TResponse>(options));
+  const query = <TResponse>(resultKey: string, options: QueryOptions): Promise<Response<TResponse>> =>
+    wrap(resultKey, client.query<TResponse>(options));
 
-  const upgradeErrors = (e, resultKey = "result"): UpgradedError[] => {
-    console.log([e]);
-    if (e instanceof GraphQLError) {
-      return e.errors.map((x) => {
-        let path = null;
-
-        if (x.path) {
-          const [head] = x.path;
-          let [, ...localPath] = x.path;
-
-          if (head !== resultKey) {
-            localPath = [head, ...localPath];
-          }
-
-          localPath = ["$", ...localPath];
-
-          path = localPath;
-        } else {
-          path = ["$"];
-        }
-
-        return {
-          path,
-          key: path.join("."),
-          message: x.message,
-          extensions: x.extensions || {},
-        };
-      });
-    }
-
-    return [
-      {
-        path: ["$"],
-        key: "$",
-        message: e.message,
-        extensions: {},
-      } as UpgradedError,
-    ];
-  };
-
-  return { query, mutate, upgradeErrors };
+  return { query, mutate };
 }
