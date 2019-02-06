@@ -3,10 +3,10 @@ import invariant from "invariant";
 import memoize from "memoize-one";
 import React from "react";
 
-import ErrorBag from "../ErrorBag";
-import { genid } from "../commons";
 import Label from "../../core/Label";
 import BaseTextAreaInput from "../../core/TextAreaInput";
+import { genid } from "../commons";
+import ErrorBag from "../ErrorBag";
 
 import R from "ramda";
 import { FormattedMessage, InjectedIntl, injectIntl } from "react-intl";
