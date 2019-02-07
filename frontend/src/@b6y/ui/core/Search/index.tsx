@@ -1,45 +1,46 @@
 import styled from "@emotion/styled";
-import PropTypes from "prop-types";
-import React from "react";
-
-import LoadingIndicator from "../../core/LoadingIndicator";
-
-import { ButtonTransparent, Group, Icon } from "../../core";
-
+import * as libphonenumber from "google-libphonenumber";
 import { DateTime } from "luxon";
-
+import PropTypes from "prop-types";
 import R from "ramda";
-
+import React from "react";
+import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
-
+import { AutoSizer, Column, Table } from "react-virtualized";
 import { compose } from "redux";
-
 import { createStructuredSelector } from "reselect";
+import { theme } from "styled-tools";
 
 import injectReducer from "@b6y/ui/redux/injectReducer";
-
 import injectSaga from "@b6y/ui/redux/injectSaga";
 
-import { makeSelectAuth } from "@/root/selectors";
-
-import { AutoSizer, Column, Table } from "react-virtualized";
-
-import { FormattedMessage } from "react-intl";
-
-import { theme } from "styled-tools";
+import { ButtonTransparent, Group, Icon } from "../../core";
+import LoadingIndicator from "../../core/LoadingIndicator";
 import actionsBuilder from "./actionsBuilder";
 import constantsBuilder from "./constantsBuilder";
 import styles from "./index.css";
+import messages from "./messages";
 import reducerBuilder from "./reducerBuilder";
 import sagaBuilder from "./sagaBuilder";
-
 import { BaseCellElementProps, BuiltSearchMeta, OuterProps, Props, State, TypesMap } from "./types";
 
-import messages from "./messages";
+interface QueryResult {
+  total: number;
+  totalUnfiltered: number;
+  remaining: number;
+  fromOffset: number;
+  toOffset: number;
+  totalOnPage: number;
+  totalOfPages: number;
+  currentPage: number;
+  itemsPerPage: number;
+  hasMore: boolean;
+  items: any[];
+}
 
-import { get } from "@b6y/commons";
-
-import * as libphonenumber from "google-libphonenumber";
+interface QueryAdapter {
+  run(searchState: any, globalState: any, params: any): Promise<QueryResult>;
+}
 
 const PNF = libphonenumber.PhoneNumberFormat;
 const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
@@ -159,8 +160,7 @@ class Search extends React.Component<Props, State> {
       return this.$types;
     }
 
-    const customTypes = get("constructor.options.types", this, {});
-    const actualTypes = { ...Types, ...customTypes };
+    const actualTypes = { ...Types };
 
     this.$types = actualTypes;
 
@@ -168,32 +168,22 @@ class Search extends React.Component<Props, State> {
   }
 
   public registerAndNavigate() {
-    const extraFields =
-      this.props.extraFields || get("constructor.options.extraFields", this, []);
-
     const {
       name,
-      extraArgs,
       defaultSearch,
       env,
       field,
-      requestType,
       fields,
-      auth,
       limit,
     } = this.props;
 
     this.props.registerAndSearch(
       {
         name,
-        extraArgs,
         defaultSearch,
         env,
         field,
-        requestType,
         fields,
-        extraFields,
-        auth,
         limit,
       },
       {},
@@ -244,7 +234,7 @@ class Search extends React.Component<Props, State> {
   }
 
   public cellRenderer(env, field) {
-    let Element = BaseCellElement;
+    let Element: React.ComponentType<any> = BaseCellElement;
 
     const types = this.types();
 
@@ -343,6 +333,8 @@ class Search extends React.Component<Props, State> {
     }
 
     const { current, fields, env } = searchStore;
+
+    console.log(searchStore);
 
     const pagesRange = R.range(1, current.totalOfPages + 1).filter((item) => {
       if (
@@ -466,21 +458,25 @@ class Search extends React.Component<Props, State> {
 }
 
 export class BuiltSearch {
+
+  get Component(): new(...args) => React.Component<OuterProps, State> {
+    return this.component;
+  }
+
+  public adapter: QueryAdapter;
   public component: typeof Search;
   public meta: BuiltSearchMeta;
   public constants: any;
   public actions: any;
   public options: any;
 
-  get Component(): new(...args) => React.Component<OuterProps, State> {
-    return this.component;
-  }
-
   constructor(
     component: typeof Search,
+    adapter: QueryAdapter,
     meta: BuiltSearchMeta,
     options: any,
   ) {
+    this.adapter = adapter;
     this.meta = meta;
     this.options = options;
 
@@ -521,7 +517,6 @@ export class BuiltSearch {
     });
 
     const mapStateToProps = createStructuredSelector({
-      auth: makeSelectAuth(),
       searchStore: this.propsSelector(),
       reducerName: () => id,
     });
@@ -553,7 +548,7 @@ export class BuiltSearch {
 
 const searchCache = {};
 
-export default function buildSearch(rootName, options = {}): BuiltSearch {
+export default function buildSearch(rootName: string, queryAdapter: QueryAdapter, options = {}): BuiltSearch {
   if (
     process.env.NODE_ENV === "production" &&
     searchCache.hasOwnProperty(rootName)
@@ -561,10 +556,11 @@ export default function buildSearch(rootName, options = {}): BuiltSearch {
     return searchCache[rootName];
   }
 
-  const reducerName = `../../Search:${rootName}`;
+  const reducerName = `@b6y/ui/core/Search:${rootName}`;
 
   const builtSearch = new BuiltSearch(
     Search,
+    queryAdapter,
     { id: reducerName, name: rootName },
     options,
   );

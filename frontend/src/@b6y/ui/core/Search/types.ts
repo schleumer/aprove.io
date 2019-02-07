@@ -9,23 +9,18 @@ export interface BaseCellElementProps {
 }
 
 export interface TypesMap {
-  [key: string]: React.ReactNode;
-}
-
-export interface SearchExtraArg {
-  type: string;
-  value: any;
-  name: string;
+  [key: string]: React.ComponentType<any>;
 }
 
 export interface SearchField {
-  id?: string;
+  id: string;
   name?: string | FormattedMessage.MessageDescriptor;
   width?: number;
   type?: string;
   virtual?: boolean;
   query?: string;
   path?: string;
+  fields?: SearchField[];
 }
 
 export interface InnerProps {
@@ -39,7 +34,6 @@ export interface InnerProps {
 
 export interface OuterProps {
   name?: string;
-  extraArgs?: SearchExtraArg[];
   defaultSearch?: any;
   env?: any;
   fontSize?: number;
@@ -48,7 +42,6 @@ export interface OuterProps {
   field?: string;
   requestType?: string;
   fields: SearchField[];
-  extraFields?: string[];
   limit?: number;
 }
 
@@ -61,7 +54,7 @@ export interface BuiltSearchMeta {
   name: string;
 }
 
-export interface CurrentView {
+export interface CurrentResult {
   total: number;
   totalUnfiltered: number;
   remaining: number;
@@ -75,20 +68,21 @@ export interface CurrentView {
   items: any[];
 }
 
+export interface SortedField {
+  name: string;
+  priority: number;
+  order: 1 | 0 | -1;
+}
+
 export interface View {
+  name: string;
   env: any;
-  sort: any;
+  sort: SortedField[];
   defaultSearch: any;
   search: any;
-  name: string;
-  field: string;
-  extraArgs: string[];
+  endpoint: string;
   fields: SearchField[];
-  requestType: string;
-  auth: {
-    token: string;
-  };
   limit: number;
   isLoading: boolean;
-  current: CurrentView;
+  current: CurrentResult;
 }

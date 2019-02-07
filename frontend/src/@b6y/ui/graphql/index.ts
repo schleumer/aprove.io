@@ -4,7 +4,7 @@ import * as R from "ramda";
 
 import clientCreator from "./client";
 
-interface CreateGraphQLParams {
+export interface CreateGraphQLParams {
   headers?: { [key: string]: string };
 }
 

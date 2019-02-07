@@ -7,15 +7,12 @@ import { View } from "./types";
 
 const defaultView = (): View => ({
   env: {},
-  sort: {},
+  sort: [],
   defaultSearch: {},
   search: {},
   name: "default",
-  field: null,
-  extraArgs: [],
+  endpoint: null,
   fields: [],
-  requestType: null,
-  auth: null,
   limit: 10,
   isLoading: false,
   current: null,
@@ -32,16 +29,13 @@ const reducerBuilder = (builtSearch: BuiltSearch) => (state: View = initialState
       case REGISTER:
         draft[data.name] = {
           env: data.env || {},
-          sort: data.sort || {},
+          sort: data.sort || [],
           defaultSearch: data.defaultSearch || {},
           search: data.search || {},
           name: data.name || "default",
           extraArgs: data.extraArgs || [],
           fields: data.fields || [],
-          extraFields: data.extraFields || [],
-          field: data.field || null,
-          requestType: data.requestType || null,
-          auth: data.auth || null,
+          endpoint: data.endpoint || null,
           limit: data.limit || 10,
           isLoading: data.isLoading || false,
           current: {
@@ -57,7 +51,7 @@ const reducerBuilder = (builtSearch: BuiltSearch) => (state: View = initialState
             hasMore: get("current.hasMore", data, false),
             items: get("current.items", data, []),
           },
-        };
+        } as View;
         return;
       case SET_LOADING:
         draft[data.name].isLoading = data.state;
