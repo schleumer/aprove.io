@@ -24,7 +24,7 @@ import reducerBuilder from "./reducerBuilder";
 import sagaBuilder from "./sagaBuilder";
 import { BaseCellElementProps, BuiltSearchMeta, OuterProps, Props, State, TypesMap } from "./types";
 
-interface QueryResult {
+export interface QueryResult {
   total: number;
   totalUnfiltered: number;
   remaining: number;
@@ -38,7 +38,7 @@ interface QueryResult {
   items: any[];
 }
 
-interface QueryAdapter {
+export interface QueryAdapter {
   run(searchState: any, globalState: any, params: any): Promise<QueryResult>;
 }
 

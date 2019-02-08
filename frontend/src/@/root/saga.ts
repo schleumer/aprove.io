@@ -49,7 +49,7 @@ export function* tryAuthenticate(form) {
     },
   };
 
-  const response: Response<{}> = yield call(mutate, "result", options);
+  const response: Response<any> = yield call(mutate, "result", options);
 
   if (response.successful) {
     yield put(authenticateErrors([]));
@@ -58,7 +58,12 @@ export function* tryAuthenticate(form) {
 
     Object.defineProperty(result, "$managed", {
       value: true,
+      enumerable: true,
+      writable: true,
+      configurable: true,
     });
+
+    console.log(result);
 
     localStorage.setItem("aprove-io:auth", JSON.stringify(result));
 

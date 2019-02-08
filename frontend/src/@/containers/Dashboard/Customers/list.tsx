@@ -15,7 +15,7 @@ import {
   Icon,
   Padding,
 } from "@b6y/ui/core";
-import search from "@b6y/ui/core/Search";
+import search, { QueryAdapter } from "@b6y/ui/core/Search";
 import Tooltip from "@b6y/ui/core/Tooltip";
 import { TextInput } from "@b6y/ui/formik";
 import Channel from "@b6y/ui/formik/Channel";
@@ -57,6 +57,12 @@ const searchFields = [
     type: "phone",
   },
 ];
+
+const SearchGraphQLAdapter: QueryAdapter = {
+  run(searchState: any, globalState: any, params: any): Promise<QueryResult> {
+    return Promise.reject(null);
+  },
+};
 
 const Search = search("customers");
 
