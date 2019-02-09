@@ -138,7 +138,7 @@ interface FormState {
   testid: string;
 }
 
-class TestFormPure extends React.Component<FormProps, FormState> {
+class TestFormPure extends React.PureComponent<FormProps, FormState> {
   public state = {
     testid: "test",
   };
@@ -395,7 +395,7 @@ interface Props {
   auth: AuthState;
 }
 
-export class ComponentsKitchenSink extends React.Component<Props> {
+export class ComponentsKitchenSink extends React.PureComponent<Props> {
   constructor(a) {
     super(a);
 

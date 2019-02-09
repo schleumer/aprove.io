@@ -21,7 +21,7 @@ interface State {
   visible?: boolean;
 }
 
-abstract class PortalImpl<P> extends React.Component<P & Props, State> {
+abstract class PortalImpl<P> extends React.PureComponent<P & Props, State> {
   public abstract contains(el: HTMLElement): boolean;
 }
 

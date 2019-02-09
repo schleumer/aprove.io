@@ -19,7 +19,14 @@ interface InnerProps {
   definition: Definition;
 }
 
-class Application extends React.Component<InnerProps> {
+// /* tslint:disable */
+// if (process.env.NODE_ENV !== "production") {
+//   const {whyDidYouUpdate} = require("why-did-you-update");
+//   whyDidYouUpdate(React);
+// }
+// /* tslint:enable */
+
+class Application extends React.PureComponent<InnerProps> {
   public render() {
     const { definition } = this.props;
     const theme = definition.theme(defaultTheme);
@@ -44,7 +51,7 @@ class Application extends React.Component<InnerProps> {
   }
 }
 
-class ApplicationRoot extends React.Component<Props> {
+class ApplicationRoot extends React.PureComponent<Props> {
   public render() {
     return (
       <Context.Provider value={this.props.definition}>

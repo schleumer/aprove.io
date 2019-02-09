@@ -17,7 +17,7 @@ const Anchor = styled.a``;
 /**
  * The public API for rendering a history-aware <a>.
  */
-class Link extends React.Component<LinkProps> {
+class Link extends React.PureComponent<LinkProps> {
   public static propTypes = {
     onClick: PropTypes.func,
     target: PropTypes.string,

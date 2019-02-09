@@ -15,7 +15,7 @@ export type FormikFormProps = Pick<
 
 const Form = styled(Box.withComponent("form"))``;
 
-class FormikForm extends React.Component<FormikFormProps> {
+class FormikForm extends React.PureComponent<FormikFormProps> {
   constructor(props) {
     super(props);
 

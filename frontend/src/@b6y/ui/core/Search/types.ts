@@ -1,5 +1,6 @@
 import React from "react";
-import { FormattedMessage } from "react-intl";
+
+import { Field, Result, SortedField } from "@b6y/ui/search";
 
 export interface BaseCellElementProps {
   env?: any;
@@ -12,17 +13,6 @@ export interface TypesMap {
   [key: string]: React.ComponentType<any>;
 }
 
-export interface SearchField {
-  id: string;
-  name?: string | FormattedMessage.MessageDescriptor;
-  width?: number;
-  type?: string;
-  virtual?: boolean;
-  query?: string;
-  path?: string;
-  fields?: SearchField[];
-}
-
 export interface InnerProps {
   auth: {
     token: string;
@@ -33,15 +23,15 @@ export interface InnerProps {
 }
 
 export interface OuterProps {
-  name?: string;
+  fields: Field[];
   defaultSearch?: any;
+  name?: string;
   env?: any;
   fontSize?: number;
   controls?: (env: any, data: any) => any;
   controlsWidth?: number;
   field?: string;
   requestType?: string;
-  fields: SearchField[];
   limit?: number;
 }
 
@@ -54,35 +44,14 @@ export interface BuiltSearchMeta {
   name: string;
 }
 
-export interface CurrentResult {
-  total: number;
-  totalUnfiltered: number;
-  remaining: number;
-  fromOffset: number;
-  toOffset: number;
-  totalOnPage: number;
-  totalOfPages: number;
-  currentPage: number;
-  itemsPerPage: number;
-  hasMore: boolean;
-  items: any[];
-}
-
-export interface SortedField {
-  name: string;
-  priority: number;
-  order: 1 | 0 | -1;
-}
-
 export interface View {
   name: string;
   env: any;
-  sort: SortedField[];
   defaultSearch: any;
   search: any;
-  endpoint: string;
-  fields: SearchField[];
+  fields: Field[];
+  sort: SortedField[];
   limit: number;
   isLoading: boolean;
-  current: CurrentResult;
+  current: Result;
 }

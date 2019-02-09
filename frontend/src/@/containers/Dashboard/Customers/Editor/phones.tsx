@@ -54,7 +54,7 @@ interface PhoneFormProps extends FormikProps<any> {
   parent: any;
 }
 
-class PhoneForm extends React.Component<PhoneFormProps> {
+class PhoneForm extends React.PureComponent<PhoneFormProps> {
   public render() {
     return (
       <Form>

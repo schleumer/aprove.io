@@ -13,6 +13,7 @@ import { theme } from "styled-tools";
 
 import injectReducer from "@b6y/ui/redux/injectReducer";
 import injectSaga from "@b6y/ui/redux/injectSaga";
+import { Adapter } from "@b6y/ui/search";
 
 import { ButtonTransparent, Group, Icon } from "../../core";
 import LoadingIndicator from "../../core/LoadingIndicator";
@@ -22,25 +23,14 @@ import styles from "./index.css";
 import messages from "./messages";
 import reducerBuilder from "./reducerBuilder";
 import sagaBuilder from "./sagaBuilder";
-import { BaseCellElementProps, BuiltSearchMeta, OuterProps, Props, State, TypesMap } from "./types";
-
-export interface QueryResult {
-  total: number;
-  totalUnfiltered: number;
-  remaining: number;
-  fromOffset: number;
-  toOffset: number;
-  totalOnPage: number;
-  totalOfPages: number;
-  currentPage: number;
-  itemsPerPage: number;
-  hasMore: boolean;
-  items: any[];
-}
-
-export interface QueryAdapter {
-  run(searchState: any, globalState: any, params: any): Promise<QueryResult>;
-}
+import {
+  BaseCellElementProps,
+  BuiltSearchMeta,
+  OuterProps,
+  Props,
+  State,
+  TypesMap,
+} from "./types";
 
 const PNF = libphonenumber.PhoneNumberFormat;
 const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
@@ -121,17 +111,15 @@ const Types = {
   phone: PhoneField,
 };
 
-class Search extends React.Component<Props, State> {
+class Search extends React.PureComponent<Props, State> {
   public static defaultProps = {
     name: "default",
-    extraArgs: [],
     defaultSearch: {},
     controlsWidth: 150,
     fontSize: 14,
     limit: 10,
     env: {},
     searchStore: null,
-    extraFields: null,
     $options: {},
   };
 
@@ -334,8 +322,6 @@ class Search extends React.Component<Props, State> {
 
     const { current, fields, env } = searchStore;
 
-    console.log(searchStore);
-
     const pagesRange = R.range(1, current.totalOfPages + 1).filter((item) => {
       if (
         (item <= 3 && current.currentPage < 3) ||
@@ -463,7 +449,7 @@ export class BuiltSearch {
     return this.component;
   }
 
-  public adapter: QueryAdapter;
+  public adapter: Adapter;
   public component: typeof Search;
   public meta: BuiltSearchMeta;
   public constants: any;
@@ -472,7 +458,7 @@ export class BuiltSearch {
 
   constructor(
     component: typeof Search,
-    adapter: QueryAdapter,
+    adapter: Adapter,
     meta: BuiltSearchMeta,
     options: any,
   ) {
@@ -548,7 +534,7 @@ export class BuiltSearch {
 
 const searchCache = {};
 
-export default function buildSearch(rootName: string, queryAdapter: QueryAdapter, options = {}): BuiltSearch {
+export default function buildSearch(rootName: string, adapter: Adapter, options = {}): BuiltSearch {
   if (
     process.env.NODE_ENV === "production" &&
     searchCache.hasOwnProperty(rootName)
@@ -560,7 +546,7 @@ export default function buildSearch(rootName: string, queryAdapter: QueryAdapter
 
   const builtSearch = new BuiltSearch(
     Search,
-    queryAdapter,
+    adapter,
     { id: reducerName, name: rootName },
     options,
   );

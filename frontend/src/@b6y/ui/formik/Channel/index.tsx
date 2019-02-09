@@ -20,7 +20,7 @@ interface Props {
 
 interface State {}
 
-class Channel extends React.Component<Props, State> {
+class Channel extends React.PureComponent<Props, State> {
   public formRef = React.createRef<Formik>();
 
   public static actions = actions;

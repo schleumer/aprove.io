@@ -153,7 +153,7 @@ interface State {
   visible: boolean;
 }
 
-class StyledTextInput extends React.Component<Props, State> {
+class StyledTextInput extends React.PureComponent<Props, State> {
   public static defaultProps = {
     state: "default",
     size: "md",

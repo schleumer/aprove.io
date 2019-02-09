@@ -223,7 +223,7 @@ const MenuList = (props) => {
   );
 };
 
-class SelectInput extends React.Component<Props, State> {
+class SelectInput extends React.PureComponent<Props, State> {
   // HAHA.
   public isMounted: boolean;
 

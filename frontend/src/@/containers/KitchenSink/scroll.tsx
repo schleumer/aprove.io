@@ -9,7 +9,7 @@ interface State {
   portal1Visible: boolean;
 }
 
-export class ScrollKitchenSink extends React.Component<Props, State> {
+export class ScrollKitchenSink extends React.PureComponent<Props, State> {
   public state = {
     portal1Visible: true,
   };

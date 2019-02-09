@@ -49,7 +49,7 @@ interface EmailFormProps extends FormikProps<any> {
   parent: any;
 }
 
-class EmailForm extends React.Component<EmailFormProps> {
+class EmailForm extends React.PureComponent<EmailFormProps> {
   public render() {
     return (
       <Form>

@@ -1,11 +1,13 @@
+import { makeSelectAuth } from "@/root/selectors";
+import gql from "graphql-tag";
+import R from "ramda";
 import React from "react";
 
 import { FastField, Form, Formik } from "formik";
 import produce from "immer";
+import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { createStructuredSelector } from "reselect";
-import { FormattedMessage } from "react-intl";
 import * as yup from "yup";
 
 import {
@@ -15,7 +17,7 @@ import {
   Icon,
   Padding,
 } from "@b6y/ui/core";
-import search, { QueryAdapter } from "@b6y/ui/core/Search";
+import search from "@b6y/ui/core/Search";
 import Tooltip from "@b6y/ui/core/Tooltip";
 import { TextInput } from "@b6y/ui/formik";
 import Channel from "@b6y/ui/formik/Channel";
@@ -28,6 +30,8 @@ import {
   PageBody,
   PageTitle,
 } from "@/components/elite";
+import graphQLCreator, { GraphQLMethods } from "@b6y/ui/graphql";
+import { Adapter, Field, Query, ResponseError, Result } from "@b6y/ui/search";
 
 import breadcrumbs from "./breadcrumbs";
 
@@ -38,33 +42,154 @@ const searchSchema = yup.object().shape({
   name: yup.string(),
 });
 
-const searchFields = [
+const searchFields: Field[] = [
   { id: "code", name: messages.code, width: 40 },
   { id: "name", name: messages.name, width: 100 },
   {
     id: "email",
     name: messages.email,
     width: 40,
-    query: "email { email }",
+    fields: [
+      { id: "email" },
+    ],
     path: "email.email",
   },
   {
     id: "phone",
     name: messages.phone,
     width: 40,
-    query: "phone { phone }",
+    fields: [
+      { id: "phone" },
+    ],
     path: "phone.phone",
     type: "phone",
   },
 ];
 
-const SearchGraphQLAdapter: QueryAdapter = {
-  run(searchState: any, globalState: any, params: any): Promise<QueryResult> {
-    return Promise.reject(null);
-  },
-};
+interface ExtraArg {
+  name: string;
+  type: string;
+  value: any;
+}
 
-const Search = search("customers");
+interface SearchGraphQLAdapterParams {
+  field: string;
+  requestType: string;
+  extraArgs?: (adapterParams: SearchGraphQLAdapterParams, query: Query, globalState: any, env: any) => ExtraArg[];
+}
+
+const buildQuery = R.memoizeWith((...args) => {
+  return args.join("👌");
+}, (field, argsHeader, argsRefs, queryableFields) => {
+  return gql`
+    query (${argsHeader}) {
+      result: ${field} (${argsRefs}) {
+        total
+        totalUnfiltered
+        remaining
+        fromOffset
+        toOffset
+        totalOnPage
+        totalOfPages
+        currentPage
+        itemsPerPage
+        hasMore
+        items { ${queryableFields} }
+      }
+    }`;
+});
+
+const SearchGraphQLAdapter = (params: SearchGraphQLAdapterParams): Adapter => ({
+  run(query: Query, globalState: any, env: any = {}): Promise<Result> {
+    console.time("SearchGraphQLAdapter.run");
+
+    console.time("SearchGraphQLAdapter.run1");
+    const auth = makeSelectAuth()(globalState);
+    console.timeEnd("SearchGraphQLAdapter.run1");
+
+    const extraArgs = (params.extraArgs && params.extraArgs(params, query, globalState, env)) || [];
+
+    let methods: GraphQLMethods = null;
+
+    console.time("SearchGraphQLAdapter.run2");
+    if (auth.token) {
+      methods = graphQLCreator({ headers: { Authorization: `Bearer ${auth.token}` } });
+    } else {
+      methods = graphQLCreator({});
+    }
+    console.timeEnd("SearchGraphQLAdapter.run2");
+
+    console.time("SearchGraphQLAdapter.run3");
+    const fieldsToGraphQL = (fields: Field[]): string => {
+      return fields.map((field) => {
+        if (field.fields && field.fields.length > 0) {
+          return `${field.id} { ${fieldsToGraphQL(field.fields)} }`;
+        } else {
+          return field.id;
+        }
+      }).join(", ");
+    };
+
+    const queryableFields = fieldsToGraphQL([{ id: "id" }].concat(
+      query.fields
+        .filter((f) => !f.virtual),
+    ));
+    console.timeEnd("SearchGraphQLAdapter.run3");
+
+    const args = [
+      {
+        name: "request",
+        type: `${params.requestType}!`,
+        value: {
+          page: query.page,
+          limit: query.limit,
+          sort: {},
+          search: query.search,
+        },
+      },
+      ...extraArgs,
+    ];
+
+    const argsHeader = args.map((arg) => `$${arg.name}: ${arg.type}`).join(", ");
+    const argsRefs = args.map((arg) => `${arg.name}: $${arg.name}`).join(", ");
+    const variables = args.reduce(
+      (variables, arg) => ({ ...variables, [arg.name]: arg.value }),
+      {},
+    );
+
+    return methods.query<any>("result", {
+      query: buildQuery(params.field, argsHeader, argsRefs, queryableFields),
+      variables,
+    }).then((res) => {
+      if (res.errors && res.errors.length > 0) {
+        throw new ResponseError(res.errors);
+      }
+
+      const { result } = res;
+
+      console.timeEnd("SearchGraphQLAdapter.run");
+
+      return {
+        total: result.total,
+        totalUnfiltered: result.totalUnfiltered,
+        remaining: result.remaining,
+        fromOffset: result.fromOffset,
+        toOffset: result.toOffset,
+        totalOnPage: result.totalOnPage,
+        totalOfPages: result.totalOfPages,
+        currentPage: result.currentPage,
+        itemsPerPage: result.itemsPerPage,
+        hasMore: result.hasMore,
+        items: result.items,
+      } as Result;
+    });
+  },
+});
+
+const Search = search("customers", SearchGraphQLAdapter({
+  field: "customers",
+  requestType: "CustomersRequest",
+}));
 
 const CustomerSearchForm = ({ isSubmitting }) => (
   <Form>
@@ -97,7 +222,7 @@ interface IProps {
   search: (...args: any[]) => void;
 }
 
-class List extends React.Component<IProps> {
+class List extends React.PureComponent<IProps> {
   public form?: React.RefObject<any>;
 
   constructor(props) {
@@ -173,9 +298,7 @@ class List extends React.Component<IProps> {
           </Channel>
           <div style={{ height: "100%" }}>
             <Search.Component
-              field="customers"
               limit={50}
-              requestType="CustomersRequest"
               fields={searchFields}
               controls={this.renderControls}
               controlsWidth={300}
@@ -196,10 +319,8 @@ export function mapDispatchToProps(dispatch) {
   };
 }
 
-const mapStateToProps = createStructuredSelector({});
-
 const withConnect = connect(
-  mapStateToProps,
+  () => ({}),
   mapDispatchToProps,
 );
 

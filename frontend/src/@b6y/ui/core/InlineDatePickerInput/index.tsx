@@ -339,7 +339,7 @@ const monthsAliases = [
   "december",
 ];
 
-class DatePicker extends React.Component<Props, State> {
+class DatePicker extends React.PureComponent<Props, State> {
   public static defaultProps = {
     visibleMonths: 3,
     reference: null,

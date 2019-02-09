@@ -42,7 +42,7 @@ const TooltipElement = styled((props) => {
     translateRight && "transform: translateX(0%) translateY(-50%)"}
 `;
 
-class Tooltip extends React.Component<Props, State> {
+class Tooltip extends React.PureComponent<Props, State> {
 
   public static defaultProps = {
     position: "top",

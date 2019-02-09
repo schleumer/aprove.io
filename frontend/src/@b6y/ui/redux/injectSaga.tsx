@@ -22,7 +22,7 @@ interface InjectSaga {
  *
  */
 export default ({ key, saga, mode }: InjectSaga) => (WrappedComponent) => {
-  class InjectSaga extends React.Component {
+  class InjectSaga extends React.PureComponent {
     public static WrappedComponent = WrappedComponent;
 
     public static contextType = ReactReduxContext;

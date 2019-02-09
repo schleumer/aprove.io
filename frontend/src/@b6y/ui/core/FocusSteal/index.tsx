@@ -4,7 +4,7 @@ import Context from "./context";
 
 import { FocusStealEvent, Props, State } from "./types";
 
-class FocusStealConsumer extends React.Component<Props, State> {
+class FocusStealConsumer extends React.PureComponent<Props, State> {
   public static contextType = Context;
 
   public static defaultProps = {

@@ -1,13 +1,9 @@
 import hoistNonReactStatics from "hoist-non-react-statics";
 import React from "react";
-import { ReactReduxContext, ReactReduxContextValue } from "react-redux";
-import { AnyAction } from "redux";
+import { ReactReduxContext } from "react-redux";
+import { Context } from "../core/ScrollController";
 
 import getInjectors from "./reducerInjectors";
-
-interface Props {
-  reduxContext: ReactReduxContextValue<any, AnyAction>;
-}
 
 /**
  * Dynamically injects a reducer
@@ -17,38 +13,28 @@ interface Props {
  *
  */
 export default ({ key, reducer }) => (WrappedComponent) => {
-  class ReducerInjector extends React.Component<Props> {
+  class ReducerInjector extends React.PureComponent {
+    public static WrappedComponent = WrappedComponent;
+
+    public static contextType = ReactReduxContext;
 
     public static displayName = `withReducer(${
       WrappedComponent.displayName || WrappedComponent.name || "Component"
     })`;
+
+    public context!: React.ContextType<typeof Context>;
+
     constructor(props, context) {
       super(props, context);
 
-      getInjectors(props.reduxContext.store)
+      getInjectors(context.store)
         .injectReducer(key, reducer);
     }
 
     public render() {
-      return <WrappedComponent {...this.props} />;
+      return <WrappedComponent {...this.props}/>;
     }
   }
 
-  class ReducerInjectorConsumer extends React.Component {
-    public static WrappedComponent = WrappedComponent;
-
-    public static displayName = `withReducerConsumers(${
-      WrappedComponent.displayName || WrappedComponent.name || "Component"
-    })`;
-
-    public render() {
-      return (
-        <ReactReduxContext.Consumer>
-          {(x) => <ReducerInjector reduxContext={x} {...this.props}/>}
-        </ReactReduxContext.Consumer>
-      );
-    }
-  }
-
-  return hoistNonReactStatics(ReducerInjectorConsumer, WrappedComponent);
+  return hoistNonReactStatics(ReducerInjector, WrappedComponent);
 };

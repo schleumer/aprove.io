@@ -6,7 +6,7 @@ interface Props extends RouteComponentProps<any> {}
 import Components from "./components";
 import Scroll from "./scroll";
 
-export class KitchenSink extends React.Component<Props> {
+export class KitchenSink extends React.PureComponent<Props> {
   public render() {
     const { match } = this.props;
 

@@ -51,7 +51,7 @@ interface FormProps extends FormikProps<any> {
   options: typeof options;
 }
 
-class EditorForm extends React.Component<FormProps> {
+class EditorForm extends React.PureComponent<FormProps> {
   public render() {
     const { options, isSubmitting } = this.props;
 

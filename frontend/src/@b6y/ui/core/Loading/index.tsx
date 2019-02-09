@@ -12,9 +12,9 @@ import reducer from "./reducer";
 const Loading = (props) => {
   const { loading, name, children } = props;
 
-  let state = loading[name];
+  let state = loading && loading[name];
 
-  if (state === undefined) {
+  if (loading === null || state === undefined) {
     state = true;
   }
 
@@ -40,7 +40,7 @@ export function mapDispatchToProps(dispatch) {
 
 const mapStateToProps = (state) => {
   return ({
-    loading: state["@b6y/components/core/Loading"] || {},
+    loading: state["@b6y/components/core/Loading"] || null,
   });
 };
 

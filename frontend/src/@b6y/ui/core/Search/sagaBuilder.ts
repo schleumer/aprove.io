@@ -1,43 +1,10 @@
-import { makeSelectAuth } from "@/root/selectors";
-import graphQLCreator, { GraphQLMethods, Response } from "@b6y/ui/graphql";
-import gql from "graphql-tag";
 import { call, put, select, takeEvery } from "redux-saga/effects";
 
 import { BuiltSearch } from "./index";
 
-interface QuerySearchParams {
-  methods: GraphQLMethods;
-  [key: string]: any;
-}
+import { View } from "./types";
 
-const querySearch = ({
-  methods,
-  argsHeader,
-  argsRefs,
-  field,
-  graphqlFields,
-  variables,
-}: QuerySearchParams) =>
-  methods.query("result", {
-    query: gql`
-        query (${argsHeader}) {
-          result: ${field} (${argsRefs}) {
-            total
-            totalUnfiltered
-            remaining
-            fromOffset
-            toOffset
-            totalOnPage
-            totalOfPages
-            currentPage
-            itemsPerPage
-            hasMore
-            items { ${graphqlFields} }
-          }
-        }
-      `,
-    variables,
-  });
+import { Query } from "../../search";
 
 export default (builtSearch: BuiltSearch) => {
   const {
@@ -55,70 +22,55 @@ export default (builtSearch: BuiltSearch) => {
       name,
     },
   }) {
-    const auth = yield select(makeSelectAuth());
-    const methods = graphQLCreator({ headers: { Authorization: `Bearer ${auth.token}`}});
+    console.time("search");
+    console.time("search1");
 
-    const state = yield select(builtSearch.selector(name));
+    const globalState = yield select();
+    const state: View = yield select(builtSearch.selector(name));
+
+    console.timeEnd("search1");
+    console.time("search2");
 
     const {
+      env,
       current,
-      requestType,
       defaultSearch,
-      extraArgs,
-      field,
-      search: oldSearch,
+      fields,
+      search: previousSearch,
+      sort,
     } = state;
 
-    const search = newSearch || oldSearch;
+    const currentSearch = newSearch || previousSearch;
 
     const page = newPage || current.currentPage;
     const limit = Math.min(Math.max(current.itemsPerPage, 1), 50);
 
+    console.timeEnd("search2");
+    console.time("search3");
+
     yield put(setLoading(name, true));
 
-    const graphqlFields = [
-      "id",
-      state.fields
-        .filter((f) => !f.virtual)
-        .map((f) => f.query || f.id)
-        .join(", "),
-      state.extraFields.join(", "),
-    ];
+    console.timeEnd("search3");
+    console.time("search4");
 
-    const args = [
-      {
-        name: "request",
-        type: `${requestType}!`,
-        value: {
-          page,
-          limit,
-          sort: {},
-          search: {
-            ...defaultSearch,
-            ...search,
-          },
-        },
-      },
-      ...extraArgs,
-    ];
+    const runParams = {
+      fields,
+      sort,
+      limit,
+      page,
+      search: { ...defaultSearch, ...currentSearch },
+      previousSearch,
+    } as Query;
 
-    const argsHeader = args.map((arg) => `$${arg.name}: ${arg.type}`).join(", ");
-    const argsRefs = args.map((arg) => `${arg.name}: $${arg.name}`).join(", ");
-    const variables = args.reduce(
-      (variables, arg) => ({ ...variables, [arg.name]: arg.value }),
-      {},
-    );
+    const result = yield call(builtSearch.adapter.run, runParams, globalState, env);
 
-    const response: Response = yield call(querySearch, {
-      methods,
-      argsHeader,
-      argsRefs,
-      field,
-      graphqlFields,
-      variables,
-    });
+    console.timeEnd("search4");
+    console.time("search5");
 
-    yield put(setCurrent(name, response.result, search));
+    yield put(setCurrent(name, result, runParams.search));
+
+    console.timeEnd("search5");
+    console.timeEnd("search");
   }
 
   function* doRegister({ data }) {

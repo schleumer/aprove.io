@@ -28,7 +28,7 @@ interface IProps {
   auth: AuthState;
 }
 
-export class HomePage extends React.Component<IProps> {
+export class HomePage extends React.PureComponent<IProps> {
   public render() {
     return (
       <div>

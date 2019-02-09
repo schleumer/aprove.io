@@ -5,7 +5,7 @@ import { FocusStealEvent } from "./types";
 
 import Context from "./context";
 
-export default class FocusStealProvider extends React.Component {
+export default class FocusStealProvider extends React.PureComponent {
   public bus = new EventEmitter();
 
   public componentDidMount() {

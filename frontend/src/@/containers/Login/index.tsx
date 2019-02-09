@@ -98,7 +98,7 @@ interface IProps {
   auth: AuthState;
 }
 
-class LoginPage extends React.Component<IProps> {
+class LoginPage extends React.PureComponent<IProps> {
   public form?: React.RefObject<any>;
 
   constructor(a, b) {

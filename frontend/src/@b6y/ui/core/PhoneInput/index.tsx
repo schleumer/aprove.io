@@ -324,7 +324,7 @@ interface StyledInputState {
   focused: boolean;
 }
 
-class StyledInput extends React.Component<StyledInputProps, StyledInputState> {
+class StyledInput extends React.PureComponent<StyledInputProps, StyledInputState> {
   public static propTypes = {
     placeholder: PropTypes.oneOfType([
       PropTypes.string,

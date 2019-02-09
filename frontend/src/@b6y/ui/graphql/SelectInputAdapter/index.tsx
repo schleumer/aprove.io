@@ -174,7 +174,7 @@ export const withGraphQLAdapter = <K extends string, P, S>(
   WrappedComponent: React.ComponentType<P & { children?: React.ReactNode } & { [P in K]: GraphQLAdapter }>,
   options: GraphQLAdapterOptions,
 ): React.ComponentClass<Pick<P, Exclude<keyof P, keyof { [P in K]: GraphQLAdapter }>>> => {
-  class Enhance extends React.Component<P> {
+  class Enhance extends React.PureComponent<P> {
     public static contextType = ApplicationContext;
 
     public context!: React.ContextType<typeof ApplicationContext>;

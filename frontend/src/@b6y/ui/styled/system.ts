@@ -3,6 +3,7 @@
  */
 
 import PropTypes from "prop-types";
+
 import { titleCase } from "@b6y/commons";
 
 // utils
@@ -198,8 +199,17 @@ const defaultSizes = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56];
 
 const defaultFontSizes = [0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6];
 
+const defaultRadii = [0, .15, .3];
+
 export const getSpace = (n) => (props) => {
   const scale = get(props.theme, "space") || defaultScale;
+  const getStyle = getValue(scale, "rem");
+
+  return getStyle(n);
+};
+
+export const getRadii = (n) => (props) => {
+  const scale = get(props.theme, "radii") || defaultRadii;
   const getStyle = getValue(scale, "rem");
 
   return getStyle(n);

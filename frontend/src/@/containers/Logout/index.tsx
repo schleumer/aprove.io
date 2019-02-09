@@ -25,7 +25,7 @@ interface Props {
   logout: Function;
 }
 
-class LogoutPage extends React.Component<Props> {
+class LogoutPage extends React.PureComponent<Props> {
   public componentDidMount() {
     const { logout } = this.props;
 

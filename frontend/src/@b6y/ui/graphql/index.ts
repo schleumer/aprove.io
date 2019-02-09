@@ -2,17 +2,12 @@ import { FetchResult } from "apollo-link";
 import { DocumentNode } from "graphql";
 import * as R from "ramda";
 
+import * as error from "@b6y/error";
+
 import clientCreator from "./client";
 
 export interface CreateGraphQLParams {
   headers?: { [key: string]: string };
-}
-
-interface UpgradedError {
-  path: string[];
-  key: string;
-  message: string;
-  extensions: any;
 }
 
 export interface Variables {
@@ -31,7 +26,7 @@ export interface MutateOptions<TVariables = Variables> {
 
 export interface Response<TResponse = any> {
   result?: TResponse;
-  errors: ReadonlyArray<UpgradedError>;
+  errors: ReadonlyArray<error.Error>;
   successful: boolean;
 }
 
@@ -40,7 +35,7 @@ export interface GraphQLMethods {
   mutate<TResponse = {}>(resultKey: string, options: MutateOptions): Promise<Response<TResponse>>;
 }
 
-const upgradeErrors = (resultKey = "result", errors: any[]): UpgradedError[] => {
+const upgradeErrors = (resultKey = "result", errors: any[]): error.Error[] => {
   return errors.map((x) => {
     let path = null;
 
@@ -63,8 +58,10 @@ const upgradeErrors = (resultKey = "result", errors: any[]): UpgradedError[] => 
       path,
       key: path.join("."),
       message: x.message,
-      extensions: x.extensions || {},
-    };
+      meta: {
+        extensions: x.extensions || {},
+      },
+    } as error.Error;
   });
 
   // return [

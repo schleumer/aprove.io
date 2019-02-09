@@ -12,7 +12,7 @@ interface Props extends RouteProps {
   permission?: any;
 }
 
-class PrivateRoute extends React.Component<Props> {
+class PrivateRoute extends React.PureComponent<Props> {
   public render() {
     const { component: Component, permission, ...rest } = this.props;
 
