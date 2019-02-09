@@ -22,6 +22,7 @@ import Tooltip from "@b6y/ui/core/Tooltip";
 import { TextInput } from "@b6y/ui/formik";
 import Channel from "@b6y/ui/formik/Channel";
 import {
+  RouterButton,
   RouterButtonOutline,
 } from "@b6y/ui/router";
 import { Box } from "@b6y/ui/styled";
@@ -279,7 +280,12 @@ class List extends React.PureComponent<IProps> {
   public render() {
     return (
       <div>
-        <PageTitle title="Clientes" breadcrumb={breadcrumbs.list} />
+        <PageTitle title="Clientes" breadcrumb={breadcrumbs.list}>
+          <RouterButton to={`/customers/new`} size="sm" px={2} state="primary">
+            <Icon size={16} name="plus-circle"/>
+            <span><FormattedMessage {...messages.new} /></span>
+          </RouterButton>
+        </PageTitle>
         <PageBody>
           <Channel name="customers/list">
             <Formik

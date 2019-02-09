@@ -5,6 +5,10 @@ export default defineMessages({
     id: "customers.view",
     defaultMessage: "{name}",
   },
+  new: {
+    id: "customers.new",
+    defaultMessage: "Novo",
+  },
   search: {
     id: "customers.search",
     defaultMessage: "Buscar",
@@ -20,6 +24,7 @@ export default defineMessages({
   emails: { id: "customers.emails", defaultMessage: "E-mails" },
   id: { id: "customers.id", defaultMessage: "Identificação" },
   code: { id: "customers.code", defaultMessage: "Código" },
+  newCode: { id: "customers.newCode", defaultMessage: "NOVO" },
   type: { id: "customers.type", defaultMessage: "Tipo" },
   notes: { id: "customers.notes", defaultMessage: "Notas" },
   status: { id: "customers.status", defaultMessage: "Status" },

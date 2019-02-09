@@ -3,9 +3,10 @@ import { FormattedMessage } from "react-intl";
 import { RouteComponentProps } from "react-router-dom";
 
 import { PageBody, PageTitle } from "@/components/elite";
-import { LoadingIndicator } from "@b6y/ui/core";
+import { Button, Icon, LoadingIndicator } from "@b6y/ui/core";
 
 import * as graphql from "@/hooks/graphql";
+import { RouterButton } from "@b6y/ui/router";
 
 import breadcrumbs from "./breadcrumbs";
 import Editor from "./editor";
@@ -53,7 +54,12 @@ const View = (props: Props) => {
     <>
       <PageTitle title={
         <FormattedMessage {...messages.view} values={result} />
-      } breadcrumb={breadcrumb} />
+      } breadcrumb={breadcrumb}>
+        <RouterButton to={`/customers/new`} size="sm" px={2} state="primary">
+          <Icon size={16} name="plus-circle"/>
+          <span><FormattedMessage {...messages.new} /></span>
+        </RouterButton>
+      </PageTitle>
       <PageBody>
         <Editor data={result} />
       </PageBody>

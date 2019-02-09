@@ -31,8 +31,8 @@ export interface Response<TResponse = any> {
 }
 
 export interface GraphQLMethods {
-  query<TResponse = {}>(resultKey: string, options: QueryOptions): Promise<Response<TResponse>>;
-  mutate<TResponse = {}>(resultKey: string, options: MutateOptions): Promise<Response<TResponse>>;
+  query<TResponse = any>(resultKey: string, options: QueryOptions): Promise<Response<TResponse>>;
+  mutate<TResponse = any>(resultKey: string, options: MutateOptions): Promise<Response<TResponse>>;
 }
 
 const upgradeErrors = (resultKey = "result", errors: any[]): error.Error[] => {

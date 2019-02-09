@@ -41,3 +41,13 @@ export const updateQuery = gql`
     }
   }
 `;
+
+export const createQuery = gql`
+  ${viewFragment}
+
+  mutation($input: CreateCustomerInput!) {
+    result: createCustomer(input: $input) {
+      ...ViewFragment
+    }
+  }
+`;

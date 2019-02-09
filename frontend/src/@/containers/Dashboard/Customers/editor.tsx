@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import { FormattedMessage, InjectedIntlProps, injectIntl } from "react-intl";
 import * as yup from "yup";
 
+import history from "@/history";
 import * as graphql from "@/hooks/graphql";
 import globalMessages from "@/messages/global";
 import {
@@ -23,11 +24,11 @@ import { Box, Heading } from "@b6y/ui/styled";
 
 import EmailsEditor from "./Editor/emails";
 import PhonesEditor from "./Editor/phones";
-import { updateQuery } from "./graphql";
+import { updateQuery, createQuery } from "./graphql";
 import messages from "./messages";
 
 const validationSchema = yup.object().shape({
-  id: yup.number().required(),
+  id: yup.number(),
   name: yup.string().required(),
   status: yup.string()
     .required("#required"),
@@ -53,7 +54,7 @@ interface FormProps extends FormikProps<any> {
 
 class EditorForm extends React.PureComponent<FormProps> {
   public render() {
-    const { options, isSubmitting } = this.props;
+    const { options, isSubmitting, values } = this.props;
 
     return (
       <Box>
@@ -62,7 +63,16 @@ class EditorForm extends React.PureComponent<FormProps> {
             <Heading><FormattedMessage {...messages.infos} /></Heading>
             <BoxGroup spacing={3}>
               <Box mb={3} width={1 / 3}>
-                <FastField name="code" label={messages.code} component={TextInput} disabled={true} />
+                {values.code && (
+                  <FastField name="code" label={messages.code} component={TextInput} disabled />
+                )}
+                {!values.code && (
+                  <FastField name="code"
+                             label={messages.code}
+                             component={TextInput}
+                             disabledValue={messages.newCode}
+                             disabled />
+                )}
               </Box>
               <Box mb={3} width={1 / 3}>
                 <FastField name="name" label={messages.name} component={TextInput} />
@@ -109,16 +119,18 @@ class EditorForm extends React.PureComponent<FormProps> {
             </RouterButtonTransparent>
           </Padding>
         </Form>
-        <BoxGroup spacing={3} mt={3}>
-          <Box width={1 / 2}>
-            <Heading mb={0}><FormattedMessage {...messages.phones} /></Heading>
-            <FieldArray name="phones" component={PhonesEditor}/>
-          </Box>
-          <Box width={1 / 2}>
-            <Heading mb={0}><FormattedMessage {...messages.emails} /></Heading>
-            <FieldArray name="emails" component={EmailsEditor}/>
-          </Box>
-        </BoxGroup>
+        {values.id && (
+          <BoxGroup spacing={3} mt={3}>
+            <Box width={1 / 2}>
+              <Heading mb={0}><FormattedMessage {...messages.phones} /></Heading>
+              <FieldArray name="phones" component={PhonesEditor}/>
+            </Box>
+            <Box width={1 / 2}>
+              <Heading mb={0}><FormattedMessage {...messages.emails} /></Heading>
+              <FieldArray name="emails" component={EmailsEditor}/>
+            </Box>
+          </BoxGroup>
+        )}
       </Box>
     );
   }
@@ -132,6 +144,9 @@ interface Props extends InjectedIntlProps {
 const initialValues = (base: any): any => {
   return {
     ...base,
+    status: "ACTIVE",
+    phones: [],
+    emails: [],
     phone: {
       phone: null,
     },
@@ -155,20 +170,32 @@ const Editor2 = (props: Props) => {
     validationSchema
       .validate(values)
       .then((customer) => {
-        return methods.mutate("result", {
-          mutation: updateQuery,
-          variables: {
-            input: customer,
-          },
-        });
+        if (customer.id) {
+          return methods.mutate("result", {
+            mutation: updateQuery,
+            variables: {
+              input: customer,
+            },
+          });
+        } else {
+          return methods.mutate("result", {
+            mutation: createQuery,
+            variables: {
+              input: customer,
+            },
+          });
+        }
       })
       .then((response) => {
         formRef.current.setSubmitting(false);
 
-        props.onChange(response.result);
+        props.onChange && props.onChange(response.result);
+
+        history.replace(`/customers/${response.result.id}`);
       })
-      .catch(() => {
+      .catch((e) => {
         formRef.current.setSubmitting(false);
+        throw e;
       });
   };
 
@@ -186,6 +213,7 @@ const Editor2 = (props: Props) => {
             options={intlOptions}
             {...props} />;
         }}
+        validateOnBlur={false}
         validateOnChange={false}
       />
     </React.Fragment>

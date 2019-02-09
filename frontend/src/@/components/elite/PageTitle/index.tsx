@@ -19,8 +19,9 @@ const PageTitleWrapper = styled(Flex)((props) => {
     marginRight: nSpace,
     marginTop: nSpace,
     backgroundColor: "white",
-    padding: space,
     marginBottom: space,
+    minHeight: '3.5em',
+    padding: `0 ${space}`
   };
 });
 

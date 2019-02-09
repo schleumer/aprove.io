@@ -10,8 +10,9 @@ import {
 
 import { makeSelectAuth } from "@/root/selectors";
 
-import InstancesList from "./list";
-import InstancesView from "./view";
+import ListCustomers from "./list";
+import NewCustomer from "./new";
+import ViewCustomer from "./view";
 
 import messages from "./messages";
 
@@ -30,8 +31,9 @@ const Home = ({ match, globalState }) => (
     </FormattedMessage>
     <div>
       <Switch>
-        <Route path={`${match.path}/:customerId`} component={InstancesView} />
-        <Route path={`${match.path}`} exact component={InstancesList} />
+        <Route path={`${match.path}/new`} component={NewCustomer} />
+        <Route path={`${match.path}/:customerId`} component={ViewCustomer} />
+        <Route path={`${match.path}`} exact component={ListCustomers} />
       </Switch>
     </div>
   </div>

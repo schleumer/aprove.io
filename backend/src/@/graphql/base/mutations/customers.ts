@@ -1,4 +1,5 @@
 import {GraphQLBoolean, GraphQLInputObjectType, GraphQLString} from "graphql";
+import R from "ramda";
 
 import {Customer, CustomerEmail, CustomerPhone} from "@/entity";
 import {Search as CustomersSearch} from "@/graphql/base/queries/customers";
@@ -19,6 +20,25 @@ const UpdateCustomerInput = new GraphQLInputObjectType({
     name: "UpdateCustomerInput",
     fields: {
         id: {type: nonNull(LongType)},
+        type: {type: CustomerType},
+        status: {type: nonNull(CustomerStatus)},
+        name: {type: nonNull(GraphQLString)},
+        notes: {type: GraphQLString},
+
+        document: {type: GraphQLString},
+        streetName: {type: GraphQLString},
+        streetNumber: {type: GraphQLString},
+        complementary: {type: GraphQLString},
+        neighborhood: {type: GraphQLString},
+        city: {type: GraphQLString},
+        zipcode: {type: GraphQLString},
+        state: {type: GraphQLString},
+    },
+});
+
+const CreateCustomerInput = new GraphQLInputObjectType({
+    name: "CreateCustomerInput",
+    fields: {
         type: {type: CustomerType},
         status: {type: nonNull(CustomerStatus)},
         name: {type: nonNull(GraphQLString)},
@@ -191,6 +211,31 @@ export default async () => {
                     .execute();
 
                 return await Customer.findOne(input.id);
+            },
+        }),
+        createCustomer: auth({
+            type: CustomersSearchType.ItemType,
+            args: {
+                input: {type: CreateCustomerInput},
+            },
+            async resolve(source, args, ctx, info) {
+                const {instance, user} = await ctx.session();
+
+                const input = {
+                    ...args.input,
+                    instanceId: instance.id,
+                    userId: user.id,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+
+                const entity = Customer.getRepository().create(input);
+
+                const result = await Customer.insert(entity);
+
+                const id = R.head(result.identifiers).id;
+
+                return await Customer.findOne(id);
             },
         }),
     };
